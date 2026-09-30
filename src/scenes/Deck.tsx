@@ -17,7 +17,7 @@ function Steps({ items, active, select, icons, humanDecisionAt }: { items: strin
     const Icon = icons?.[i]
     const number = <span className="step-number">{String(i + 1).padStart(2, '0')}</span>
     const arrow = i < items.length - 1 ? <ArrowRight aria-hidden="true" /> : null
-    const content = <>{Icon ? <div className="step-top"><span className="step-icon-wrap" aria-hidden="true"><Icon size={30} strokeWidth={1.5} /></span></div> : number}{Icon ? <div className="step-label-row"><strong>{item}{humanDecisionAt === i && <ShieldCheck className="step-human-icon" size={18} strokeWidth={1.5} aria-label="İnsan kararı" />}</strong>{arrow}</div> : <strong>{item}</strong>}</>
+    const content = <>{Icon ? <div className="step-top"><span className="step-icon-wrap" aria-hidden="true"><Icon size={34} strokeWidth={1.5} /></span></div> : number}{Icon ? <div className="step-label-row"><strong>{item}{humanDecisionAt === i && <ShieldCheck className="step-human-icon" size={18} strokeWidth={1.5} aria-label="İnsan kararı" />}</strong>{arrow}</div> : <strong>{item}</strong>}</>
     return <li key={item} className={active === i ? 'selected' : ''}>{select ? <button onClick={() => select(i)} aria-pressed={active === i}>{content}</button> : content}{!Icon && arrow}</li>
   })}</ol>
 }
