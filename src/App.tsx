@@ -59,7 +59,7 @@ function Presentation() {
 
 export default function App() {
   const [authenticated, setAuthenticated] = useState(
-    () => window.sessionStorage.getItem(AUTH_SESSION_KEY) === 'true',
+    () => import.meta.env.DEV || window.sessionStorage.getItem(AUTH_SESSION_KEY) === 'true',
   )
 
   const authenticate = () => {
