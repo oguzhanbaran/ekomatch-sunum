@@ -9,6 +9,15 @@ import provinces from '../data/provinces.json'
 const miniLogoUrl = new URL('../../logo-mini.png', import.meta.url).href
 const ktLogoUrl = new URL('../../kt-logo.png', import.meta.url).href
 const archiLogoUrl = new URL('../../archi-logo.png', import.meta.url).href
+const b2bStepImages = [
+  new URL('../../Pics/Slide8/Company.png', import.meta.url).href,
+  new URL('../../Pics/Slide8/Similarity.png', import.meta.url).href,
+  new URL('../../Pics/Slide8/History.png', import.meta.url).href,
+  new URL('../../Pics/Slide8/Oppurtinity.png', import.meta.url).href,
+  new URL('../../Pics/Slide8/Employee.png', import.meta.url).href,
+  new URL('../../Pics/Slide8/Supplier.png', import.meta.url).href,
+  new URL('../../Pics/Slide8/Product.png', import.meta.url).href,
+]
 
 function Tag({ children }: { children: ReactNode }) { return <p className="deck-tag">{children}</p> }
 function Insight({ children, warning = false }: { children: ReactNode; warning?: boolean }) { return <div className={`deck-insight ${warning ? 'is-warning' : ''}`}>{children}</div> }
@@ -36,7 +45,8 @@ function Heatmap() {
 
 function B2B() {
   const [step, setStep] = useState(0)
-  return <><Steps items={data.b2bSteps} active={step} select={setStep} /><div className="b2b-focus" aria-live="polite"><div className="focus-number">{String(step + 1).padStart(2, '0')}</div><div><Tag>TEMSİLİ ÖRNEK · MOBİLYA ATÖLYESİ</Tag><h2>{data.b2bStory[step][0]}</h2><p>{data.b2bStory[step][1]}</p></div><div className="deck-action-column"><button className="deck-button" onClick={() => setStep(s => Math.min(6, s + 1))} disabled={step === 6}>Sonraki adım <ChevronRight /></button><button className="deck-button secondary" onClick={() => setStep(0)}><RotateCcw /> Yeniden başlat</button></div></div><Insight>AI keşfeder, insan doğrular. Tedarikçi eşleşmesi banka garantisi değildir.</Insight></>
+  const stepImage = b2bStepImages[step]
+  return <><Steps items={data.b2bSteps} active={step} select={setStep} /><div className="b2b-focus" aria-live="polite"><div className={`b2b-focus-visual${stepImage ? ' has-image' : ''}`}>{stepImage ? <img src={stepImage} width="1254" height="1254" alt={`${data.b2bStory[step][0]} aşamasını temsil eden görsel`} /> : <span className="focus-number">{String(step + 1).padStart(2, '0')}</span>}</div><div><Tag>TEMSİLİ ÖRNEK · MOBİLYA ATÖLYESİ</Tag><h2>{data.b2bStory[step][0]}</h2><p>{data.b2bStory[step][1]}</p></div><div className="deck-action-column"><button className="deck-button" onClick={() => setStep(s => Math.min(6, s + 1))} disabled={step === 6}>Sonraki adım <ChevronRight /></button><button className="deck-button secondary" onClick={() => setStep(0)}><RotateCcw /> Yeniden başlat</button></div></div><Insight>AI keşfeder, insan doğrular. Tedarikçi eşleşmesi banka garantisi değildir.</Insight></>
 }
 
 const provinceNames = ['Adana','Adıyaman','Afyonkarahisar','Ağrı','Amasya','Ankara','Antalya','Artvin','Aydın','Balıkesir','Bilecik','Bingöl','Bitlis','Bolu','Burdur','Bursa','Çanakkale','Çankırı','Çorum','Denizli','Diyarbakır','Edirne','Elazığ','Erzincan','Erzurum','Eskişehir','Gaziantep','Giresun','Gümüşhane','Hakkâri','Hatay','Isparta','Mersin','İstanbul','İzmir','Kars','Kastamonu','Kayseri','Kırklareli','Kırşehir','Kocaeli','Konya','Kütahya','Malatya','Manisa','Kahramanmaraş','Mardin','Muğla','Muş','Nevşehir','Niğde','Ordu','Rize','Sakarya','Samsun','Siirt','Sinop','Sivas','Tekirdağ','Tokat','Trabzon','Tunceli','Şanlıurfa','Uşak','Van','Yozgat','Zonguldak','Aksaray','Bayburt','Karaman','Kırıkkale','Batman','Şırnak','Bartın','Ardahan','Iğdır','Yalova','Karabük','Kilis','Osmaniye','Düzce']

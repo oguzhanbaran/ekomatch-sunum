@@ -90,6 +90,8 @@
 .approach-row.old .deck-steps li { border-color: #ef816f66; }
 .approach-row.new .step-icon-wrap { color: #15b79e; }
 .b2b-focus { display: flex; gap: 35px; align-items: center; padding: 32px; border: 1px solid var(--line-strong); background: #0d211b; min-height: 220px; }
+.b2b-focus-visual { display: grid; place-items: center; flex: 0 0 200px; width: 200px; height: 200px; }
+.b2b-focus-visual img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .b2b-focus > div:nth-child(2) { flex: 1; }
 .focus-number { color: #4de3b74d; font: 500 clamp(60px,6vw,120px) var(--font-display); }
 .deck-action-column { display: flex; flex-direction: column; gap: 12px; flex: 0 0 210px; }
@@ -256,7 +258,7 @@
   .heatmap-layout, .b2c-layout, .privacy-layout, .pilot-layout, .resources-layout, .opportunity-layout, .revenue-layout, .loop-layout { grid-template-columns: 1fr; gap: 30px; }
   .heatmap-explain { display: none; }
   .deck-steps { flex-wrap: wrap; }.deck-steps li { flex: 1 1 24%; }
-  .b2b-focus { flex-wrap: wrap; }.focus-number { display: none; }.deck-action-column { flex-direction: row; flex-basis: 100%; }
+  .b2b-focus { flex-wrap: wrap; }.b2b-focus-visual:not(.has-image) { display: none; }.deck-action-column { flex-direction: row; flex-basis: 100%; }
   .architecture-five { grid-template-columns: repeat(2,1fr); }
   .deck-loop { width: min(65vh,70vw); margin: 20px auto; }
   .loop-copy { text-align: center; }
@@ -276,7 +278,7 @@
   .deck-scene { padding-inline: 22px; }.deck-heading h1 { font-size: 32px; }
   .deck-center h1 { font-size: 34px; }.deck-slogan { font-size: 23px; }
   .deck-steps li { flex-basis: 40%; }.deck-steps strong { font-size: 18px; }
-  .b2b-focus { padding: 22px; }.b2b-focus > div:nth-child(2) { flex-basis: 100%; }
+  .b2b-focus { padding: 22px; }.b2b-focus-visual { flex-basis: 144px; width: 144px; height: 144px; }.b2b-focus > div:nth-child(2) { flex-basis: 100%; }
   .deck-action-column { flex-wrap: wrap; }.deck-action-column button { flex: 1; }
   .relation-heatmap { overflow-x: auto; }.heatmap-row { min-width: 640px; }
   .map-heading { flex-wrap: wrap; }.map-readout { flex-wrap: wrap; gap: 6px; }.map-legend { font-size: 13px; }
