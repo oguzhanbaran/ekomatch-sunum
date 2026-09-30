@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowRight, Check, Minus, X, ScanSearch, UserCheck, Handshake, Banknote, Database, Layers, Network, BrainCircuit, ShieldCheck, Monitor, ChevronRight, RotateCcw, BookOpen } from 'lucide-react'
+import { ArrowRight, Check, Minus, X, ScanSearch, UserCheck, Handshake, Banknote, Database, Layers, Network, BrainCircuit, ShieldCheck, Monitor, ChevronRight, RotateCcw, BookOpen, User, Package, Megaphone, Unlink, Activity, Radar, Link, Landmark, type LucideIcon } from 'lucide-react'
 import { EkoMark } from '../components/Brand'
 import { EconomicNetwork } from '../components/Network'
 import * as data from '../data/deckData'
@@ -12,8 +12,14 @@ const archiLogoUrl = new URL('../../archi-logo.png', import.meta.url).href
 
 function Tag({ children }: { children: ReactNode }) { return <p className="deck-tag">{children}</p> }
 function Insight({ children, warning = false }: { children: ReactNode; warning?: boolean }) { return <div className={`deck-insight ${warning ? 'is-warning' : ''}`}>{children}</div> }
-function Steps({ items, active, select }: { items: string[]; active?: number; select?: (i: number) => void }) {
-  return <ol className="deck-steps">{items.map((item, i) => <li key={item} className={active === i ? 'selected' : ''}>{select ? <button onClick={() => select(i)} aria-pressed={active === i}><span>{String(i + 1).padStart(2, '0')}</span><strong>{item}</strong></button> : <><span>{String(i + 1).padStart(2, '0')}</span><strong>{item}</strong></>}{i < items.length - 1 && <ArrowRight aria-hidden="true" />}</li>)}</ol>
+function Steps({ items, active, select, icons, humanDecisionAt }: { items: string[]; active?: number; select?: (i: number) => void; icons?: LucideIcon[]; humanDecisionAt?: number }) {
+  return <ol className="deck-steps">{items.map((item, i) => {
+    const Icon = icons?.[i]
+    const number = <span className="step-number">{String(i + 1).padStart(2, '0')}</span>
+    const arrow = i < items.length - 1 ? <ArrowRight aria-hidden="true" /> : null
+    const content = <>{Icon ? <div className="step-top"><span className="step-icon-wrap" aria-hidden="true"><Icon size={30} strokeWidth={1.5} /></span></div> : number}{Icon ? <div className="step-label-row"><strong>{item}{humanDecisionAt === i && <ShieldCheck className="step-human-icon" size={18} strokeWidth={1.5} aria-label="İnsan kararı" />}</strong>{arrow}</div> : <strong>{item}</strong>}</>
+    return <li key={item} className={active === i ? 'selected' : ''}>{select ? <button onClick={() => select(i)} aria-pressed={active === i}>{content}</button> : content}{!Icon && arrow}</li>
+  })}</ol>
 }
 
 function Appendix() {
@@ -92,7 +98,7 @@ function SlideBody({ kind }: { kind: string }) {
     case 'definition': return <><p className="deck-lead">Bankanın geçmiş ekonomik ilişkilerinden öğrenir; henüz oluşmamış potansiyel ilişkileri keşfeder, talep ile arzı buluşturur.</p><div className="definition-grid">{data.definition.map((name, i) => { const Icon = icons[i]; return <div key={name}><Icon /><h2>{name}</h2></div> })}</div><Insight>Henüz kurulmamış ilişki, keşfedilmeyi bekleyen bir fırsattır.</Insight></>
     case 'metrics': return <><div className="metrics-grid">{data.metrics.map(([value, unit, label]) => <div key={label}><strong>{value}</strong><span>{unit}</span><p>{label}</p></div>)}</div><Insight>Boşluk küçük değil: harcama bizde başlıyor, başka bankada bitiyor.</Insight><p className="deck-source">Kaynak: BKM 2025–2026 kart verileri, Kuveyt Türk kurumsal tanıtım (Aralık 2025) · 590 milyar TL hesabında %90 off-us oranı varsayımı kullanılmıştır.</p></>
     case 'heatmap': return <Heatmap />
-    case 'comparison': return <><div className="approach-row old"><Tag>MEVCUT YAKLAŞIM</Tag><Steps items={['Müşteri gelir', 'Ürün önerilir', 'Kampanya gönderilir', 'İlişki banka dışında kalır']} /></div><div className="approach-row new"><Tag>EKOMATCH</Tag><Steps items={['Veri', 'Fırsat keşfi', 'Şubeci doğrular', 'Arz eşleşir', 'Yeni ticaret', 'Finansman / POS']} /></div><p className="deck-source">Kavramsal süreç karşılaştırması.</p></>
+    case 'comparison': return <><div className="approach-row old"><Tag>MEVCUT YAKLAŞIM</Tag><Steps items={['Müşteri gelir', 'Ürün önerilir', 'Kampanya gönderilir', 'İlişki banka dışında kalır']} icons={[User, Package, Megaphone, Unlink]} /></div><div className="approach-row new"><Tag>EKOMATCH</Tag><Steps items={['Veri', 'Fırsat keşfi', 'Şubeci doğrular', 'Arz eşleşir', 'Yeni ticaret', 'Finansman / POS']} icons={[Activity, Radar, UserCheck, Link, Handshake, Landmark]} humanDecisionAt={2} /></div><p className="deck-source">Kavramsal süreç karşılaştırması.</p></>
     case 'b2b': return <B2B />
     case 'b2c': return <B2C />
     case 'flywheel': return <Flywheel />
