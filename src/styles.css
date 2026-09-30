@@ -60,9 +60,6 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--aqua);
 .login-submit:hover { background: #74edc9; border-color: #74edc9; box-shadow: 0 12px 34px rgba(77,227,183,.17); transform: translateY(-1px); }
 .login-submit:active { transform: translateY(0); }
 .login-submit svg { width: 19px; height: 19px; }
-.login-footer { margin-top: 32px; padding-top: 20px; display: flex; align-items: center; justify-content: center; gap: 12px; border-top: 1px solid var(--line); color: #70857e; font: 500 9px var(--font-mono); letter-spacing: .13em; }
-.login-footer i { width: 3px; height: 3px; border-radius: 50%; background: var(--aqua); }
-
 @media (max-width: 520px) {
   .login-gate { padding-inline: 16px; }
   .login-panel { padding: 26px 22px 24px; }
@@ -73,7 +70,6 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--aqua);
   .login-gate { place-items: start center; overflow-y: auto; }
   .login-panel { margin-block: 12px; }
   .login-heading { margin: 24px 0 20px; }
-  .login-footer { margin-top: 22px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

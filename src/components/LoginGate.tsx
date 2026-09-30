@@ -120,11 +120,6 @@ export function LoginGate({ onAuthenticated }: LoginGateProps) {
           </button>
         </form>
 
-        <div className="login-footer">
-          <span>KUVEYT TÜRK</span>
-          <i aria-hidden="true" />
-          <span>ARCHI TECH</span>
-        </div>
       </motion.section>
     </main>
   )
