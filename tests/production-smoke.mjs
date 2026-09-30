@@ -9,7 +9,7 @@ page.on('pageerror', e => errors.push(e.message))
 const base = process.env.EKOMATCH_PRODUCTION_URL || 'http://127.0.0.1:4173'
 const settle = () => page.waitForTimeout(450)
 try {
-  assert.equal(scenes.length, 21)
+  assert.equal(scenes.length, 23)
   await page.goto(base)
   await page.locator('#login-username').fill('finnovate')
   await page.locator('#login-password').fill('yanlis-parola')
@@ -55,5 +55,5 @@ try {
   await page.locator('.gantt-row').last().click()
   assert.equal(await page.locator('.gantt-row').last().getAttribute('aria-pressed'),'true')
   assert.deepEqual(errors,[])
-  console.log('Production: 21 scenes, touch forward/back/vertical isolation, restart, focus trap, 8-step loop and Gantt selection passed. No runtime errors.')
+  console.log('Production: 23 scenes, touch forward/back/vertical isolation, restart, focus trap, 8-step loop and Gantt selection passed. No runtime errors.')
 } finally { await browser.close() }

@@ -27,8 +27,13 @@ async function goto(id) {
 async function settled() { await page.waitForTimeout(480) }
 function hash(id) { assert.equal(new URL(page.url()).hash, `#${id}`) }
 try {
-  assert.equal(scenes.length, 21)
-  assert.equal(new Set(scenes.map(s => s.id)).size, 21)
+  assert.equal(scenes.length, 23)
+  assert.equal(new Set(scenes.map(s => s.id)).size, 23)
+  for (const [id, next] of [['ekonomik-katki', 'ekonomik-firsat'], ['strateji-kapanis', 'strateji']]) {
+    const index = scenes.findIndex(scene => scene.id === id)
+    assert.equal(scenes[index]?.kind, 'divider')
+    assert.equal(scenes[index + 1]?.id, next)
+  }
   for (const id of ['ai-motoru', 'guven', 'pilot', 'konumlandirma', 'riskler']) {
     assert.equal(scenes.some(scene => scene.id === id), false)
   }
@@ -43,6 +48,14 @@ try {
       assert.equal(await page.locator('.deck-scene').count(), 1)
       assert.equal(await page.locator('.deck-scene h1').textContent(), slide.title)
       assert.equal(await page.locator('img[alt="EkoMatch"]').count(), slide.id === 'final' ? 1 : 0)
+      if (slide.kind === 'divider') {
+        const logo = page.locator('.chapter-logo')
+        assert.equal(await logo.count(), 1)
+        assert.equal(await logo.evaluate(img => img.complete && img.naturalWidth > 0), true)
+        const lineBox = await page.locator('.chapter-line').boundingBox()
+        const logoBox = await logo.boundingBox()
+        assert.ok(logoBox.y >= lineBox.y + lineBox.height && logoBox.y + logoBox.height <= size[1] - 72)
+      }
       const measurement = await page.evaluate(() => {
         const scene = document.querySelector('.deck-scene')
         const text = [...scene.querySelectorAll('h1,h2,p,li,button,th,td,.map-readout,.deck-insight')]
@@ -100,11 +113,11 @@ try {
   assert.match(await page.locator('.deck-insight').textContent(), /işyeri edinim/)
   checks.push('Heatmap, 81-province map and B2C layers')
 
-  for (const [from, to] of [['ekonomik-dongu', 'teknoloji'], ['yol-haritasi', 'kaynak'], ['benchmark', 'swot'], ['swot', 'ekonomik-firsat']]) {
+  for (const [from, to] of [['ekonomik-dongu', 'teknoloji'], ['yol-haritasi', 'kaynak'], ['benchmark', 'swot'], ['swot', 'ekonomik-katki'], ['ekonomik-katki', 'ekonomik-firsat'], ['bankaya-katki', 'strateji-kapanis'], ['strateji-kapanis', 'strateji']]) {
     await goto(from)
     await page.keyboard.press('ArrowRight'); await settled(); hash(to)
   }
-  checks.push('Navigation skips the five removed scenes')
+  checks.push('Navigation skips removed scenes and includes chapter 5/6 covers')
 
   await goto('bankaya-katki')
   await page.getByRole('button', { name: 'Kötü', exact: true }).click()

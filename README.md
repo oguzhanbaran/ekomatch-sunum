@@ -1,6 +1,6 @@
 # EkoMatch · Techathon Sunumu
 
-Sağlanan içerik planından seçilmiş 21 slaytlık Türkçe interaktif sunum. React, TypeScript, Vite, Framer Motion ve SVG görselleştirmeleri kullanır. Tek büyük logo yalnızca kapanışta görünür.
+Sağlanan içerik planından seçilmiş 23 slaytlık Türkçe interaktif sunum. React, TypeScript, Vite, Framer Motion ve SVG görselleştirmeleri kullanır. Tek büyük logo yalnızca kapanışta görünür.
 
 ## Çalıştırma
 
@@ -43,7 +43,7 @@ Fontlar, logo ve harita yereldir; dış internet servisi gerekmez. Yerel sunucu 
 
 Kapak → Problem / Fırsat → Çözüm / Mimari → Uygulama / Yol Haritası → Rekabet / Değer → Ekonomik Katkı → Strateji / Kapanış.
 
-21 ana sahneye ek olarak finansal sahnelerde **Hesaplar ve varsayımlar** altında dört ek panel vardır. Gerçek Ek 1–4 dosyaları paylaşılmadığından bu paneller mevcut aritmetiği ve teyit listesini içerir.
+23 ana sahneye ek olarak finansal sahnelerde **Hesaplar ve varsayımlar** altında dört ek panel vardır. Gerçek Ek 1–4 dosyaları paylaşılmadığından bu paneller mevcut aritmetiği ve teyit listesini içerir.
 
 - Başlıklar, notlar, içerik, finansal girdiler: `src/data/deckData.ts`
 - Güncel sahneler: `src/scenes/Deck.tsx`
@@ -76,8 +76,8 @@ npm run test:presentation
 
 Test macOS Google Chrome kullanır. Farklı ortam için EKOMATCH_CHROME ve EKOMATCH_TEST_URL değişkenlerini ayarlayın. lint betiği TypeScript tip kontrolüdür; ayrı ESLint yapılandırması yoktur.
 
-21 sahne 1920×1080, 1440×900, 1366×768, 1024×768, 768×1024 ve 375×812 boyutlarında kontrol edilir. Klavye, trackpad, tam ekran, genel görünüm, notlar, B2B akışı, B2C haritası, senaryolar, ekler, logo kuralı ve dış internet olmadan yerel çalışma test edilir.
+23 sahne 1920×1080, 1440×900, 1366×768, 1024×768, 768×1024 ve 375×812 boyutlarında kontrol edilir. Klavye, trackpad, tam ekran, genel görünüm, notlar, B2B akışı, B2C haritası, senaryolar, ekler, logo kuralı ve dış internet olmadan yerel çalışma test edilir.
 
 Rapor `test-results/audit.json`, 1920×1080 görüntüleri aynı klasördedir. Headless animasyon ölçümü fiziksel projektör testi veya 60 FPS garantisi değildir. Gerçek salonda yazı okunabilirliği ayrıca kontrol edilmelidir.
 
-Üretim önizlemesi 4173 portunda çalışırken `node tests/production-smoke.mjs` ayrıca 21 sahneyi, dokunmayı, yeniden başlatmayı, odak kilidini, döngüyü ve Gantt seçimini kontrol eder.
+Üretim önizlemesi 4173 portunda çalışırken `node tests/production-smoke.mjs` ayrıca 23 sahneyi, dokunmayı, yeniden başlatmayı, odak kilidini, döngüyü ve Gantt seçimini kontrol eder.

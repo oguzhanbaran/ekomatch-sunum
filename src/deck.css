@@ -34,12 +34,13 @@
 .deck-slogan strong { color: var(--aqua); }
 .deck-cover-logos { display: flex; align-items: center; justify-content: center; gap: clamp(18px, 2vw, 28px); margin: 3.5vh auto 0; }
 .deck-cover-logos img { display: block; object-fit: contain; user-select: none; }
-.deck-cover-mini { width: clamp(72px, 5vw, 96px); height: clamp(72px, 5vw, 96px); filter: drop-shadow(0 0 8px rgba(77,227,183,.1)); }
-.deck-cover-partner.is-kt { width: clamp(180px, 12vw, 230px); height: auto; }
-.deck-cover-partner.is-archi { width: clamp(140px, 9vw, 175px); height: auto; }
+.deck-cover-mini { width: clamp(90px, 6.25vw, 120px); height: clamp(90px, 6.25vw, 120px); filter: drop-shadow(0 0 8px rgba(77,227,183,.1)); }
+.deck-cover-partner.is-kt { width: clamp(225px, 15vw, 287.5px); height: auto; }
+.deck-cover-partner.is-archi { width: clamp(175px, 11.25vw, 218.75px); height: auto; }
 .chapter-number { display: block; color: #4de3b735; font: 600 clamp(70px, 9vw, 150px)/1 var(--font-display); }
 .deck-divider .deck-tag { margin-top: 20px; font-size: var(--subheading); }
 .chapter-line { width: 100px; height: 3px; margin: 35px auto 0; background: var(--aqua); }
+.chapter-logo { display: block; width: clamp(88px, 7vw, 112px); height: auto; margin: 18px auto 0; object-fit: contain; }
 .deck-final .brand { width: min(76vw, 1300px); height: min(21vw, 300px); }
 .deck-final .deck-center h1 { font-size: clamp(28px, 2.6vw, 50px); max-width: 1200px; margin-top: 30px; }
 .deck-final .deck-center { width: 100%; }
@@ -296,7 +297,7 @@
   .deck-risks > div { display: block; }.deck-risks h2 { margin-bottom: 12px; }.deck-risks svg { display: none; }
   .strategy-table > div { grid-template-columns: 1fr; gap: 8px; }.strategy-table svg { display: none; }
   .financial-number { flex-wrap: wrap; gap: 8px; }.financial-number strong { font-size: 78px; }
-  .revenue-bar > div { padding: 16px; }.deck-cover-logos { gap: 8px; margin-top: 24px; }.deck-cover-mini { width: 68px; height: 68px; }.deck-cover-partner.is-kt { width: 130px; }.deck-cover-partner.is-archi { width: 110px; }
+  .revenue-bar > div { padding: 16px; }.deck-cover-logos { gap: 8px; margin-top: 24px; flex-wrap: wrap; }.deck-cover-mini { width: 85px; height: 85px; }.deck-cover-partner.is-kt { width: 162.5px; }.deck-cover-partner.is-archi { width: 137.5px; }
   .deck-dialog { padding: 45px 20px 25px; }.deck-dialog h2 { font-size: 25px; }.deck-dialog li { font-size: 18px; }.deck-dialog .deck-tabs button { padding-inline: 8px; }
   .overview { padding-inline: 22px; }.overview__grid { grid-template-columns: repeat(2,1fr); }
 }
