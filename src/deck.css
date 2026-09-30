@@ -301,7 +301,7 @@
   .overview { padding-inline: 22px; }.overview__grid { grid-template-columns: repeat(2,1fr); }
 }
 
-/* 26 · Kapanış — logo değişmeden, marka imzası ölçeğinde. */
+/* Kapanış — logo değişmeden, marka imzası ölçeğinde. */
 .deck-final { background: #050c0a; }
 .deck-final .final-network-layer { position: absolute; inset: 0; }
 .deck-final .deck-background-network {

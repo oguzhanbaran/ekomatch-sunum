@@ -27,8 +27,11 @@ async function goto(id) {
 async function settled() { await page.waitForTimeout(480) }
 function hash(id) { assert.equal(new URL(page.url()).hash, `#${id}`) }
 try {
-  assert.equal(scenes.length, 26)
-  assert.equal(new Set(scenes.map(s => s.id)).size, 26)
+  assert.equal(scenes.length, 21)
+  assert.equal(new Set(scenes.map(s => s.id)).size, 21)
+  for (const id of ['ai-motoru', 'guven', 'pilot', 'konumlandirma', 'riskler']) {
+    assert.equal(scenes.some(scene => scene.id === id), false)
+  }
   assert.equal(finances.pos + finances.financing, finances.total)
   assert.equal(finances.low, null)
   assert.equal(finances.high, null)
@@ -54,7 +57,7 @@ try {
       if (measurement.bad.length) layout.push({ size, id: slide.id, ...measurement })
       if (size[0] === 1920) await page.screenshot({ path: fileURLToPath(new URL(`${String(i + 1).padStart(2,'0')}-${slide.id}.png`, output)) })
     }
-    checks.push(`26 scenes: ${size.join('×')}`)
+    checks.push(`${scenes.length} scenes: ${size.join('×')}`)
     console.log(checks.at(-1))
   }
   await page.setViewportSize({ width: 1440, height: 900 })
@@ -70,7 +73,7 @@ try {
 
   await page.keyboard.press('o'); await page.locator('.overview').waitFor()
   await page.keyboard.press('ArrowRight'); hash('acilis')
-  assert.equal(await page.locator('.overview__grid button').count(), 26)
+  assert.equal(await page.locator('.overview__grid button').count(), scenes.length)
   await page.keyboard.press('Escape'); await settled()
   await page.getByRole('button', { name: 'Sahne görünümü', exact: true }).click()
   await page.locator('.overview__grid button').filter({ hasText: 'B2B · Economic Twin' }).click()
@@ -95,12 +98,13 @@ try {
   assert.match(await page.locator('.map-readout').textContent(), /İzmir/)
   await page.getByRole('button', { name: /İşyeri \/ POS White Space/ }).click()
   assert.match(await page.locator('.deck-insight').textContent(), /işyeri edinim/)
-  await goto('guven')
-  await page.getByRole('button', { name: 'İhtiyacı doğrula' }).click()
-  assert.match(await page.locator('.validation-result').textContent(), /Tedarikçi A/)
-  await page.getByRole('button', { name: 'Doğrulamayı geri al' }).click()
-  assert.match(await page.locator('.validation-result').textContent(), /bekleniyor/)
-  checks.push('Heatmap, 81-province map, B2C layers and reversible human validation')
+  checks.push('Heatmap, 81-province map and B2C layers')
+
+  for (const [from, to] of [['ekonomik-dongu', 'teknoloji'], ['yol-haritasi', 'kaynak'], ['benchmark', 'swot'], ['swot', 'ekonomik-firsat']]) {
+    await goto(from)
+    await page.keyboard.press('ArrowRight'); await settled(); hash(to)
+  }
+  checks.push('Navigation skips the five removed scenes')
 
   await goto('bankaya-katki')
   await page.getByRole('button', { name: 'Kötü', exact: true }).click()
