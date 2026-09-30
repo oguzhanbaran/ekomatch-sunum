@@ -89,7 +89,6 @@
 .approach-row.old .deck-steps li:last-child .step-icon-wrap { color: #ef8a3c; }
 .approach-row.old .deck-steps li { border-color: #ef816f66; }
 .approach-row.new .step-icon-wrap { color: #15b79e; }
-.approach-row.new .deck-steps li:last-child .step-icon-wrap { border-color: #7cf4d9; background: #15b79e0c; box-shadow: 0 0 12px #7cf4d944; }
 .b2b-focus { display: flex; gap: 35px; align-items: center; padding: 32px; border: 1px solid var(--line-strong); background: #0d211b; min-height: 220px; }
 .b2b-focus > div:nth-child(2) { flex: 1; }
 .focus-number { color: #4de3b74d; font: 500 clamp(60px,6vw,120px) var(--font-display); }
