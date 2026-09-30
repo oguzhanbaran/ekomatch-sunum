@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from 'framer-motion'
+import { LoginGate } from './components/LoginGate'
 import { PresentationShell } from './components/PresentationShell'
 import { scenes } from './data/deckData'
 import { DeckScene } from './scenes/Deck'
 
-export default function App() {
+const AUTH_SESSION_KEY = 'ekomatch:authenticated'
+
+function Presentation() {
   const initialIndex = useMemo(() => {
     const id = window.location.hash.slice(1)
     const found = scenes.findIndex(scene => scene.id === id)
@@ -52,4 +55,37 @@ export default function App() {
       </motion.div>
     </AnimatePresence>
   </PresentationShell></MotionConfig>
+}
+
+export default function App() {
+  const [authenticated, setAuthenticated] = useState(
+    () => window.sessionStorage.getItem(AUTH_SESSION_KEY) === 'true',
+  )
+
+  const authenticate = () => {
+    window.sessionStorage.setItem(AUTH_SESSION_KEY, 'true')
+    setAuthenticated(true)
+  }
+
+  return (
+    <MotionConfig reducedMotion="user">
+      <AnimatePresence mode="wait">
+        {authenticated ? (
+          <motion.div
+            key="presentation"
+            className="app-view"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: .24 }}
+          >
+            <Presentation />
+          </motion.div>
+        ) : (
+          <motion.div key="login" className="app-view" exit={{ opacity: 0 }} transition={{ duration: .16 }}>
+            <LoginGate onAuthenticated={authenticate} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </MotionConfig>
+  )
 }

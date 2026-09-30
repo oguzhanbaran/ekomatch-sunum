@@ -9,6 +9,15 @@ page.on('pageerror', e => errors.push(e.message))
 const base = process.env.EKOMATCH_PRODUCTION_URL || 'http://127.0.0.1:4173'
 const settle = () => page.waitForTimeout(450)
 try {
+  await page.goto(base)
+  await page.locator('#login-username').fill('finnovate')
+  await page.locator('#login-password').fill('yanlis-parola')
+  await page.getByRole('button', { name: 'Sunumu aç' }).click()
+  assert.match(await page.locator('#login-error').textContent(), /hatalı/)
+  await page.locator('#login-password').fill('fin12fin12.')
+  await page.getByRole('button', { name: 'Sunumu aç' }).click()
+  await page.locator('.deck-scene').waitFor()
+
   for (const scene of scenes) {
     await page.goto(`${base}/#${scene.id}`)
     await page.locator('.deck-scene h1').waitFor()

@@ -26,8 +26,59 @@ html, body, #root { width: 100%; height: 100%; margin: 0; overflow: hidden; back
 body { color: var(--ink); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
 button { color: inherit; font: inherit; }
 button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--aqua); outline-offset: 3px; }
+.app-view { width: 100%; height: 100%; }
 .skip-link { position: fixed; left: 16px; top: -80px; z-index: 2000; background: var(--ink); color: var(--bg); padding: 12px 18px; border-radius: 8px; }
 .skip-link:focus { top: 16px; }
+
+.login-gate { position: relative; min-height: 100dvh; display: grid; place-items: center; overflow: hidden; padding: max(24px, env(safe-area-inset-top)) 24px max(24px, env(safe-area-inset-bottom)); background: radial-gradient(circle at 50% 36%, #123329 0, #07110f 43%, #040a09 100%); isolation: isolate; }
+.login-gate__grid { position: absolute; inset: 0; z-index: -3; opacity: .52; background-image: linear-gradient(rgba(136,204,181,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(136,204,181,.055) 1px, transparent 1px); background-size: 64px 64px; mask-image: radial-gradient(circle at 50% 48%, #000 0, transparent 74%); }
+.login-gate__glow { position: absolute; z-index: -2; width: min(54vw, 760px); aspect-ratio: 1; border-radius: 50%; filter: blur(100px); opacity: .14; pointer-events: none; }
+.login-gate__glow--one { left: -24vw; top: -32vw; background: var(--aqua); }
+.login-gate__glow--two { right: -28vw; bottom: -36vw; background: var(--blue); }
+.login-panel { width: min(100%, 470px); padding: clamp(28px, 4vw, 48px); border: 1px solid rgba(184,225,211,.2); background: linear-gradient(145deg, rgba(17,35,31,.93), rgba(8,20,17,.96)); box-shadow: 0 32px 100px rgba(0,0,0,.45), inset 0 1px rgba(255,255,255,.04); backdrop-filter: blur(24px); }
+.login-brand { display: flex; align-items: center; gap: 12px; }
+.login-brand__mark { width: 46px; height: 46px; display: grid; place-items: center; border: 1px solid rgba(77,227,183,.25); background: rgba(77,227,183,.07); }
+.login-brand__mark img { width: 36px; height: 36px; object-fit: contain; filter: drop-shadow(0 0 9px rgba(77,227,183,.18)); }
+.login-brand__name { font: 600 20px var(--font-display); letter-spacing: -.035em; }
+.login-heading { margin: clamp(34px, 5vh, 52px) 0 32px; }
+.login-kicker { display: flex; align-items: center; gap: 9px; color: var(--aqua); font: 500 10px var(--font-mono); letter-spacing: .15em; }
+.login-kicker i { width: 20px; height: 1px; background: var(--aqua); box-shadow: 0 0 9px rgba(77,227,183,.7); }
+.login-heading h1 { margin: 14px 0 10px; font: 600 clamp(34px, 7vw, 48px)/1.02 var(--font-display); letter-spacing: -.052em; }
+.login-heading p { max-width: 380px; margin: 0; color: #a7bab3; font-size: 14px; line-height: 1.65; }
+.login-form { display: flex; flex-direction: column; gap: 18px; }
+.login-field label { display: block; margin: 0 0 8px; color: #c6d5d0; font-size: 12px; font-weight: 600; }
+.login-input { min-height: 52px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(184,225,211,.2); background: rgba(4,10,9,.52); transition: border-color .2s ease, background .2s ease, box-shadow .2s ease; }
+.login-input:focus-within { border-color: var(--aqua); background: rgba(4,10,9,.78); box-shadow: 0 0 0 3px rgba(77,227,183,.1); }
+.login-input > svg { width: 17px; height: 17px; margin-left: 16px; color: #789188; flex: 0 0 auto; }
+.login-input input { width: 100%; min-width: 0; height: 50px; padding: 0 15px 0 0; border: 0; outline: 0; color: var(--ink); background: transparent; font: 500 16px var(--font-body); }
+.login-input input:-webkit-autofill { -webkit-text-fill-color: var(--ink); transition: background-color 9999s ease-out; }
+.login-password-toggle { width: 50px; height: 50px; flex: 0 0 50px; display: grid; place-items: center; border: 0; background: transparent; color: #8fa59d; cursor: pointer; transition: color .2s ease, background .2s ease; }
+.login-password-toggle:hover { color: var(--aqua-soft); background: rgba(77,227,183,.06); }
+.login-password-toggle svg { width: 18px; height: 18px; }
+.login-error { min-height: 20px; margin-top: -6px; color: #ff9f91; font-size: 12px; line-height: 1.5; }
+.login-submit { min-height: 54px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px 0 20px; border: 1px solid var(--aqua); background: var(--aqua); color: #04100c; cursor: pointer; font-weight: 700; transition: background .2s ease, border-color .2s ease, transform .2s ease, box-shadow .2s ease; touch-action: manipulation; }
+.login-submit:hover { background: #74edc9; border-color: #74edc9; box-shadow: 0 12px 34px rgba(77,227,183,.17); transform: translateY(-1px); }
+.login-submit:active { transform: translateY(0); }
+.login-submit svg { width: 19px; height: 19px; }
+.login-footer { margin-top: 32px; padding-top: 20px; display: flex; align-items: center; justify-content: center; gap: 12px; border-top: 1px solid var(--line); color: #70857e; font: 500 9px var(--font-mono); letter-spacing: .13em; }
+.login-footer i { width: 3px; height: 3px; border-radius: 50%; background: var(--aqua); }
+
+@media (max-width: 520px) {
+  .login-gate { padding-inline: 16px; }
+  .login-panel { padding: 26px 22px 24px; }
+  .login-heading { margin: 30px 0 26px; }
+}
+
+@media (max-height: 700px) and (orientation: landscape) {
+  .login-gate { place-items: start center; overflow-y: auto; }
+  .login-panel { margin-block: 12px; }
+  .login-heading { margin: 24px 0 20px; }
+  .login-footer { margin-top: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-submit, .login-input, .login-password-toggle { transition: none; }
+}
 
 .presentation { position: relative; width: 100%; height: 100dvh; overflow: hidden; background: radial-gradient(circle at 72% 16%, rgba(36, 119, 98, .15), transparent 28%), var(--bg); }
 .presentation__grain { position: fixed; inset: 0; z-index: 80; pointer-events: none; opacity: .045; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E"); mix-blend-mode: soft-light; }

@@ -15,6 +15,11 @@ page.on('response', r => { if (r.status() >= 400) errors.push(`${r.status()} ${r
 await page.emulateMedia({ reducedMotion: 'reduce' })
 async function goto(id) {
   await page.goto(`${base}/#${id}`)
+  if (await page.locator('#login-username').isVisible()) {
+    await page.locator('#login-username').fill('finnovate')
+    await page.locator('#login-password').fill('fin12fin12.')
+    await page.getByRole('button', { name: 'Sunumu aç' }).click()
+  }
   await page.locator('.deck-scene').waitFor()
   await page.evaluate(() => document.fonts.ready)
   await page.waitForTimeout(350)
@@ -56,7 +61,7 @@ try {
   await goto('acilis')
   await page.keyboard.press('ArrowLeft'); hash('acilis')
   await page.keyboard.press('ArrowRight'); await settled(); hash('problem')
-  await page.keyboard.press('Space'); await settled(); hash('ekomatch-nedir')
+  await page.keyboard.press('Space'); await settled(); hash('mevcut-durum')
   await page.keyboard.press('PageUp'); await settled(); hash('problem')
   await page.keyboard.press('End'); await settled(); hash('final')
   await page.keyboard.press('ArrowRight'); hash('final')
@@ -117,7 +122,7 @@ try {
   await goto('acilis'); await page.waitForTimeout(800)
   for (let i=0;i<12;i++) { await page.mouse.wheel(0,90); await page.waitForTimeout(80) }
   await settled(); hash('problem')
-  await page.waitForTimeout(250); await page.mouse.wheel(0,80); await settled(); hash('ekomatch-nedir')
+  await page.waitForTimeout(250); await page.mouse.wheel(0,80); await settled(); hash('mevcut-durum')
   checks.push('Trackpad gesture: single scene per continuous scroll')
   await page.getByRole('button', { name: 'Tam ekran', exact:true }).click(); await settled()
   assert.equal(await page.evaluate(() => Boolean(document.fullscreenElement)), true)
