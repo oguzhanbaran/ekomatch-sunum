@@ -1,0 +1,53 @@
+{
+  "ses_dosyasi": "ekomatch_seslendirme.mp3",
+  "sure": 47.05,
+  "sahneler": [
+    { "t": 0.00,  "id": "s0_giris",          "not": "Karanlık ekran, tek nokta nabız gibi atar. Konuşma 1.07'de başlar.", "altyazi": "" },
+    { "t": 1.26,  "id": "s1_kivilcim_1",     "not": "'alışveriş' — iki nokta arasında ilk ışık çizgisi çakar", "altyazi": "Her alışveriş," },
+    { "t": 2.66,  "id": "s1_kivilcim_2",     "not": "'ödeme' — ikinci ışık çizgisi", "altyazi": "her ödeme," },
+    { "t": 3.74,  "id": "s1_kivilcim_3",     "not": "'ticaret' — üçüncü ışık çizgisi", "altyazi": "her ticaret" },
+    { "t": 4.46,  "id": "s1_iliski",         "not": "'ilişkidir' — üç bağlantı kalıcı hâle gelir", "altyazi": "bir ilişkidir." },
+    { "t": 5.56,  "id": "s2_ag_acilis",      "not": "'Her müşterimiz' — kamera geri çekilir, çevrede ağ belirmeye başlar", "altyazi": "Her müşterimiz," },
+    { "t": 7.92,  "id": "s2_ag_tam",         "not": "'ekonomik ağın' — ağ tam hâline ulaşır", "altyazi": "bu ilişkilerden oluşan ekonomik ağın bir parçası." },
+    { "t": 9.96,  "id": "s3_yeni_iliskiler", "not": "'Bu ağda her gün' — ağda sürekli yeni beyaz çizgiler çekilir", "altyazi": "Bu ağda her gün yeni ilişkiler kuruluyor." },
+    { "t": 13.70, "id": "s3_bizimle",        "not": "'bizimle' — merkezdeki çizgilerin bir kısmı parlar", "altyazi": "Bir kısmı bizimle," },
+    { "t": 15.20, "id": "s3_disimizda",      "not": "'bizim dışımızda' — çizgilerin bir kısmı turuncuya döner, işletmeler kenara kayar, parçacıklar DIŞA akar", "altyazi": "bir kısmı bizim dışımızda." },
+    { "t": 16.58, "id": "s4_kurulmus",       "not": "'Bugün' — kamera ağın üzerinde yavaşça kayar, sadece mevcut çizgiler parlak", "altyazi": "Bugün bu ağda yalnızca kurulmuş ilişkileri görüyoruz." },
+    { "t": 20.54, "id": "s4_bosluk",         "not": "'Boşlukları' — mevcut çizgiler kararır, çizgisiz alanların etrafındaki noktalar parlar", "altyazi": "Boşlukları değil." },
+    { "t": 21.14, "id": "s4_bosluk_vurgu",   "not": "'değil' — boşluklar en belirgin hâlinde", "altyazi": "" },
+    { "t": 21.45, "id": "s5_donma",          "not": "Tüm hareket durur, ağ kararır. MÜZİK KESİLİR (1,3 sn sessizlik).", "altyazi": "" },
+    { "t": 22.72, "id": "s5_peki",           "not": "'Peki ya' — merkezde tek bir turkuaz nokta belirir", "altyazi": "Peki ya bu boşlukları önceden görebilseydik?" },
+    { "t": 26.70, "id": "s6_zincir_musteri", "not": "'bir müşterinin olası talebini' — turkuaz noktadan radar dalgası; bir müşteri noktası turkuaz yanar", "altyazi": "Bir müşterinin olası talebini," },
+    { "t": 28.90, "id": "s6_zincir_isletme", "not": "'o talebi karşılayabilecek işletmeyi' — müşteriden işletmeye ışık akar, işletme yanar", "altyazi": "o talebi karşılayabilecek işletmeyi" },
+    { "t": 31.04, "id": "s6_zincir_tedarikci","not": "'ve o işletmenin… tedarikçiyi' — işletmeden tedarikçiye ışık akar, tedarikçi yeşil yanar", "altyazi": "ve o işletmenin ihtiyaç duyabileceği tedarikçiyi." },
+    { "t": 34.66, "id": "s6_zincir_cogalma", "not": "Aynı zincir ağın her yerinde eşzamanlı çoğalır", "altyazi": "" },
+    { "t": 35.02, "id": "s7_firsat",         "not": "'Çünkü henüz kurulmamış' — boşlukların yerinde kesikli turkuaz çizgiler belirir", "altyazi": "Çünkü henüz kurulmamış ilişki," },
+    { "t": 37.46, "id": "s7_duzlesme",       "not": "'keşfedilmeyi bekleyen' — kesikli çizgiler düz çizgiye dönüşür, parçacıklar İÇE akar, ağ parlar", "altyazi": "keşfedilmeyi bekleyen bir fırsattır." },
+    { "t": 39.60, "id": "s8_toplanma",       "not": "Ağ merkeze toplanır; zincirin turkuaz ve yeşil uç noktaları logonun iki noktasının konumuna gider", "altyazi": "" },
+    { "t": 40.40, "id": "s8_logo",           "not": "'EkoMatch' — logo belirir (tok vuruş)", "altyazi": "EkoMatch." },
+    { "t": 41.52, "id": "s8_slogan_1",       "not": "'Talebi keşfet' — logonun turkuaz noktası hafifçe nabız atar", "altyazi": "Talebi keşfet." },
+    { "t": 42.72, "id": "s8_slogan_2",       "not": "'Arzla buluştur' — logonun yeşil noktası nabız atar", "altyazi": "Arzla buluştur." },
+    { "t": 44.06, "id": "s8_slogan_3",       "not": "'Ekonomik ağı büyüt' — logonun arkasındaki silik ağ bir kez nefes alır gibi genişler", "altyazi": "Ekonomik ağı büyüt." },
+    { "t": 45.24, "id": "s9_son_kare",       "not": "Logo sabit kalır, müzik söner", "altyazi": "" },
+    { "t": 47.05, "id": "bitis",             "not": "animationEnded olayı yayınlanır", "altyazi": "" }
+  ],
+  "muzik": [
+    { "t": 0.00,  "ses": 0.00, "not": "Müzik sessizden başlar" },
+    { "t": 1.00,  "ses": 0.35, "not": "Alçak ambient; seslendirmenin altında" },
+    { "t": 20.54, "ses": 0.20, "not": "'Boşlukları' ile incelir" },
+    { "t": 21.45, "ses": 0.00, "not": "KESİLİR — kırılma anı (0,15 sn içinde)" },
+    { "t": 26.70, "ses": 0.30, "not": "'bir müşterinin' ile geri gelir, yükselerek" },
+    { "t": 37.46, "ses": 0.50, "not": "Doruk — kesikli çizgiler düzleşirken" },
+    { "t": 40.40, "ses": 0.45, "not": "Logo vuruşu" },
+    { "t": 45.24, "ses": 0.30, "not": "Sönmeye başlar" },
+    { "t": 47.05, "ses": 0.00, "not": "Tamamen söner" }
+  ],
+  "logo": {
+    "dosya": "logo.png",
+    "boyut_px": [1672, 941],
+    "icerik_sinir_kutusu": [60, 202, 1618, 779],
+    "turkuaz_nokta_merkez_px": [740, 360],
+    "yesil_nokta_merkez_px": [910, 360],
+    "nokta_yaricap_px": 35
+  }
+}

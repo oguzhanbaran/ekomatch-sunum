@@ -29,6 +29,8 @@ Fontlar, logo ve harita yereldir; dış internet servisi gerekmez. Yerel sunucu 
 
 ## Kontroller
 
+- Sunum doğrudan açıldığında seslendirmeli Canvas açılışı gelir; tıklama veya Boşluk ile başlar ve 47 saniyelik anlatımın sonunda kapak slaydına geçer.
+- Açılışta Sol/Sağ: 2 sn sarma; D: zaman paneli; S: altyazı; M: müzik; R: başa dön; F: tam ekran.
 - Ok tuşları, Space, PageUp / PageDown: önceki / sonraki sahne
 - F: tam ekran; O: genel görünüm; N: konuşmacı notları
 - Home / End: ilk / son sahne

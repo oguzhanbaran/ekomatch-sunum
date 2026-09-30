@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>EkoMatch — Açılış</title>
+  <style>
+    :root { color-scheme: dark; background: #000; }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #000; }
+    body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; cursor: pointer; }
+    canvas { display: block; width: 100%; height: 100%; }
+    audio { display: none; }
+    #subtitle { position: fixed; z-index: 4; left: 50%; bottom: 5.5vh; width: min(90vw, 1500px); transform: translateX(-50%); padding: 18px 28px; color: #fff; background: rgba(2, 7, 10, .7); text-align: center; font-size: clamp(20px, 1.9vw, 36px); line-height: 1.35; opacity: 0; transition: opacity .2s ease; pointer-events: none; }
+    #subtitle.on { opacity: 1; }
+    #debug { position: fixed; z-index: 5; top: 18px; right: 18px; min-width: 190px; display: none; padding: 10px 12px; border: 1px solid rgba(243,247,247,.18); color: #d7e9e9; background: rgba(3,10,15,.78); font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; pointer-events: none; }
+    #debug.on { display: block; }
+  </style>
+</head>
+<body aria-label="EkoMatch seslendirmeli açılış animasyonu">
+  <canvas id="stage" aria-hidden="true"></canvas>
+  <div id="subtitle" aria-live="polite"></div>
+  <div id="debug"></div>
+  <audio id="voice" preload="auto" src="ekomatch_seslendirme.mp3"></audio>
+  <audio id="music" preload="auto" src="music.mp3"></audio>
+  <script>
+    (() => {
+      'use strict'
+
+      const W = 1920, H = 1080, TRANSITION = .62
+      const COLORS = { bg: '#0B1620', center: '#13283B', white: '#F3F7F7', orange: '#EF8A3C', aqua: '#02ABBF', mid: '#05AA6A', green: '#5AC526' }
+      const canvas = document.querySelector('#stage')
+      const ctx = canvas.getContext('2d', { alpha: false })
+      const voice = document.querySelector('#voice')
+      const music = document.querySelector('#music')
+      const subtitle = document.querySelector('#subtitle')
+      const debug = document.querySelector('#debug')
+      const logoImage = new Image()
+      logoImage.src = 'logo.png'
+      let cues = null, scenes = [], sceneById = new Map(), nodes = [], edges = [], newEdges = [], particles = [], gaps = [], chainSets = []
+      let sprites = {}, started = false, ended = false, debugOn = false, subtitleOn = false, musicOn = true
+      let frameCount = 0, fps = 60, fpsAt = performance.now(), lastFrame = performance.now()
+
+      const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v))
+      const lerp = (a, b, p) => a + (b - a) * p
+      const easeInOut = p => { p = clamp(p); return p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2 }
+      const fadeWindow = (p, edge = .18) => easeInOut(clamp(p / edge))
+      const hexRgb = hex => [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16)]
+      const mixColor = (a, b, p, alpha = 1) => { const A = hexRgb(a), B = hexRgb(b); return `rgba(${A.map((v,i) => Math.round(lerp(v,B[i],p))).join(',')},${alpha})` }
+      function mulberry32(seed) { return () => { let t = seed += 0x6D2B79F5; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296 } }
+      const rand = mulberry32(0xE601A7C)
+
+      function makeGlow(color) {
+        const c = document.createElement('canvas'), size = 96
+        c.width = c.height = size
+        const g = c.getContext('2d'), gradient = g.createRadialGradient(48,48,0,48,48,48)
+        gradient.addColorStop(0, color)
+        gradient.addColorStop(.12, color)
+        gradient.addColorStop(.34, color.replace('1)', '.32)'))
+        gradient.addColorStop(1, color.replace('1)', '0)'))
+        g.fillStyle = gradient; g.fillRect(0,0,size,size)
+        return c
+      }
+
+      function prepareSprites() {
+        sprites = {
+          white: makeGlow('rgba(243,247,247,1)'), aqua: makeGlow('rgba(2,171,191,1)'),
+          green: makeGlow('rgba(90,197,38,1)'), orange: makeGlow('rgba(239,138,60,1)')
+        }
+      }
+
+      function buildNetwork() {
+        nodes = [
+          { x: 810, y: 475, business: false }, { x: 1010, y: 440, business: true },
+          { x: 875, y: 610, business: false }, { x: 1090, y: 630, business: false },
+          { x: 1170, y: 590, business: true }, { x: 970, y: 545, business: false },
+        ]
+        while (nodes.length < 220) {
+          const angle = rand() * Math.PI * 2, radius = 90 + Math.pow(rand(), .64) * 820
+          nodes.push({
+            x: 960 + Math.cos(angle) * radius,
+            y: 540 + Math.sin(angle) * radius * .57,
+            business: rand() < .15,
+            phase: rand() * Math.PI * 2,
+            reveal: rand(),
+          })
+        }
+        const used = new Set(), addEdge = (a,b,isNew=false) => {
+          if (a === b) return false
+          const key = a < b ? `${a}-${b}` : `${b}-${a}`
+          if (used.has(key)) return false
+          used.add(key); (isNew ? newEdges : edges).push({ a, b, reveal: rand(), center: (nodes[a].x + nodes[b].x) / 2 > 650 && (nodes[a].x + nodes[b].x) / 2 < 1270, outer: Math.hypot((nodes[a].x + nodes[b].x)/2-960, ((nodes[a].y + nodes[b].y)/2-540)*1.5) > 530 })
+          return true
+        }
+        for (let i = 6; i < nodes.length; i++) {
+          const nearest = nodes.map((n,j) => ({ j, d: j === i ? Infinity : Math.hypot(n.x-nodes[i].x,n.y-nodes[i].y) })).sort((a,b)=>a.d-b.d)
+          addEdge(i, nearest[0].j)
+          if (rand() < .48) addEdge(i, nearest[1].j)
+        }
+        while (edges.length < 310) { const a = Math.floor(rand()*nodes.length), b = Math.floor(rand()*nodes.length); if (Math.hypot(nodes[a].x-nodes[b].x,nodes[a].y-nodes[b].y) < 270) addEdge(a,b) }
+        while (newEdges.length < 40) { const a = Math.floor(rand()*nodes.length), b = Math.floor(rand()*nodes.length); if (Math.hypot(nodes[a].x-nodes[b].x,nodes[a].y-nodes[b].y) < 340) addEdge(a,b,true) }
+        particles = Array.from({length: 42}, () => ({ edge: Math.floor(rand()*edges.length), phase: rand(), speed: .05 + rand()*.08 }))
+        const closest = (x,y,exclude=[]) => nodes.map((n,i)=>({i,d:exclude.includes(i)?Infinity:Math.hypot(n.x-x,n.y-y)})).sort((a,b)=>a.d-b.d)[0].i
+        const chainTargets = [
+          [[875,610],[1010,440],[1170,590]], [[360,390],[540,460],[700,360]],
+          [[1180,310],[1360,420],[1510,310]], [[1230,720],[1430,650],[1600,760]],
+          [[430,710],[620,680],[800,800]], [[830,250],[970,330],[1120,230]],
+          [[820,760],[980,700],[1140,820]], [[1130,520],[1310,550],[1460,500]],
+        ]
+        chainSets = chainTargets.map((targets,chainIndex) => {
+          if(chainIndex===0)return [2,1,4]
+          const ids=[];targets.forEach(([x,y])=>ids.push(closest(x,y,ids)));nodes[ids[0]].business=false;nodes[ids[1]].business=true;nodes[ids[2]].business=true;return ids
+        })
+        gaps = [[755,435,88],[1050,400,78],[1270,575,92],[970,690,82],[635,655,86],[1435,345,76]].map(([x,y,r],i)=>{
+          const ring=nodes.map((n,index)=>({index,d:Math.abs(Math.hypot(n.x-x,n.y-y)-r)})).sort((a,b)=>a.d-b.d).slice(0,5).map(v=>v.index)
+          const angle=(i*.92+.3), ax=x-Math.cos(angle)*r, ay=y-Math.sin(angle)*r, bx=x+Math.cos(angle)*r, by=y+Math.sin(angle)*r
+          return {x,y,r,ring,a:closest(ax,ay),b:closest(bx,by)}
+        })
+      }
+
+      function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2)
+        canvas.width = Math.round(innerWidth * dpr); canvas.height = Math.round(innerHeight * dpr)
+        canvas.style.width = `${innerWidth}px`; canvas.style.height = `${innerHeight}px`
+      }
+
+      function logicalTransform() {
+        const dpr = canvas.width / innerWidth, scale = Math.min(innerWidth/W, innerHeight/H)
+        const ox = (innerWidth-W*scale)/2, oy = (innerHeight-H*scale)/2
+        ctx.setTransform(dpr*scale,0,0,dpr*scale,dpr*ox,dpr*oy)
+      }
+
+      function background(intensity = 1) {
+        ctx.setTransform(1,0,0,1,0,0); ctx.fillStyle = '#000'; ctx.fillRect(0,0,canvas.width,canvas.height)
+        logicalTransform()
+        const g = ctx.createRadialGradient(960,500,20,960,540,920)
+        g.addColorStop(0, COLORS.center); g.addColorStop(.62, COLORS.bg); g.addColorStop(1, '#050B10')
+        ctx.globalAlpha = intensity; ctx.fillStyle = g; ctx.fillRect(0,0,W,H); ctx.globalAlpha = 1
+        const v = ctx.createRadialGradient(960,540,430,960,540,1110)
+        v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(1,'rgba(0,0,0,.64)')
+        ctx.fillStyle = v; ctx.fillRect(0,0,W,H)
+      }
+
+      function pointAt(i, t, freeze = false, outside = 0) {
+        const n = nodes[i], phase = n.phase || i * .77
+        const drift = freeze ? 0 : 1
+        let x = n.x + Math.sin(t*.17 + phase) * 7 * drift, y = n.y + Math.cos(t*.13 + phase*1.3) * 5 * drift
+        if (outside && n.business && Math.hypot(x-960,(y-540)*1.6) > 490) {
+          const dx=x-960, dy=y-540, len=Math.hypot(dx,dy)||1
+          x += dx/len * outside*90; y += dy/len * outside*60
+        }
+        return { x, y }
+      }
+
+      function glow(x,y,size,sprite,alpha=1) { ctx.globalAlpha = alpha; ctx.drawImage(sprite,x-size/2,y-size/2,size,size); ctx.globalAlpha = 1 }
+      function nodeDot(i,t,alpha=1,color=COLORS.white,outside=0,freeze=false) {
+        const n=nodes[i], p=pointAt(i,t,freeze,outside), r=n.business?6:2.4
+        glow(p.x,p.y,n.business?64:34,color===COLORS.orange?sprites.orange:color===COLORS.aqua?sprites.aqua:color===COLORS.green?sprites.green:sprites.white,alpha*.32)
+        ctx.globalAlpha=alpha; ctx.fillStyle=color; ctx.beginPath(); ctx.arc(p.x,p.y,r,0,Math.PI*2); ctx.fill()
+        if(n.business){ctx.strokeStyle=color;ctx.globalAlpha=alpha*.7;ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(p.x,p.y,r+6,0,Math.PI*2);ctx.stroke()} ctx.globalAlpha=1
+      }
+
+      function edgeLine(edge,t,alpha=.18,color=COLORS.white,grow=1,outside=0,width=1,freeze=false) {
+        const a=pointAt(edge.a,t,freeze,outside), b=pointAt(edge.b,t,freeze,outside), x=lerp(a.x,b.x,grow), y=lerp(a.y,b.y,grow)
+        ctx.globalAlpha=alpha; ctx.strokeStyle=color; ctx.lineWidth=width; ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(x,y);ctx.stroke();ctx.globalAlpha=1
+      }
+
+      function network(t, reveal=1, opacity=1, options={}) {
+        const zoom=options.zoom || 1, pan=options.pan || 0, outside=options.outside || 0, freeze=options.freeze || false
+        ctx.save(); ctx.translate(960+pan,540); ctx.scale(zoom,zoom); ctx.translate(-960,-540)
+        edges.forEach(e => { if(e.reveal>reveal)return; const warm=options.orange&&e.outer, aqua=options.aqua&&e.center, positive=options.positive; const color=positive?mixColor(COLORS.aqua,COLORS.green,clamp(((nodes[e.a].x+nodes[e.b].x)/2-450)/1020)):warm?COLORS.orange:aqua?COLORS.aqua:COLORS.white; edgeLine(e,t,(warm||aqua||positive ? .24 : .12)*opacity,color,1,outside,warm||aqua||positive?1.45:1,freeze) })
+        nodes.forEach((n,i)=>{if((n.reveal||0)>reveal)return; const warm=options.orange&&n.business&&Math.hypot(n.x-960,(n.y-540)*1.6)>490, positive=options.positive;const color=positive?mixColor(COLORS.aqua,COLORS.green,clamp((n.x-450)/1020)):warm?COLORS.orange:COLORS.white;nodeDot(i,t,(n.business?.72:.52)*opacity,color,outside,freeze)})
+        ctx.restore()
+      }
+
+      function sparkPair(pairIndex,t,p,prior=0) {
+        const pairs=[[0,1],[2,3],[4,5]], [a,b]=pairs[pairIndex], pa=pointAt(a,t), pb=pointAt(b,t)
+        if(prior>0) edgeLine({a,b},t,.48*prior,COLORS.white,1,0,1.6)
+        nodeDot(a,t,.95); nodeDot(b,t,.95)
+        const flash=Math.sin(Math.PI*clamp(p/.3))*fadeWindow(p,.12)
+        if(flash>0){edgeLine({a,b},t,.35+.65*flash,COLORS.white,clamp(p/.24),0,2.4);const q=clamp(p/.28),x=lerp(pa.x,pb.x,q),y=lerp(pa.y,pb.y,q);glow(x,y,105,sprites.white,flash*.9)}
+      }
+
+      function persistentSparks(count,t,alpha=1) { for(let i=0;i<count;i++) sparkPair(i,t,1,alpha) }
+      function sceneProgress(id,t) { const i=sceneById.get(id), s=scenes[i], end=scenes[i+1]?.t ?? cues.sure; return clamp((t-s.t)/(end-s.t)) }
+      function activeScene(t) { let i=0; for(let n=0;n<scenes.length;n++){if(t>=scenes[n].t)i=n;else break} return { ...scenes[i], index:i, p:sceneProgress(scenes[i].id,t) } }
+
+      function s0_giris(p,t) {
+        const pulse=.72+.28*Math.sin(t*Math.PI*1.4), size=52+18*pulse
+        glow(960,540,size,sprites.white,.5);ctx.fillStyle=COLORS.white;ctx.globalAlpha=.86;ctx.beginPath();ctx.arc(960,540,3.2+pulse*1.2,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1
+      }
+      function s1_kivilcim_1(p,t){sparkPair(0,t,p)}
+      function s1_kivilcim_2(p,t){sparkPair(0,t,1,1);sparkPair(1,t,p)}
+      function s1_kivilcim_3(p,t){persistentSparks(2,t);sparkPair(2,t,p)}
+      function s1_iliski(p,t){persistentSparks(3,t,lerp(.55,1,easeInOut(p)))}
+      function s2_ag_acilis(p,t){const q=easeInOut(p);network(t,q,fadeWindow(p),{zoom:lerp(3,1.18,q)});persistentSparks(3,t,1-q*.45)}
+      function s2_ag_tam(p,t){const q=easeInOut(clamp(p/.42));network(t,1,1,{zoom:lerp(1.18,1,q)})}
+      function s3_yeni_iliskiler(p,t){network(t,1,1);newEdges.forEach(e=>{const q=clamp((p-e.reveal*.78)/.22);if(q>0)edgeLine(e,t,.2,COLORS.white,easeInOut(q),0,1.15)})}
+      function s3_bizimle(p,t){network(t,1,1,{aqua:easeInOut(p)});newEdges.forEach(e=>edgeLine(e,t,.18,e.center?COLORS.aqua:COLORS.white,1,0,e.center?1.5:1))}
+      function s3_disimizda(p,t){const q=easeInOut(p);network(t,1,1,{aqua:1,orange:q,outside:q});newEdges.forEach(e=>edgeLine(e,t,.18,e.outer?COLORS.orange:e.center?COLORS.aqua:COLORS.white,1,q,e.outer?1.7:1.1));drawParticles(t,q)}
+
+      function drawGaps(t,strength,peak=false) {
+        gaps.forEach((gap,i)=>{
+          const erase=ctx.createRadialGradient(gap.x,gap.y,gap.r*.2,gap.x,gap.y,gap.r*1.25)
+          erase.addColorStop(0,`rgba(5,11,16,${.88*strength})`);erase.addColorStop(.68,`rgba(8,19,27,${.72*strength})`);erase.addColorStop(1,'rgba(8,19,27,0)')
+          ctx.fillStyle=erase;ctx.beginPath();ctx.arc(gap.x,gap.y,gap.r*1.25,0,Math.PI*2);ctx.fill()
+          const pulse=peak?.78+.22*Math.sin(t*3+i):.45+.15*Math.sin(t*2+i)
+          gap.ring.forEach(index=>{const pos=pointAt(index,t);glow(pos.x,pos.y,peak?78:58,sprites.white,strength*pulse);nodeDot(index,t,clamp(strength*(peak?1:.72)))})
+        })
+      }
+
+      function gradientLine(aIndex,bIndex,t,grow=1,alpha=1,width=3,dashed=false,offset=0) {
+        const a=pointAt(aIndex,t),b=pointAt(bIndex,t),x=lerp(a.x,b.x,grow),y=lerp(a.y,b.y,grow)
+        const gradient=ctx.createLinearGradient(a.x,a.y,b.x,b.y);gradient.addColorStop(0,COLORS.aqua);gradient.addColorStop(.52,COLORS.mid);gradient.addColorStop(1,COLORS.green)
+        ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle=gradient;ctx.lineWidth=width;ctx.lineCap='round';if(dashed){ctx.setLineDash([12,16]);ctx.lineDashOffset=offset}ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(x,y);ctx.stroke();ctx.restore()
+        if(grow>0&&grow<1)glow(x,y,86,sprites.green,alpha*.72)
+      }
+
+      function drawChain(chain,t,first=1,second=1,alpha=1) {
+        gradientLine(chain[0],chain[1],t,first,alpha,3.2)
+        if(first>=.99)gradientLine(chain[1],chain[2],t,second,alpha,3.2)
+        nodeDot(chain[0],t,alpha,COLORS.aqua);if(first>0)nodeDot(chain[1],t,alpha,COLORS.mid);if(second>0)nodeDot(chain[2],t,alpha,COLORS.green)
+      }
+
+      function drawRadar(t,p) {
+        const center={x:960,y:540},q=easeInOut(p),radius=20+q*520
+        ctx.globalAlpha=(1-q)*.8;ctx.strokeStyle=COLORS.aqua;ctx.lineWidth=2;ctx.beginPath();ctx.arc(center.x,center.y,radius,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;glow(center.x,center.y,110,sprites.aqua,.72)
+      }
+
+      function drawOpportunityBridges(t,p,solidProgress=0) {
+        gaps.forEach((gap,i)=>{
+          const reveal=easeInOut(clamp((p-i*.075)/.5)),solid=easeInOut(clamp((solidProgress-i*.09)/.3))
+          if(reveal<=0)return
+          gradientLine(gap.a,gap.b,t,reveal,.75+solid*.2,2.2+solid*1.1,solid<.98,-t*54)
+        })
+      }
+
+      function logoLayout() {
+        const source=cues?.logo?.boyut_px||[1672,941],width=W*.55,height=width*source[1]/source[0],x=(W-width)/2,y=(H-height)/2,scale=width/source[0]
+        const aqua=cues?.logo?.turkuaz_nokta_merkez_px||[740,360],green=cues?.logo?.yesil_nokta_merkez_px||[910,360]
+        return {x,y,width,height,aqua:{x:x+aqua[0]*scale,y:y+aqua[1]*scale},green:{x:x+green[0]*scale,y:y+green[1]*scale}}
+      }
+
+      function drawLogo(alpha=1,scale=1) {
+        if(!logoImage.complete||!logoImage.naturalWidth)return
+        const l=logoLayout();ctx.save();ctx.globalAlpha=alpha;ctx.translate(W/2,H/2);ctx.scale(scale,scale);ctx.translate(-W/2,-H/2);ctx.drawImage(logoImage,l.x,l.y,l.width,l.height);ctx.restore()
+      }
+
+      function logoPulse(point,color,sprite,p) {
+        const wave=Math.sin(Math.PI*clamp(p));if(wave<=0)return;glow(point.x,point.y,100+wave*95,sprite,wave*.72);ctx.globalAlpha=wave*.7;ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.arc(point.x,point.y,18+wave*38,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1
+      }
+
+      function s4_kurulmus(p,t){const pan=Math.sin(t*.16)*34;network(t,1,1,{pan});newEdges.forEach(e=>edgeLine(e,t,.2,COLORS.white,1,0,1.2))}
+      function s4_bosluk(p,t){const q=easeInOut(p),pan=Math.sin(t*.16)*34;network(t,1,lerp(1,.3,q),{pan});drawGaps(t,q,false)}
+      function s4_bosluk_vurgu(p,t){network(t,1,.3);drawGaps(t,easeInOut(clamp(p/.35)),true)}
+      function s5_donma(p,t){const frozen=scenes[sceneById.get('s5_donma')]?.t||t;network(frozen,1,.15,{freeze:true})}
+      function s5_peki(p,t){const frozen=scenes[sceneById.get('s5_donma')]?.t||t;network(frozen,1,.15,{freeze:true});const pulse=.72+.28*Math.sin(p*Math.PI*3);glow(960,540,95+35*pulse,sprites.aqua,.72);ctx.fillStyle=COLORS.aqua;ctx.beginPath();ctx.arc(960,540,5+pulse*2,0,Math.PI*2);ctx.fill()}
+      function s6_zincir_musteri(p,t){const q=easeInOut(p);network(t,1,lerp(.15,.6,q));drawRadar(t,p);nodeDot(chainSets[0][0],t,easeInOut(clamp((q-.1)/.3)),COLORS.aqua)}
+      function s6_zincir_isletme(p,t){network(t,1,.6);drawChain(chainSets[0],t,easeInOut(p),0,1)}
+      function s6_zincir_tedarikci(p,t){network(t,1,.6);drawChain(chainSets[0],t,1,easeInOut(p),1)}
+      function s6_zincir_cogalma(p,t){network(t,1,.62);drawChain(chainSets[0],t,1,1,1);chainSets.slice(1).forEach((chain,i)=>{const q=easeInOut(clamp((p-i*.09)/.36));if(q>0)drawChain(chain,t,q,clamp(q*1.45-.45),q)})}
+      function s7_firsat(p,t){network(t,1,.62);chainSets.forEach(chain=>drawChain(chain,t,1,1,.72));drawOpportunityBridges(t,p,0)}
+      function s7_duzlesme(p,t){const q=easeInOut(p);network(t,1,lerp(.62,1,q),{positive:q});drawOpportunityBridges(t,1,p);drawFlowParticles(t,q,true)}
+      function s8_toplanma(p,t){const q=easeInOut(p),l=logoLayout(),chain=chainSets[0],a=pointAt(chain[0],t),b=pointAt(chain[2],t);network(t,1,1-q,{zoom:lerp(1,.18,q),positive:1});const ax=lerp(a.x,l.aqua.x,q),ay=lerp(a.y,l.aqua.y,q),bx=lerp(b.x,l.green.x,q),by=lerp(b.y,l.green.y,q);glow(ax,ay,92,sprites.aqua,1-q*.25);glow(bx,by,92,sprites.green,1-q*.25);ctx.fillStyle=COLORS.aqua;ctx.beginPath();ctx.arc(ax,ay,6,0,Math.PI*2);ctx.fill();ctx.fillStyle=COLORS.green;ctx.beginPath();ctx.arc(bx,by,6,0,Math.PI*2);ctx.fill()}
+      function s8_logo(p,t){network(t,1,.1,{freeze:true});const q=easeInOut(clamp(p/.55)),l=logoLayout();drawLogo(q,lerp(.96,1,q));glow(l.aqua.x,l.aqua.y,92,sprites.aqua,1-q);glow(l.green.x,l.green.y,92,sprites.green,1-q)}
+      function s8_slogan_1(p,t){network(t,1,.1,{freeze:true});drawLogo(1,1);logoPulse(logoLayout().aqua,COLORS.aqua,sprites.aqua,p)}
+      function s8_slogan_2(p,t){network(t,1,.1,{freeze:true});drawLogo(1,1);logoPulse(logoLayout().green,COLORS.green,sprites.green,p)}
+      function s8_slogan_3(p,t){const breath=1+Math.sin(Math.PI*clamp(p))*.025;network(t,1,.1,{freeze:true,zoom:breath});drawLogo(1,1)}
+      function s9_son_kare(){network(0,1,.1,{freeze:true});drawLogo(1,1)}
+      function bitis(){s9_son_kare()}
+
+      function drawParticles(t,strength) {
+        particles.forEach((particle,i)=>{const e=edges[particle.edge];if(!e.outer)return;const a=pointAt(e.a,t,false,strength),b=pointAt(e.b,t,false,strength);let q=(particle.phase+t*particle.speed)%1;if(Math.hypot(b.x-960,b.y-540)<Math.hypot(a.x-960,a.y-540))q=1-q;const x=lerp(a.x,b.x,q),y=lerp(a.y,b.y,q);glow(x,y,38,sprites.orange,strength*.42);ctx.fillStyle=COLORS.orange;ctx.globalAlpha=strength*.8;ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1})
+      }
+
+      function drawFlowParticles(t,strength,inward=false) {
+        particles.forEach((particle,i)=>{const e=edges[particle.edge],a=pointAt(e.a,t),b=pointAt(e.b,t);let q=(particle.phase+t*particle.speed*1.35)%1;const aDist=Math.hypot(a.x-960,a.y-540),bDist=Math.hypot(b.x-960,b.y-540),towardCenter=aDist>bDist;if((inward&&towardCenter)||(!inward&&!towardCenter))q=1-q;const x=lerp(a.x,b.x,q),y=lerp(a.y,b.y,q),mix=clamp((x-520)/900);glow(x,y,34,mix>.55?sprites.green:sprites.aqua,strength*.34);ctx.fillStyle=mixColor(COLORS.aqua,COLORS.green,mix);ctx.globalAlpha=strength*.78;ctx.beginPath();ctx.arc(x,y,1.8,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1})
+      }
+
+      const renderers={s0_giris,s1_kivilcim_1,s1_kivilcim_2,s1_kivilcim_3,s1_iliski,s2_ag_acilis,s2_ag_tam,s3_yeni_iliskiler,s3_bizimle,s3_disimizda,s4_kurulmus,s4_bosluk,s4_bosluk_vurgu,s5_donma,s5_peki,s6_zincir_musteri,s6_zincir_isletme,s6_zincir_tedarikci,s6_zincir_cogalma,s7_firsat,s7_duzlesme,s8_toplanma,s8_logo,s8_slogan_1,s8_slogan_2,s8_slogan_3,s9_son_kare,bitis}
+
+      function musicVolumeAt(t) {
+        const points=cues?.muzik||[]; if(!points.length)return 0
+        if(t<=points[0].t)return points[0].ses
+        const cutAt=scenes[sceneById.get('s5_donma')]?.t
+        for(let i=0;i<points.length-1;i++){const a=points[i],b=points[i+1];if(t<=b.t){const duration=b.t-a.t;let q=clamp((t-a.t)/duration);if(b.t===cutAt)q=clamp((t-(b.t-.15))/.15);return lerp(a.ses,b.ses,q)}}
+        return points.at(-1).ses
+      }
+
+      function syncMusic(t) {
+        if(!musicOn||music.error){music.volume=0;return}
+        music.volume=clamp(musicVolumeAt(t),0,1)
+        if(!music.paused&&Math.abs(music.currentTime-t)>.1)music.currentTime=t
+      }
+
+      function finish() {
+        if(ended)return; ended=true;voice.pause();music.pause()
+        window.dispatchEvent(new CustomEvent('animationEnded'))
+        window.parent.postMessage({type:'animationEnded'},'*')
+      }
+
+      function render(now) {
+        requestAnimationFrame(render)
+        const delta=now-lastFrame;lastFrame=now;frameCount++
+        if(now-fpsAt>=500){fps=Math.round(frameCount*1000/(now-fpsAt));frameCount=0;fpsAt=now}
+        const t=started?voice.currentTime:0
+        background()
+        const active=cues?activeScene(t):{id:'s0_giris',p:0}
+        ;(renderers[active.id]||s9_son_kare)(active.p||0,t)
+        if(cues){
+          const text=subtitleOn?active.altyazi||'':''; subtitle.textContent=text;subtitle.classList.toggle('on',Boolean(text))
+          debug.textContent=`t ${t.toFixed(2)}\n${active.id}\n${fps} fps`
+          syncMusic(t)
+          const handoff=scenes.find(s=>s.id==='bitis')?.t ?? cues.sure
+          if(started&&!ended&&Number.isFinite(handoff)&&t>=handoff)finish()
+        }
+        if(delta>100) lastFrame=now
+      }
+
+      async function begin() {
+        if(ended)return
+        started=true
+        try{await voice.play()}catch{started=false;return}
+        if(musicOn&&!music.error){music.currentTime=voice.currentTime;music.play().catch(()=>{})}
+      }
+
+      function seek(delta) {
+        if(!cues)return
+        const handoff=scenes.find(s=>s.id==='bitis')?.t ?? cues.sure
+        voice.currentTime=clamp(voice.currentTime+delta,0,Math.max(0,handoff-.02));if(!music.error)music.currentTime=voice.currentTime
+      }
+
+      function reset() {voice.pause();music.pause();voice.currentTime=0;if(!music.error)music.currentTime=0;started=false;ended=false;subtitle.textContent='';subtitle.classList.remove('on')}
+
+      addEventListener('resize',resize)
+      addEventListener('click',()=>{if(!started)begin()})
+      addEventListener('keydown',event=>{
+        if(event.key===' '){event.preventDefault();if(!started)begin();else if(voice.paused)begin();else{voice.pause();music.pause()}}
+        if(event.key==='ArrowLeft'){event.preventDefault();seek(-2)}
+        if(event.key==='ArrowRight'){event.preventDefault();seek(2)}
+        if(event.key.toLowerCase()==='r')reset()
+        if(event.key.toLowerCase()==='d'){debugOn=!debugOn;debug.classList.toggle('on',debugOn)}
+        if(event.key.toLowerCase()==='s')subtitleOn=!subtitleOn
+        if(event.key.toLowerCase()==='m'){musicOn=!musicOn;if(!musicOn){music.pause();music.volume=0}else if(started){music.currentTime=voice.currentTime;music.play().catch(()=>{})}}
+        if(event.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen?.().catch(()=>{});else document.exitFullscreen?.().catch(()=>{})}
+      })
+      voice.addEventListener('ended',finish)
+      music.addEventListener('error',()=>{musicOn=false})
+
+      resize();prepareSprites();buildNetwork();requestAnimationFrame(render)
+      fetch('cues.json').then(r=>{if(!r.ok)throw new Error('cues.json yüklenemedi');return r.json()}).then(data=>{cues=data;scenes=data.sahneler;sceneById=new Map(scenes.map((s,i)=>[s.id,i]))}).catch(error=>{debug.textContent=error.message;debug.classList.add('on')})
+    })()
+  </script>
+</body>
+</html>
