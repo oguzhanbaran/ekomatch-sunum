@@ -4,8 +4,8 @@ const s = (id: string, shortTitle: string, eyebrow: string, title: string, kind:
 export const scenes: Slide[] = [
   s('acilis', 'Kapak', 'EKOMATCH', 'Yapay Zekâ Destekli Ekonomik İlişki ve Fırsat Keşif Platformu', 'cover', 'Kesikli bağlantı henüz kurulmamış ekonomik ilişkiyi temsil eder. Önce fırsat, sonra reel ticaret ve finansman.'),
   s('problem', 'Problem & Fırsat', 'BÖLÜM 01', 'Ekonomik ilişkiler banka dışında kuruluyor.', 'divider', 'Bankanın müşteri ilişkisi ile müşterinin ticari ilişkisinin aynı ekosistemde kalması arasındaki farkı anlatın.', 'Problem & Fırsat'),
-  s('mevcut-durum', 'Mevcut Durum', '01 / PROBLEM & FIRSAT', 'Talep bizde, ekonomik ilişki başka bankada.', 'metrics', 'Bu boşluklar küçük değil. Müşterilerimiz her yıl kartlarımızla yaklaşık 970 milyar lira harcıyor. Ama bunun 590 milyarı başka bankaların POS\'larında gerçekleşiyor. Kart bizim, POS başka bankanın. Rakamlar kullanıcının sağladığı sunum metninden alınmıştır. Referans yıl, tanım ve birincil kaynaklar verilmediğinden dışarıdan doğrulanmış sonuç değildir. 33,4 trilyon TL yıllık kartlı harcama; yaklaşık 970 milyar TL KT kart harcaması; yaklaşık 590 milyar TL diğer banka POS harcaması; 10,3 milyon müşteri ve 453 şube.'),
-  s('ekomatch-nedir', 'EkoMatch Nedir?', '01 / PROBLEM & FIRSAT', 'Henüz kurulmamış ilişkiyi keşfet.', 'definition', 'Bankanın geçmiş ekonomik ilişkilerinden öğrenerek henüz oluşmamış potansiyel ilişkileri keşfeden, talep ile arzı buluşturan platform. Keşif, doğrulama, eşleştirme ve finansman aynı değer zinciridir.'),
+  s('mevcut-durum', 'Mevcut Durum', '01 / PROBLEM & FIRSAT', 'Müşteri ve kart bizde. Harcamanın büyük kısmı başka bankada.', 'metrics', 'Bu boşluklar küçük değil. Müşterilerimiz her yıl kartlarımızla yaklaşık 970 milyar lira harcıyor. Ama bunun 590 milyarı başka bankaların POS\'larında gerçekleşiyor. Kart bizim, POS başka bankanın. Rakamlar kullanıcının sağladığı sunum metninden alınmıştır. Referans yıl, tanım ve birincil kaynaklar verilmediğinden dışarıdan doğrulanmış sonuç değildir. 33,4 trilyon TL yıllık kartlı harcama; yaklaşık 970 milyar TL KT kart harcaması; yaklaşık 590 milyar TL diğer banka POS harcaması; 10,3 milyon müşteri ve 453 şube.'),
+  s('ekomatch-nedir', 'EkoMatch Nedir?', '01 / PROBLEM & FIRSAT', 'Henüz kurulmamış ilişkiyi keşfet.', 'definition', 'Bankanın geçmiş ekonomik ilişkilerinden öğrenerek henüz oluşmamış potansiyel ilişkileri keşfeden, talep ile arzı buluşturan platform. Keşif, doğrulama, eşleştirme ve finansman aynı değer zinciridir.\n\nKeşif: Benzer müşteri ve şirketlerden öğrenerek fırsatı bulur.\nDoğrulama: Şubeci gerçek ihtiyacı teyit eder.\nEşleştirme: Talebi bankanın ekosistemindeki arzla buluşturur.\nFinansman: Reel ticarete ödeme ve finansmanla hizmet eder.'),
   s('beyaz-alan', 'Economic White Space', '01 / PROBLEM & FIRSAT', 'Benzerleri bu ilişkiyi kurdu. O henüz kurmadı.', 'heatmap', 'Isı haritası temsili müşteri-kategori ilişkilerini gösterir. Boş hücre kesin ihtiyaç değildir. AI potansiyeli keşfeder, şubeci gerçek ihtiyacı doğrular.'),
   s('cozum', 'Çözüm & Mimari', 'BÖLÜM 02', 'İki ikiz model, tek ekonomik ağ.', 'divider', 'Economic Twin şirketlerin geçmiş ticari ilişkilerinden; Behavioral Twin MCC kategori dizilerinden öğrenir.', 'Çözüm & Mimari'),
   s('yaklasim', 'Mevcut Yaklaşım / EkoMatch', '02 / ÇÖZÜM & MİMARİ', 'Önce ekonomik fırsat, sonra bankacılık ürünü.', 'comparison', 'Mevcut yaklaşım akışı kavramsal karşılaştırmadır; bütün CRM ve kampanya çözümleri için evrensel özellik iddiası değildir.'),
@@ -30,12 +30,7 @@ export const scenes: Slide[] = [
   s('final', 'Kapanış', 'EKOMATCH', 'Henüz kurulmamış ilişki, keşfedilmeyi bekleyen bir fırsattır.', 'final', 'Talebi keşfet. Arzla buluştur. Ekonomik ağı büyüt. Tek büyük logo yalnızca bu sahnede görünür.'),
 ]
 
-export const definition = [
-  ['Keşif', 'Benzer müşteri ve şirketlerden öğrenerek fırsatı bulur.'],
-  ['Doğrulama', 'Şubeci gerçek ihtiyacı teyit eder.'],
-  ['Eşleştirme', 'Talebi bankanın ekosistemindeki arzla buluşturur.'],
-  ['Finansman', 'Reel ticarete ödeme ve finansmanla hizmet eder.'],
-]
+export const definition = ['Keşif', 'Doğrulama', 'Eşleştirme', 'Finansman']
 export const metrics = [['33,4', 'trilyon TL', 'Türkiye’de yıllık kartlı harcama'], ['~970', 'milyar TL', 'Kuveyt Türk kartlarıyla yapılan harcama'], ['~590', 'milyar TL', 'Diğer bankaların POS’larında'], ['10,3', 'milyon', 'Kuveyt Türk müşterisi'], ['453', 'şube', 'İnsan doğrulaması için temas ağı']]
 export const b2bSteps = ['Şirket', 'Benzer şirketler', 'Geçmiş ticaret ve finansman', 'Fırsat alanı', 'Şubeci doğrulaması', 'Tedarikçi eşleşmesi', 'Finansman']
 export const b2bStory = [
