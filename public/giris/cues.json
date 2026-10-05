@@ -29,6 +29,7 @@
     { "t": 42.72, "id": "s8_slogan_2",       "not": "'Arzla buluştur' — logonun yeşil noktası nabız atar", "altyazi": "Arzla buluştur." },
     { "t": 44.06, "id": "s8_slogan_3",       "not": "'Ekonomik ağı büyüt' — logonun arkasındaki silik ağ bir kez nefes alır gibi genişler", "altyazi": "Ekonomik ağı büyüt." },
     { "t": 45.24, "id": "s9_son_kare",       "not": "Logo sabit kalır, müzik söner", "altyazi": "" },
+    { "t": 46.25, "id": "s10_gecis", "not": "Zemin adaçayına döner, logo koyu yazılı versiyona geçer", "altyazi": "" },
     { "t": 47.05, "id": "bitis",             "not": "animationEnded olayı yayınlanır", "altyazi": "" }
   ],
   "muzik": [

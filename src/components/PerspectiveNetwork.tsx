@@ -1,5 +1,5 @@
 import { useEffect, useRef, type CSSProperties } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { useReducedMotion } from 'framer-motion'
 
 type Edge = readonly [number, number]
 
@@ -42,8 +42,14 @@ function createNetwork() {
 }
 
 const network = createNetwork()
+const artwork = {
+  left: Math.min(...network.nodes.map(n => n.x - (n.business ? 10 : 3))) - 3,
+  right: Math.max(...network.nodes.map(n => n.x + (n.business ? 10 : 3))) + 3,
+  top: Math.min(...network.nodes.map(n => n.y - (n.business ? 10 : 3))) - 3,
+  bottom: Math.max(...network.nodes.map(n => n.y + (n.business ? 10 : 3))) + 3,
+}
 
-export function PerspectiveNetwork({ reveal }: { reveal: boolean }) {
+export function PerspectiveNetwork({ reveal, cropToArtwork = false }: { reveal: boolean; cropToArtwork?: boolean }) {
   const svg = useRef<SVGSVGElement>(null)
   const reduced = useReducedMotion()
   const { nodes, edges, gaps } = network
@@ -56,7 +62,8 @@ export function PerspectiveNetwork({ reveal }: { reveal: boolean }) {
     let frame = 0
     const draw = (now: number) => {
       const bounds = element.getBoundingClientRect()
-      const scale = Math.min(bounds.width / 1000, bounds.height / 760)
+      const view = element.viewBox.baseVal
+      const scale = Math.min(bounds.width / view.width, bounds.height / view.height)
       const amplitude = 1.5 / Math.max(scale, .1)
       const points = nodes.map(n => ({
         x: n.x + Math.sin(now / 7000 + n.phase) * amplitude,
@@ -81,10 +88,11 @@ export function PerspectiveNetwork({ reveal }: { reveal: boolean }) {
     x1: nodes[a].x, y1: nodes[a].y, x2: nodes[b].x, y2: nodes[b].y,
     'data-from': a, 'data-to': b,
   })
-  return <svg ref={svg} className="perspective-network" viewBox="0 0 1000 760" aria-hidden="true">
-    <motion.g className="perspective-existing" initial={{ opacity: .28 }} animate={{ opacity: reveal ? .12 : .28 }} transition={{ duration: reduced ? 0 : .6 }}>
+  const viewBox = cropToArtwork ? `${artwork.left} ${artwork.top} ${artwork.right - artwork.left} ${artwork.bottom - artwork.top}` : '0 0 1000 760'
+  return <svg ref={svg} className="perspective-network" viewBox={viewBox} aria-hidden="true">
+    <g className="perspective-existing" opacity={reveal ? .12 : .28}>
       {edges.map((edge, i) => <line key={i} {...line(edge)} />)}
-    </motion.g>
+    </g>
     {nodes.map((node, i) => <g key={i} data-node={i} transform={`translate(${node.x} ${node.y})`} className="perspective-node">
       <circle r={node.business ? 5 : 3} />
       {node.business && <circle className="perspective-business" r="10" />}
@@ -93,6 +101,7 @@ export function PerspectiveNetwork({ reveal }: { reveal: boolean }) {
       <line {...line(edge)} />
       {edge.map(n => <g key={n} data-node={n} transform={`translate(${nodes[n].x} ${nodes[n].y})`}>
         <circle className="perspective-glow" r="17" /><circle className="perspective-endpoint" r={nodes[n].business ? 5 : 3.5} />
+        <circle className="perspective-potential-ring" r={nodes[n].business ? 10 : 8} />
       </g>)}
     </g>)}</g>}
   </svg>

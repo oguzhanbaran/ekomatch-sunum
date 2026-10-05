@@ -37,6 +37,24 @@
       const debug = document.querySelector('#debug')
       const logoImage = new Image()
       logoImage.src = 'logo.png'
+      let darkLogo = null, ready = Promise.resolve()
+      const logoReady = logoImage.decode().then(async () => {
+        const image = new Image()
+        image.src = 'logo_koyu.png'
+        try { await image.decode(); darkLogo = image }
+        catch {
+          const copy = document.createElement('canvas')
+          copy.width = logoImage.naturalWidth; copy.height = logoImage.naturalHeight
+          const g = copy.getContext('2d'); g.drawImage(logoImage, 0, 0)
+          const pixels = g.getImageData(0, 0, copy.width, copy.height)
+          for (let i = 0; i < pixels.data.length; i += 4) {
+            if (pixels.data[i] > 225 && pixels.data[i+1] > 225 && pixels.data[i+2] > 225) {
+              pixels.data[i] = 19; pixels.data[i+1] = 40; pixels.data[i+2] = 59
+            }
+          }
+          g.putImageData(pixels, 0, 0); darkLogo = copy
+        }
+      })
       let cues = null, scenes = [], sceneById = new Map(), nodes = [], edges = [], newEdges = [], particles = [], gaps = [], chainSets = []
       let sprites = {}, started = false, ended = false, debugOn = false, subtitleOn = false, musicOn = true
       let frameCount = 0, fps = 60, fpsAt = performance.now(), lastFrame = performance.now()
@@ -130,14 +148,14 @@
         ctx.setTransform(dpr*scale,0,0,dpr*scale,dpr*ox,dpr*oy)
       }
 
-      function background(intensity = 1) {
+      function background(intensity = 1, transition = 0) {
         ctx.setTransform(1,0,0,1,0,0); ctx.fillStyle = '#000'; ctx.fillRect(0,0,canvas.width,canvas.height)
         logicalTransform()
         const g = ctx.createRadialGradient(960,500,20,960,540,920)
-        g.addColorStop(0, COLORS.center); g.addColorStop(.62, COLORS.bg); g.addColorStop(1, '#050B10')
+        g.addColorStop(0, mixColor(COLORS.center, '#ACBFB7', transition)); g.addColorStop(.62, mixColor(COLORS.bg, '#ACBFB7', transition)); g.addColorStop(1, mixColor('#050B10', '#ACBFB7', transition))
         ctx.globalAlpha = intensity; ctx.fillStyle = g; ctx.fillRect(0,0,W,H); ctx.globalAlpha = 1
         const v = ctx.createRadialGradient(960,540,430,960,540,1110)
-        v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(1,'rgba(0,0,0,.64)')
+        v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(1,`rgba(0,0,0,${.64*(1-transition)})`)
         ctx.fillStyle = v; ctx.fillRect(0,0,W,H)
       }
 
@@ -153,9 +171,9 @@
       }
 
       function glow(x,y,size,sprite,alpha=1) { ctx.globalAlpha = alpha; ctx.drawImage(sprite,x-size/2,y-size/2,size,size); ctx.globalAlpha = 1 }
-      function nodeDot(i,t,alpha=1,color=COLORS.white,outside=0,freeze=false) {
+      function nodeDot(i,t,alpha=1,color=COLORS.white,outside=0,freeze=false,glowStrength=1) {
         const n=nodes[i], p=pointAt(i,t,freeze,outside), r=n.business?6:2.4
-        glow(p.x,p.y,n.business?64:34,color===COLORS.orange?sprites.orange:color===COLORS.aqua?sprites.aqua:color===COLORS.green?sprites.green:sprites.white,alpha*.32)
+        glow(p.x,p.y,n.business?64:34,color===COLORS.orange?sprites.orange:color===COLORS.aqua?sprites.aqua:color===COLORS.green?sprites.green:sprites.white,alpha*.32*glowStrength)
         ctx.globalAlpha=alpha; ctx.fillStyle=color; ctx.beginPath(); ctx.arc(p.x,p.y,r,0,Math.PI*2); ctx.fill()
         if(n.business){ctx.strokeStyle=color;ctx.globalAlpha=alpha*.7;ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(p.x,p.y,r+6,0,Math.PI*2);ctx.stroke()} ctx.globalAlpha=1
       }
@@ -175,6 +193,7 @@
           let color=cool?mixColor(COLORS.white,COLORS.aqua,cool):COLORS.white
           if(warm)color=mixColor(color,COLORS.orange,warm)
           if(positive)color=mixColor(color,mixColor(COLORS.aqua,COLORS.green,clamp(((nodes[e.a].x+nodes[e.b].x)/2-450)/1020)),positive)
+          if(options.tint)color=options.tint
           const emphasis=Math.max(warm,cool,positive)
           edgeLine(e,t,lerp(.12,.24,emphasis)*opacity,color,1,outside,lerp(1,1.45,emphasis),freeze)
         })
@@ -183,7 +202,8 @@
           const warm=n.business&&Math.hypot(n.x-960,(n.y-540)*1.6)>490?orange:0
           let color=warm?mixColor(COLORS.white,COLORS.orange,warm):COLORS.white
           if(positive)color=mixColor(color,mixColor(COLORS.aqua,COLORS.green,clamp((n.x-450)/1020)),positive)
-          nodeDot(i,t,(n.business?.72:.52)*opacity,color,outside,freeze)
+          if(options.tint)color=options.tint
+          nodeDot(i,t,(n.business?.72:.52)*opacity,color,outside,freeze,options.glowStrength ?? 1)
         })
         ctx.restore()
       }
@@ -258,9 +278,9 @@
         return {x,y,width,height,aqua:{x:x+aqua[0]*scale,y:y+aqua[1]*scale},green:{x:x+green[0]*scale,y:y+green[1]*scale}}
       }
 
-      function drawLogo(alpha=1,scale=1) {
-        if(!logoImage.complete||!logoImage.naturalWidth)return
-        const l=logoLayout();ctx.save();ctx.globalAlpha=alpha;ctx.translate(W/2,H/2);ctx.scale(scale,scale);ctx.translate(-W/2,-H/2);ctx.drawImage(logoImage,l.x,l.y,l.width,l.height);ctx.restore()
+      function drawLogo(alpha=1,scale=1,image=logoImage) {
+        if(!image || (image instanceof HTMLImageElement && (!image.complete || !image.naturalWidth)))return
+        const l=logoLayout();ctx.save();ctx.globalAlpha=alpha;ctx.translate(W/2,H/2);ctx.scale(scale,scale);ctx.translate(-W/2,-H/2);ctx.drawImage(image,l.x,l.y,l.width,l.height);ctx.restore()
       }
 
       function logoPulse(point,color,sprite,p) {
@@ -304,7 +324,19 @@
       function s8_slogan_2(p,t){network(t,1,.1,{freeze:true});drawLogo(1,1);logoPulse(logoLayout().green,COLORS.green,sprites.green,p)}
       function s8_slogan_3(p,t){const breath=1+Math.sin(Math.PI*clamp(p))*.025;network(t,1,.1,{freeze:true,zoom:breath});drawLogo(1,1)}
       function s9_son_kare(){network(0,1,.1,{freeze:true});drawLogo(1,1)}
-      function bitis(){s9_son_kare()}
+      function transitionProgress(t) {
+        const cue = scenes[sceneById.get('s10_gecis')]
+        return !cue ? 0 : t >= cue.t + .8 ? 1 : clamp((t - cue.t) / .8)
+      }
+      function endTime() { return sceneStart('s10_gecis') + .8 }
+      function s10_gecis(p,t) {
+        const raw = transitionProgress(t), q = easeInOut(raw)
+        // The faint network changes tone during the transition, then clears for the final frame.
+        const visibility = 1 - easeInOut(clamp((raw - .8) / .2))
+        if(visibility > 0)network(0,1,lerp(.1,.12,q)*visibility,{freeze:true,tint:mixColor(COLORS.white,COLORS.center,q),glowStrength:1-q})
+        drawLogo(1-q,1);drawLogo(q,1,darkLogo)
+      }
+      function bitis(p,t){s10_gecis(p,t)}
 
       function drawParticles(t,strength) {
         particles.forEach((particle,i)=>{const e=edges[particle.edge];if(!e.outer)return;const a=pointAt(e.a,t,false,strength),b=pointAt(e.b,t,false,strength);let q=(particle.phase+t*particle.speed)%1;if(Math.hypot(b.x-960,b.y-540)<Math.hypot(a.x-960,a.y-540))q=1-q;const x=lerp(a.x,b.x,q),y=lerp(a.y,b.y,q);glow(x,y,38,sprites.orange,strength*.42);ctx.fillStyle=COLORS.orange;ctx.globalAlpha=strength*.8;ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1})
@@ -314,7 +346,7 @@
         particles.forEach((particle,i)=>{const e=edges[particle.edge],a=pointAt(e.a,t),b=pointAt(e.b,t);let q=(particle.phase+t*particle.speed*1.35)%1;const aDist=Math.hypot(a.x-960,a.y-540),bDist=Math.hypot(b.x-960,b.y-540),towardCenter=aDist>bDist;if((inward&&towardCenter)||(!inward&&!towardCenter))q=1-q;const x=lerp(a.x,b.x,q),y=lerp(a.y,b.y,q),mix=clamp((x-520)/900);glow(x,y,34,mix>.55?sprites.green:sprites.aqua,strength*.34);ctx.fillStyle=mixColor(COLORS.aqua,COLORS.green,mix);ctx.globalAlpha=strength*.78;ctx.beginPath();ctx.arc(x,y,1.8,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1})
       }
 
-      const renderers={s0_giris,s1_kivilcim_1,s1_kivilcim_2,s1_kivilcim_3,s1_iliski,s2_ag_acilis,s2_ag_tam,s3_yeni_iliskiler,s3_bizimle,s3_disimizda,s4_kurulmus,s4_bosluk,s4_bosluk_vurgu,s5_donma,s5_peki,s6_zincir_musteri,s6_zincir_isletme,s6_zincir_tedarikci,s6_zincir_cogalma,s7_firsat,s7_duzlesme,s8_toplanma,s8_logo,s8_slogan_1,s8_slogan_2,s8_slogan_3,s9_son_kare,bitis}
+      const renderers={s0_giris,s1_kivilcim_1,s1_kivilcim_2,s1_kivilcim_3,s1_iliski,s2_ag_acilis,s2_ag_tam,s3_yeni_iliskiler,s3_bizimle,s3_disimizda,s4_kurulmus,s4_bosluk,s4_bosluk_vurgu,s5_donma,s5_peki,s6_zincir_musteri,s6_zincir_isletme,s6_zincir_tedarikci,s6_zincir_cogalma,s7_firsat,s7_duzlesme,s8_toplanma,s8_logo,s8_slogan_1,s8_slogan_2,s8_slogan_3,s9_son_kare,s10_gecis,bitis}
 
       function musicVolumeAt(t) {
         const points=cues?.muzik||[]; if(!points.length)return 0
@@ -331,7 +363,7 @@
       }
 
       function finish() {
-        if(ended)return; ended=true;voice.pause();music.pause()
+        if(!cues || voice.currentTime < endTime() || ended)return; ended=true;voice.pause();music.pause()
         window.dispatchEvent(new CustomEvent('animationEnded'))
         window.parent.postMessage({type:'animationEnded'},'*')
       }
@@ -340,15 +372,17 @@
         requestAnimationFrame(render)
         const delta=now-lastFrame;lastFrame=now;frameCount++
         if(now-fpsAt>=500){fps=Math.round(frameCount*1000/(now-fpsAt));frameCount=0;fpsAt=now}
-        const t=started?voice.currentTime:0
-        background()
-        const active=cues?activeScene(t):{id:'s0_giris',p:0}
+        const t=voice.currentTime, progress=transitionProgress(t)
+        background(1,easeInOut(progress))
+        let active=cues?activeScene(t):{id:'s0_giris',p:0}
+        if(cues && t>=sceneStart('s10_gecis'))active={...scenes[sceneById.get('s10_gecis')],p:progress}
+        document.body.classList.toggle('transition-complete',progress>=1)
         ;(renderers[active.id]||s9_son_kare)(active.p||0,t)
         if(cues){
           const text=subtitleOn?active.altyazi||'':''; subtitle.textContent=text;subtitle.classList.toggle('on',Boolean(text))
           debug.textContent=`t ${t.toFixed(2)}\n${active.id}\n${fps} fps`
           syncMusic(t)
-          const handoff=scenes.find(s=>s.id==='bitis')?.t ?? cues.sure
+          const handoff=endTime()
           if(started&&!ended&&Number.isFinite(handoff)&&t>=handoff)finish()
         }
         if(delta>100) lastFrame=now
@@ -356,6 +390,7 @@
 
       async function begin() {
         if(ended)return
+        await ready
         started=true
         try{await voice.play()}catch{started=false;return}
         if(musicOn&&!music.error){music.currentTime=voice.currentTime;music.play().catch(()=>{})}
@@ -363,8 +398,8 @@
 
       function seek(delta) {
         if(!cues)return
-        const handoff=scenes.find(s=>s.id==='bitis')?.t ?? cues.sure
-        voice.currentTime=clamp(voice.currentTime+delta,0,Math.max(0,handoff-.02));if(!music.error)music.currentTime=voice.currentTime
+        const handoff=endTime()
+        voice.currentTime=clamp(voice.currentTime+delta,0,handoff);if(!music.error)music.currentTime=voice.currentTime
       }
 
       function reset() {voice.pause();music.pause();voice.currentTime=0;if(!music.error)music.currentTime=0;started=false;ended=false;subtitle.textContent='';subtitle.classList.remove('on')}
@@ -382,10 +417,38 @@
         if(event.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen?.().catch(()=>{});else document.exitFullscreen?.().catch(()=>{})}
       })
       voice.addEventListener('ended',finish)
+      voice.addEventListener('seeking',()=>{if(voice.currentTime<endTime())ended=false})
       music.addEventListener('error',()=>{musicOn=false})
 
       resize();prepareSprites();buildNetwork();requestAnimationFrame(render)
-      fetch('cues.json').then(r=>{if(!r.ok)throw new Error('cues.json yüklenemedi');return r.json()}).then(data=>{cues=data;scenes=data.sahneler;sceneById=new Map(scenes.map((s,i)=>[s.id,i]))}).catch(error=>{debug.textContent=error.message;debug.classList.add('on')})
+      // The MP3 is ~44 ms shorter than the cue timeline. Keep its decoded samples and
+      // append silence in memory so voice.currentTime can reach the exact final cue.
+      async function alignVoiceEnd() {
+        if(voice.readyState<1)await new Promise(resolve=>voice.addEventListener('loadedmetadata',resolve,{once:true}))
+        if(voice.duration>=endTime())return
+        const response=await fetch(cues.ses_dosyasi)
+        if(!response.ok)throw new Error('Ses dosyası yüklenemedi')
+        const decoder=new OfflineAudioContext(1,1,48000)
+        const audio=await decoder.decodeAudioData(await response.arrayBuffer())
+        const channels=audio.numberOfChannels, frames=Math.ceil(endTime()*audio.sampleRate)
+        const buffer=new ArrayBuffer(44+frames*channels*4), view=new DataView(buffer)
+        const label=(offset,text)=>{for(let i=0;i<text.length;i++)view.setUint8(offset+i,text.charCodeAt(i))}
+        label(0,'RIFF');view.setUint32(4,buffer.byteLength-8,true);label(8,'WAVE');label(12,'fmt ')
+        view.setUint32(16,16,true);view.setUint16(20,3,true);view.setUint16(22,channels,true)
+        view.setUint32(24,audio.sampleRate,true);view.setUint32(28,audio.sampleRate*channels*4,true)
+        view.setUint16(32,channels*4,true);view.setUint16(34,32,true);label(36,'data');view.setUint32(40,buffer.byteLength-44,true)
+        for(let channel=0;channel<channels;channel++) {
+          const samples=audio.getChannelData(channel)
+          for(let i=0;i<Math.min(samples.length,frames);i++)view.setFloat32(44+(i*channels+channel)*4,samples[i],true)
+        }
+        const url=URL.createObjectURL(new Blob([buffer],{type:'audio/wav'}))
+        const loaded=new Promise(resolve=>voice.addEventListener('loadedmetadata',resolve,{once:true}))
+        voice.src=url;voice.load();await loaded
+        addEventListener('pagehide',()=>URL.revokeObjectURL(url),{once:true})
+      }
+      ready=Promise.all([logoReady,fetch('cues.json').then(r=>{if(!r.ok)throw new Error('cues.json yüklenemedi');return r.json()}).then(async data=>{
+        cues=data;scenes=data.sahneler;sceneById=new Map(scenes.map((s,i)=>[s.id,i]));await alignVoiceEnd()
+      })]).catch(error=>{debug.textContent=error.message;debug.classList.add('on');throw error})
     })()
   </script>
 </body>

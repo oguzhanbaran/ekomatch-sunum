@@ -35,16 +35,6 @@ Buna ekonomik boşluk, yani White Space diyoruz. Bu boşluk kesin ihtiyaç anlam
 
 ANLATIM NOTU
 Yeni bağlantılar belirirken örneği anlat. “Kesin ihtiyaç anlamına gelmez” cümlesini kısa ve net söyle.`,
-  'ekomatch-nedir': `HEDEF SÜRE: 22 saniye
-
-Bu yaklaşımı dört adımlı bir iş akışına dönüştürüyoruz.
-
-Önce benzer müşteri ve işletmelerden öğrenerek fırsatı keşfediyoruz. Ardından şubeci, müşteri görüşmesiyle ihtiyacı doğruluyor. Doğrulanan talebi, bankanın ekosistemindeki uygun tedarikçi veya işletmelerle eşleştiriyoruz. Son olarak oluşan ticarete ödeme ve finansman çözümleriyle hizmet ediyoruz.
-
-Böylece veriden başlayan süreç, doğrulanmış bir ihtiyaca ve yeni bir ekonomik ilişkiye ilerliyor.
-
-ANLATIM NOTU
-Dört ikonu soldan sağa takip et; her adım için bir cümle yeterli.`,
   'yaklasim': `HEDEF SÜRE: 22 saniye
 
 Bu slaytta iki farklı başlangıç noktasını karşılaştırıyoruz. Ürün ve kampanya odaklı akışlarda müşteriye uygun bankacılık teklifini belirlemek öne çıkıyor. EkoMatch ise müşterinin kurabileceği yeni ekonomik ilişkiyi araştırarak başlıyor.
@@ -212,11 +202,11 @@ const s = (id: string, shortTitle: string, eyebrow: string, title: string, kind:
 
 export const scenes: Slide[] = [
   s('acilis', 'Kapak', 'EKOMATCH', 'Yapay Zekâ Destekli Ekonomik İlişki ve Fırsat Keşif Platformu', 'cover', 'Kesikli bağlantı henüz kurulmamış ekonomik ilişkiyi temsil eder. Önce fırsat, sonra reel ticaret ve finansman.'),
-  s('problem', 'Problem & Fırsat', 'BÖLÜM 01', 'Ekonomik ilişkiler banka dışında kuruluyor.', 'divider', 'Bankanın müşteri ilişkisi ile müşterinin ticari ilişkisinin aynı ekosistemde kalması arasındaki farkı anlatın.', 'Problem & Fırsat'),
+  s('problem', 'Problem & Fırsat', 'BÖLÜM 01', 'Ağın görünen ve görünmeyen yanı.', 'divider', 'Bankanın müşteri ilişkisi ile müşterinin ticari ilişkisinin aynı ekosistemde kalması arasındaki farkı anlatın.', 'Temel Fikir'),
   s('bugunku-bakis', 'Bugünkü Bakış', '01 / BUGÜNKÜ BAKIŞ', 'Bugün, kurulmuş ilişkileri görüyoruz.', 'perspective', 'Bankalar müşterilerine bakarken hep var olana bakar: hangi kartı kullanıyor, hangi krediyi almış, nerede harcıyor. Bu çok değerli, ama resmin sadece bir kısmı.'),
-  s('yeni-bakis', 'Yeni Bakış', '02 / YENİ BAKIŞ', 'EkoMatch, henüz kurulmamış olanlara bakıyor.', 'perspective', 'Birbirine benzeyen müşteriler ve işletmeler çoğu zaman benzer ilişkiler kurar. Benzerlerinin kurduğu ama bir müşterinin henüz kurmadığı ilişki bir boşluktur. EkoMatch bu boşlukları görür; her biri bankanın önceden görebileceği bir fırsattır.'),
-  s('ekomatch-nedir', 'EkoMatch Nedir?', '01 / PROBLEM & FIRSAT', 'Henüz kurulmamış ilişkiyi keşfet.', 'definition', 'Bankanın geçmiş ekonomik ilişkilerinden öğrenerek henüz oluşmamış potansiyel ilişkileri keşfeden, talep ile arzı buluşturan platform. Keşif, doğrulama, eşleştirme ve finansman aynı değer zinciridir.\n\nKeşif: Benzer müşteri ve şirketlerden öğrenerek fırsatı bulur.\nDoğrulama: Şubeci gerçek ihtiyacı teyit eder.\nEşleştirme: Talebi bankanın ekosistemindeki arzla buluşturur.\nFinansman: Reel ticarete ödeme ve finansmanla hizmet eder.'),
-  s('yaklasim', 'Mevcut Yaklaşım / EkoMatch', '02 / ÇÖZÜM & MİMARİ', 'Önce ekonomik fırsat, sonra bankacılık ürünü.', 'comparison', 'Mevcut yaklaşım akışı kavramsal karşılaştırmadır; bütün CRM ve kampanya çözümleri için evrensel özellik iddiası değildir.'),
+  s('yeni-bakis', 'Yeni Bakış', '02 / YENİ BAKIŞ', 'EkoMatch, henüz kurulmamış olanlara bakıyor.', 'perspective', 'Birbirine benzeyen müşteriler ve işletmeler çoğu zaman benzer ilişkiler kurar. Benzerlerinin kurduğu ama bir müşterinin henüz kurmadığı ilişki bir boşluktur. EkoMatch bu boşlukları görür; her biri bankanın önceden görebileceği bir fırsattır.\n\nBenzerlerini buluyoruz: davranışı ve yapısı birbirine benzeyen müşteri ve işletmeleri. Sonra boşluğu görüyoruz: benzerlerinde kurulmuş, ona henüz kurulmamış ilişkiyi. En sonunda şubemiz doğruluyor ve banka ilişkinin kurulmasını destekliyor.'),
+  s('ekomatch-nedir', 'NASIL ÇALIŞIR?', '01 / PROBLEM & FIRSAT', 'EkoMatch dört adımda çalışır.', 'definition', 'EkoMatch dört adımda çalışıyor. Önce benzerlerinin geçmişinden öğrenip henüz kurulmamış ilişkileri buluyor. Bu fırsat gerekçesiyle şubemize geliyor ve gerçek ihtiyacı şubemiz doğruluyor; yapay zekâ kararı kendi başına vermiyor. İhtiyaç doğrulanırsa uygun alternatifler sunuluyor, seçimi taraflar yapıyor. Kurulan ticaretin üzerine de ödeme, POS ve finansman geliyor.'),
+  s('yaklasim', 'Mevcut Yaklaşım / EkoMatch', '02 / ÇÖZÜM & MİMARİ', 'Önce ekonomik fırsat, sonra bankacılık ürünü.', 'comparison', 'Mevcut yaklaşım akışı kavramsal karşılaştırmadır; bütün CRM ve kampanya çözümleri için evrensel özellik iddiası değildir.\n\nBugünkü sistemler müşterinin kendi geçmişine bakar, uygun ürün ya da kampanyayı öne çıkarır. Bu çok değerli. EkoMatch ise benzerlerin geçmişinden öğrenir ve önce kurulabilecek ekonomik ilişkiyi arar; ürün bu ilişkinin sonunda, ona hizmet etmek için gelir.'),
   s('cozum', 'Çözüm & Mimari', 'BÖLÜM 02', 'İki model, tek ekonomik ağ.', 'divider', 'Economic Twin şirketlerin geçmiş ticari ilişkilerinden; Behavioral Twin MCC kategori dizilerinden öğrenir.', 'Çözüm & Mimari'),
   s('davranissal-ikiz', 'B2C · Üç White Space', '02 / ÇÖZÜM & MİMARİ', 'Benzer davranışlardan bölgesel talep.', 'b2c', 'Kasap hikâyesi temsilidir: davranışsal ikizlerde görülen kategori ilişkileri müşteride yoksa potansiyel sinyal oluşur. Yeterli ölçekte anonim toplulaştırma ve banka POS kapsaması birlikte değerlendirilir. MCC tam ürünü veya özel hayat olayını göstermez.'),
   s('ekonomik-dongu', 'Ekonomik Döngü', '02 / ÇÖZÜM & MİMARİ', 'B2B ve B2C, aynı ağın iki tarafı.', 'flywheel', 'Bölgesel talep → POS/işyeri fırsatı → işletmede büyüme → yeni tedarikçi → reel ticaret → finansman ve POS → yeni veri → yeniden öğrenme.'),

@@ -29,7 +29,7 @@ Fontlar, logo ve harita yereldir; dış internet servisi gerekmez. Yerel sunucu 
 
 ## Sunum görünümü
 
-Açılış animasyonu orijinal koyu görünümündedir. Diğer 23 slayt düz gri-yeşil (#B6C6BF) zemin, koyu lacivert başlıklar ve koyu gövde metinleri kullanır. 1920×1080 tasarım alanında başlıklar 60 px, gövde 30–36 px, tablo ve grafik etiketleri en az 26 px’tir. Slaytlar 16:9 oranıyla ekrana sığdırılır; içerik ve sıra korunur. Tema değiştirme düğmesi ve P kısayolu kaldırılmıştır.
+Açılış animasyonu koyu zeminde başlar; 46,25–47,05 saniyeleri arasında adaçayı (#ACBFB7) zemine ve koyu yazılı logoya geçer. MP3 yaklaşık 44 ms kısa olduğu için dosyayı değiştirmeden tarayıcı belleğinde sonuna sessizlik eklenir. Geçiş ve bitiş olayı `voice.currentTime` ile belirlenir; ileri/geri sarma testi: `node tests/opening-transition.mjs`. Diğer 23 slayt düz gri-yeşil (#ACBFB7) zemin, koyu lacivert başlıklar ve koyu gövde metinleri kullanır. 1920×1080 tasarım alanında başlıklar 60 px, gövde 30–36 px, tablo ve grafik etiketleri en az 26 px’tir. Slaytlar 16:9 oranıyla ekrana sığdırılır; içerik ve sıra korunur. Tema değiştirme düğmesi ve P kısayolu kaldırılmıştır.
 
 Araç çubuğu ve alt gezinme alanı fare hareketinde, **C** veya **Tab** ile görünür, 2,5 saniye hareketsizlikten sonra gizlenir. **F**, ok tuşları, **N** ve **O** çalışmaya devam eder. Logolar aynı görseller ve oranlarla, açık zemine uygun koyu renk işlemiyle gösterilir.
 

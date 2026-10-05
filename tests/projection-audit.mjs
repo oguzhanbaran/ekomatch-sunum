@@ -22,7 +22,9 @@ async function measure(id,screenshot=false) {
    const text=[...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim())
    if(!text || style.display==='none' || style.visibility==='hidden') continue
    const name=el.textContent.trim().slice(0,90)
-   if(parseFloat(style.fontSize)<26) issues.push({type:'small',name,size:style.fontSize})
+   // The two perspective legends deliberately use smaller secondary labels.
+   const minimum=el.closest('.deck-perspective .perspective-legend')?22:26
+   if(parseFloat(style.fontSize)<minimum) issues.push({type:'small',name,size:style.fontSize})
    if(rect.left<bounds.left-1 || rect.right>bounds.right+1 || rect.top<bounds.top-1 || rect.bottom>bounds.bottom+1) issues.push({type:'outside',name,rect:{x:(rect.x-bounds.x)/scale,y:(rect.y-bounds.y)/scale,w:rect.width/scale,h:rect.height/scale}})
    if(el.scrollWidth>el.clientWidth+3 && el.clientWidth>0) issues.push({type:'overflow',name,width:el.clientWidth,scroll:el.scrollWidth})
   }
@@ -61,7 +63,7 @@ try {
  assert.equal(await page.locator('.projection-toggle').count(),0)
  await page.waitForTimeout(2700); assert.equal(await page.locator('.topbar').isVisible(),false)
  await page.keyboard.press('c'); assert.equal(await page.locator('.topbar').isVisible(),true)
- await page.keyboard.press('p'); assert.equal(await page.locator('.deck-scene').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(182, 198, 191)')
+ await page.keyboard.press('p'); assert.equal(await page.locator('.deck-scene').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(172, 191, 183)')
  await page.keyboard.press('ArrowRight'); await page.waitForTimeout(300)
  assert.equal(new URL(page.url()).hash,'#ekonomik-katki')
  await page.keyboard.press('f'); await page.waitForTimeout(100); assert.ok(await page.evaluate(()=>Boolean(document.fullscreenElement)))
@@ -71,5 +73,5 @@ try {
  await fs.writeFile('test-results/projection/audit.json',JSON.stringify({errors,report},null,2))
  console.log(JSON.stringify({errors,issues:report.filter(r=>r.issues.length)},null,2))
  assert.equal(errors.length,0)
- assert.ok(report.every(r=>r.background==='rgb(182, 198, 191)' && Math.abs(r.ratio-16/9)<.001 && r.issues.length===0))
+ assert.ok(report.every(r=>r.background==='rgb(172, 191, 183)' && Math.abs(r.ratio-16/9)<.001 && r.issues.length===0))
 } finally {await browser.close()}

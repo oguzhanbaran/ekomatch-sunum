@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowRight, Check, Minus, X, ScanSearch, UserCheck, Handshake, Banknote, Database, Layers, Network, BrainCircuit, ShieldCheck, Monitor, ChevronRight, RotateCcw, BookOpen, User, Package, Megaphone, Unlink, Activity, Radar, Link, Landmark, type LucideIcon } from 'lucide-react'
+import { ArrowRight, Check, Minus, X, ScanSearch, UserCheck, Handshake, Banknote, Database, Layers, Network, BrainCircuit, ShieldCheck, Monitor, ChevronRight, RotateCcw, BookOpen, History, Users, Package, PackageCheck, Activity, Radar, Link, Landmark, type LucideIcon } from 'lucide-react'
 import { EkoMark } from '../components/Brand'
 import { EconomicNetwork } from '../components/Network'
 import { PerspectiveSlides } from '../components/PerspectiveSlides'
@@ -24,12 +24,12 @@ const b2bStepImages = [
 
 function Tag({ children }: { children: ReactNode }) { return <p className="deck-tag">{children}</p> }
 function Insight({ children, warning = false }: { children: ReactNode; warning?: boolean }) { return <div className={`deck-insight ${warning ? 'is-warning' : ''}`}>{children}</div> }
-function Steps({ items, active, select, icons, humanDecisionAt }: { items: string[]; active?: number; select?: (i: number) => void; icons?: LucideIcon[]; humanDecisionAt?: number }) {
+function Steps({ items, active, select, icons, humanDecisionAt, productAt }: { items: string[]; active?: number; select?: (i: number) => void; icons?: LucideIcon[]; humanDecisionAt?: number; productAt?: number }) {
   return <ol className="deck-steps">{items.map((item, i) => {
     const Icon = icons?.[i]
     const number = <span className="step-number">{String(i + 1).padStart(2, '0')}</span>
     const arrow = i < items.length - 1 ? <ArrowRight aria-hidden="true" /> : null
-    const content = <>{Icon ? <div className="step-top"><span className="step-icon-wrap" aria-hidden="true"><Icon size={34} strokeWidth={1.5} /></span></div> : number}{Icon ? <div className="step-label-row"><strong>{item}{humanDecisionAt === i && <ShieldCheck className="step-human-icon" size={18} strokeWidth={1.5} aria-label="İnsan kararı" />}</strong>{arrow}</div> : <strong>{item}</strong>}</>
+    const content = <>{Icon ? <div className="step-top"><span className="step-icon-wrap" aria-hidden="true"><Icon size={34} strokeWidth={1.5} /></span>{arrow}</div> : number}{Icon ? <div className="step-label-row"><strong>{item}</strong>{productAt === i && <span className="step-product-label">ürün burada</span>}{humanDecisionAt === i && <span className="step-human-decision"><ShieldCheck className="step-human-icon" size={18} strokeWidth={1.5} aria-hidden="true" /><span>insan kararı</span></span>}</div> : <strong>{item}</strong>}</>
     return <li key={item} className={active === i ? 'selected' : ''}>{select ? <button onClick={() => select(i)} aria-pressed={active === i}>{content}</button> : content}{!Icon && arrow}</li>
   })}</ol>
 }
@@ -115,13 +115,32 @@ function Revenue() {
   return <><div className="revenue-layout"><div><div className="financial-number"><strong>{f.total}</strong><span>milyon TL</span></div><p>POS + finansman katkı projeksiyonu</p><div className="revenue-bar" role="img" aria-label="400 milyon TL: 155 milyon POS ve 245 milyon finansman"><div style={{ flex: f.pos }}>155<br /><span>POS</span></div><div style={{ flex: f.financing }}>245<br /><span>Finansman</span></div></div><p className="deck-source">155 + 245 = 400 milyon TL</p></div><div className="scenario-panel"><div className="deck-tabs">{['Kötü', 'Beklenen', 'İyi'].map((n, i) => <button key={n} onClick={() => setScenario(i)} aria-pressed={scenario === i}>{n}</button>)}</div><div className="scenario-value" aria-live="polite"><strong>{scenario === 1 ? '400' : '—'}</strong><span>{scenario === 1 ? 'milyon TL · verilen projeksiyon' : 'Senaryo tutarı paylaşılmadı'}</span></div><div className="cost-reference"><span>Yaklaşık maliyet</span><strong>45 milyon TL</strong></div><p className="deck-source">Net/brüt tanımı ve dönem teyit bekliyor. Maliyet üstünde kalma iddiası henüz doğrulanamaz.</p></div></div><div className="finance-footer"><Insight>Projeksiyon, gerçekleşmiş gelir değildir.</Insight><Appendix /></div></>
 }
 
-function SlideBody({ kind }: { kind: string }) {
+function FourStepProcess() {
   const icons = [ScanSearch, UserCheck, Handshake, Banknote]
+  const descriptions = [
+    'Benzerlerinin geçmişinden öğrenir, henüz kurulmamış ilişkileri bulur.',
+    'Fırsat gerekçesiyle şubeciye gelir; gerçek ihtiyacı şubeci doğrular.',
+    'Uygun alternatifler sunulur; seçimi taraflar yapar.',
+    'Kurulan ticarete ödeme, POS ve finansman eşlik eder.',
+  ]
+  return <>
+    <div className="definition-grid">{data.definition.map((name, i) => {
+      const Icon = icons[i]
+      return <div key={name} className="definition-step">
+        <Icon /><h2>{name}</h2><p className="definition-description">{descriptions[i]}</p>
+        {i < data.definition.length - 1 && <ChevronRight className="definition-flow-arrow" aria-hidden="true" />}
+      </div>
+    })}</div>
+    <p className="definition-outcome">Yapay zekâ bulur ve açıklar; kredi ve ticari kararlar her zaman insanda.</p>
+  </>
+}
+
+function SlideBody({ kind }: { kind: string }) {
   switch (kind) {
-    case 'definition': return <><p className="deck-lead">Bankanın geçmiş ekonomik ilişkilerinden öğrenir; henüz oluşmamış potansiyel ilişkileri keşfeder, talep ile arzı buluşturur.</p><div className="definition-grid">{data.definition.map((name, i) => { const Icon = icons[i]; return <div key={name}><Icon /><h2>{name}</h2></div> })}</div><Insight>Henüz kurulmamış ilişki, keşfedilmeyi bekleyen bir fırsattır.</Insight></>
+    case 'definition': return <FourStepProcess />
     case 'metrics': return <><div className="metrics-grid">{data.metrics.map(([value, unit, label]) => <div key={label}><strong>{value}</strong><span>{unit}</span><p>{label}</p></div>)}</div><Insight>Boşluk küçük değil: harcama bizde başlıyor, başka bankada bitiyor.</Insight><p className="deck-source">Kaynak: BKM 2025–2026 kart verileri, Kuveyt Türk kurumsal tanıtım (Aralık 2025) · 564 milyar TL hesabında %90 off-us oranı varsayımı kullanılmıştır.</p></>
     case 'heatmap': return <Heatmap />
-    case 'comparison': return <><div className="approach-row old"><Tag>MEVCUT YAKLAŞIM</Tag><Steps items={['Müşteri gelir', 'Ürün önerilir', 'Kampanya gönderilir', 'İlişki banka dışında kalır']} icons={[User, Package, Megaphone, Unlink]} /></div><div className="approach-row new"><Tag>EKOMATCH</Tag><Steps items={['Veri', 'Fırsat keşfi', 'Şubeci doğrular', 'Arz eşleşir', 'Yeni ticaret', 'Finansman / POS']} icons={[Activity, Radar, UserCheck, Link, Handshake, Landmark]} humanDecisionAt={2} /></div><p className="deck-source">Kavramsal süreç karşılaştırması.</p></>
+    case 'comparison': return <><div className="approach-row old"><Tag>MEVCUT YAKLAŞIM</Tag><Steps items={['Müşterinin geçmişi', 'Segment', 'Ürün / kampanya', 'Ürün kullanılır']} icons={[History, Users, Package, PackageCheck]} productAt={2} /></div><div className="approach-row new"><Tag>EKOMATCH</Tag><Steps items={['Benzerlerin geçmişi', 'Fırsat keşfi', 'Şubeci doğrular', 'Arz eşleşir', 'Yeni ticaret', 'Ürün / finansman']} icons={[Activity, Radar, UserCheck, Link, Handshake, Landmark]} humanDecisionAt={2} productAt={5} /></div><p className="deck-source">Fark: mevcut yaklaşımda ürün hedeftir; EkoMatch'te ürün, kurulan ilişkinin sonucudur.</p></>
     case 'b2b': return <B2B />
     case 'b2c': return <B2C />
     case 'flywheel': return <Flywheel />
@@ -148,6 +167,14 @@ export function DeckScene({ index }: { index: number }) {
   const root = useRef<HTMLElement>(null)
   useEffect(() => { root.current?.focus({ preventScroll: true }) }, [index])
   if (slide.kind === 'perspective') return <PerspectiveSlides slide={slide} />
+  if (slide.kind === 'definition') return <section ref={root} tabIndex={-1} className="scene deck-scene deck-kind-definition" aria-label={slide.shortTitle}>
+    <header className="definition-header"><Tag>{slide.eyebrow}</Tag></header>
+    <div className="definition-process-content"><h1>{slide.title}</h1><SlideBody kind={slide.kind} /></div>
+  </section>
+  if (slide.kind === 'comparison') return <section ref={root} tabIndex={-1} className="scene deck-scene deck-kind-comparison" aria-label={slide.shortTitle}>
+    <header className="comparison-header"><Tag>{slide.eyebrow}</Tag></header>
+    <div className="comparison-content"><h1>{slide.title}</h1><SlideBody kind={slide.kind} /></div>
+  </section>
   if (slide.kind === 'cover' || slide.kind === 'final' || slide.kind === 'divider') {
     const ease = [0.22, 1, 0.36, 1] as const
     return <section ref={root} tabIndex={-1} className={`scene deck-scene deck-${slide.kind}`} aria-label={slide.shortTitle}>{slide.kind === 'final' ? <motion.div className="final-network-layer" initial={false} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0 : 1.1, ease }}><EconomicNetwork rich className="deck-background-network" /></motion.div> : <EconomicNetwork className="deck-background-network" />}<div className="deck-veil" /><div className={`deck-center ${slide.kind === 'final' ? 'final-composition' : ''}`}>
