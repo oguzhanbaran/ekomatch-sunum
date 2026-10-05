@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { AnimatePresence, MotionConfig, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, MotionConfig, motion } from 'framer-motion'
 import { LoginGate } from './components/LoginGate'
 import { PresentationShell } from './components/PresentationShell'
 import { scenes } from './data/deckData'
@@ -14,11 +14,8 @@ function Presentation({ onDirectNavigation }: { onDirectNavigation: () => void }
     return found >= 0 ? found : 0
   }, [])
   const [index, setIndex] = useState(initialIndex)
-  const [direction, setDirection] = useState(1)
-  const reduceMotion = useReducedMotion()
 
   const navigate = (next: number) => {
-    setDirection(next >= index ? 1 : -1)
     setIndex(next)
   }
 
@@ -34,29 +31,13 @@ function Presentation({ onDirectNavigation }: { onDirectNavigation: () => void }
     return () => window.removeEventListener('hashchange', onHash)
   })
 
-  const variants = reduceMotion ? {
-    enter: { opacity: 0 }, center: { opacity: 1 }, exit: { opacity: 0 },
-  } : {
-    enter: (d: number) => ({ opacity: 0, y: d * 34, scale: .992 }),
-    center: { opacity: 1, y: 0, scale: 1 },
-    exit: (d: number) => ({ opacity: 0, y: d * -26, scale: 1.004 }),
-  }
-
   return <MotionConfig reducedMotion="user"><PresentationShell index={index} setIndex={navigate}>
-    <AnimatePresence mode="wait" custom={direction}>
-      <motion.div
+      <div
         key={scenes[index].kind === 'perspective' ? 'perspective-pair' : scenes[index].id}
         className="scene-frame"
-        custom={direction}
-        variants={variants}
-        initial="enter"
-        animate="center"
-        exit="exit"
-        transition={{ duration: reduceMotion ? .12 : .42, ease: [0.22, 1, 0.36, 1] }}
       >
         <DeckScene index={index} />
-      </motion.div>
-    </AnimatePresence>
+      </div>
   </PresentationShell></MotionConfig>
 }
 
@@ -100,16 +81,13 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <AnimatePresence mode="wait">
         {authenticated ? (
-          <motion.div
+          <div
             key="presentation"
             className="app-view"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: .24 }}
           >
             <Presentation onDirectNavigation={() => setShowOpening(false)} />
             <AnimatePresence>{showOpening && <OpeningSequence onEnded={() => setShowOpening(false)} />}</AnimatePresence>
-          </motion.div>
+          </div>
         ) : (
           <motion.div key="login" className="app-view" exit={{ opacity: 0 }} transition={{ duration: .16 }}>
             <LoginGate onAuthenticated={authenticate} />

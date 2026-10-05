@@ -25,8 +25,23 @@ import './light.css'
 
 document.documentElement.dataset.theme = 'light'
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+async function startApp() {
+  // Load every presentation weight, including Turkish glyphs, before its first paint.
+  // Waiting for fonts.ready alone would miss fonts that have not been used yet.
+  const sample = 'EkoMatch İıŞşĞğÜüÖöÇç 0123456789'
+  const fonts = [
+    ...[500, 600, 700].map(weight => `${weight} 32px "Space Grotesk"`),
+    ...[400, 500, 600, 700].map(weight => `${weight} 32px "Manrope"`),
+    ...[400, 500].map(weight => `${weight} 32px "DM Mono"`),
+  ]
+  // A failed font request should still allow the presentation to open.
+  await Promise.allSettled(fonts.map(font => document.fonts.load(font, sample)))
+
+  ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+  )
+}
+
+void startApp()

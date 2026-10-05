@@ -35,8 +35,8 @@
 .deck-cover-logos { display: flex; align-items: center; justify-content: center; gap: clamp(18px, 2vw, 28px); margin: 3.5vh auto 0; }
 .deck-cover-logos img { display: block; object-fit: contain; user-select: none; }
 .deck-cover-mini { width: clamp(90px, 6.25vw, 120px); height: clamp(90px, 6.25vw, 120px); filter: drop-shadow(0 0 8px rgba(77,227,183,.1)); }
-.deck-cover-partner.is-kt { width: clamp(225px, 15vw, 287.5px); height: auto; }
-.deck-cover-partner.is-archi { width: clamp(175px, 11.25vw, 218.75px); height: auto; }
+.deck-cover-partner.is-kt { width: clamp(225px, 15vw, 287.5px); height: auto; aspect-ratio: 1920 / 1080; }
+.deck-cover-partner.is-archi { width: clamp(175px, 11.25vw, 218.75px); height: auto; aspect-ratio: 1280 / 594; }
 .chapter-number { display: block; color: #4de3b735; font: 600 clamp(70px, 9vw, 150px)/1 var(--font-display); }
 .deck-divider .deck-tag { margin-top: 20px; font-size: var(--subheading); }
 .chapter-line { width: 100px; height: 3px; margin: 35px auto 0; background: var(--aqua); }

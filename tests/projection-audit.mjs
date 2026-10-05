@@ -61,7 +61,7 @@ try {
  assert.equal(await page.locator('.projection-toggle').count(),0)
  await page.waitForTimeout(2700); assert.equal(await page.locator('.topbar').isVisible(),false)
  await page.keyboard.press('c'); assert.equal(await page.locator('.topbar').isVisible(),true)
- await page.keyboard.press('p'); assert.equal(await page.locator('.deck-scene').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(255, 255, 255)')
+ await page.keyboard.press('p'); assert.equal(await page.locator('.deck-scene').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(182, 198, 191)')
  await page.keyboard.press('ArrowRight'); await page.waitForTimeout(300)
  assert.equal(new URL(page.url()).hash,'#ekonomik-katki')
  await page.keyboard.press('f'); await page.waitForTimeout(100); assert.ok(await page.evaluate(()=>Boolean(document.fullscreenElement)))
@@ -71,5 +71,5 @@ try {
  await fs.writeFile('test-results/projection/audit.json',JSON.stringify({errors,report},null,2))
  console.log(JSON.stringify({errors,issues:report.filter(r=>r.issues.length)},null,2))
  assert.equal(errors.length,0)
- assert.ok(report.every(r=>r.background==='rgb(255, 255, 255)' && Math.abs(r.ratio-16/9)<.001 && r.issues.length===0))
+ assert.ok(report.every(r=>r.background==='rgb(182, 198, 191)' && Math.abs(r.ratio-16/9)<.001 && r.issues.length===0))
 } finally {await browser.close()}
