@@ -40,6 +40,7 @@
       const W = 1920, H = 1080, TRANSITION = .62
       const COLORS = { bg: '#0B1620', center: '#13283B', white: '#F3F7F7', orange: '#EF8A3C', aqua: '#36D9E6', mid: '#05AA6A', green: '#5AC526' }
       const NETWORK_NODE_COUNT = 80, NETWORK_EDGE_COUNT = 110, NEW_EDGE_COUNT = 14
+      const OPENING_PAIRS = [[0,1],[2,3],[4,5]]
       const canvas = document.querySelector('#stage')
       const ctx = canvas.getContext('2d', { alpha: false })
       const voice = document.querySelector('#voice')
@@ -95,32 +96,37 @@
           { x: 875, y: 610, business: false }, { x: 1090, y: 630, business: false },
           { x: 1170, y: 590, business: true }, { x: 970, y: 545, business: false },
         ]
+        // Populate matching cells on both sides so a sparse network stays balanced.
+        // Store outward membership separately from later customer/business story roles.
         while (nodes.length < NETWORK_NODE_COUNT) {
-          const angle = rand() * Math.PI * 2, radius = 90 + Math.pow(rand(), .64) * 820
-          const x = 960 + Math.cos(angle) * radius, y = 540 + Math.sin(angle) * radius * .57
-          if (nodes.some(n => Math.hypot(n.x-x,n.y-y) < 70)) continue
-          nodes.push({
-            x, y,
-            business: rand() < .15,
-            phase: rand() * Math.PI * 2,
-            reveal: rand(),
-          })
+          const pair = (nodes.length - 6) / 2, column = pair % 5, row = Math.floor(pair / 5)
+          const x = 180 + column * 140 + rand() * 80, y = 140 + row * 100 + rand() * 60
+          const mirrorX = W - x
+          if (nodes.some(n => Math.min(Math.hypot(n.x-x,n.y-y), Math.hypot(n.x-mirrorX,n.y-y)) < 70)) continue
+          const outside = column < 2 && row % 2 === 0
+          const business = outside || rand() < .15, phase = rand() * Math.PI * 2, reveal = rand()
+          nodes.push(
+            { x, y, business, outside, phase, reveal },
+            { x: mirrorX, y, business, outside, phase: phase + Math.PI, reveal },
+          )
         }
         const used = new Set(), addEdge = (a,b,isNew=false) => {
           if (a === b) return false
           const key = a < b ? `${a}-${b}` : `${b}-${a}`
           if (used.has(key)) return false
-          used.add(key); (isNew ? newEdges : edges).push({ a, b, reveal: rand(), center: (nodes[a].x + nodes[b].x) / 2 > 650 && (nodes[a].x + nodes[b].x) / 2 < 1270, outer: Math.hypot((nodes[a].x + nodes[b].x)/2-960, ((nodes[a].y + nodes[b].y)/2-540)*1.5) > 530 })
+          used.add(key); (isNew ? newEdges : edges).push({ a, b, reveal: rand(), center: (nodes[a].x + nodes[b].x) / 2 > 650 && (nodes[a].x + nodes[b].x) / 2 < 1270, outer: Boolean(nodes[a].outside || nodes[b].outside) })
           return true
         }
-        for (let i = 6; i < nodes.length; i++) {
+        OPENING_PAIRS.forEach(([a,b]) => { addEdge(a,b); edges[edges.length-1].reveal = 0 })
+        for (let i = 0; i < nodes.length; i++) {
           const nearest = nodes.map((n,j) => ({ j, d: j === i ? Infinity : Math.hypot(n.x-nodes[i].x,n.y-nodes[i].y) })).sort((a,b)=>a.d-b.d)
           addEdge(i, nearest[0].j)
           if (rand() < .30) addEdge(i, nearest[1].j)
         }
         while (edges.length < NETWORK_EDGE_COUNT) { const a = Math.floor(rand()*nodes.length), b = Math.floor(rand()*nodes.length); if (Math.hypot(nodes[a].x-nodes[b].x,nodes[a].y-nodes[b].y) < 270) addEdge(a,b) }
         while (newEdges.length < NEW_EDGE_COUNT) { const a = Math.floor(rand()*nodes.length), b = Math.floor(rand()*nodes.length); if (Math.hypot(nodes[a].x-nodes[b].x,nodes[a].y-nodes[b].y) < 340) addEdge(a,b,true) }
-        particles = Array.from({length: 22}, () => ({ edge: Math.floor(rand()*edges.length), phase: rand(), speed: .05 + rand()*.08 }))
+        const outwardEdges = edges.map((edge, i) => edge.outer ? i : -1).filter(i => i >= 0)
+        particles = Array.from({length: 22}, (_, i) => ({ edge: outwardEdges[i % outwardEdges.length], phase: rand(), speed: .05 + rand()*.08 }))
         const closest = (x,y,exclude=[]) => nodes.map((n,i)=>({i,d:exclude.includes(i)?Infinity:Math.hypot(n.x-x,n.y-y)})).sort((a,b)=>a.d-b.d)[0].i
         const chainTargets = [
           [[875,610],[1010,440],[1170,590]], [[360,390],[540,460],[700,360]],
@@ -167,7 +173,7 @@
         const n = nodes[i], phase = n.phase || i * .77
         const drift = freeze ? 0 : 1
         let x = n.x + Math.sin(t*.17 + phase) * 7 * drift, y = n.y + Math.cos(t*.13 + phase*1.3) * 5 * drift
-        if (outside && n.business && Math.hypot(x-960,(y-540)*1.6) > 490) {
+        if (outside && n.outside) {
           const dx=x-960, dy=y-540, len=Math.hypot(dx,dy)||1
           x += dx/len * outside*90; y += dy/len * outside*60
         }
@@ -203,7 +209,7 @@
         })
         nodes.forEach((n,i)=>{
           if((n.reveal||0)>reveal)return
-          const warm=n.business&&Math.hypot(n.x-960,(n.y-540)*1.6)>490?orange:0
+          const warm=n.outside?orange:0
           let color=warm?mixColor(COLORS.white,COLORS.orange,warm):COLORS.white
           if(positive)color=mixColor(color,mixColor(COLORS.aqua,COLORS.green,clamp((n.x-450)/1020)),positive)
           nodeDot(i,t,(n.business?1:.9)*opacity,color,outside,freeze)
@@ -211,15 +217,17 @@
         ctx.restore()
       }
 
-      function sparkPair(pairIndex,t,p,prior=0) {
-        const pairs=[[0,1],[2,3],[4,5]], [a,b]=pairs[pairIndex], pa=pointAt(a,t), pb=pointAt(b,t)
+      function sparkPair(pairIndex,t,p,prior=0,zoom=3) {
+        const [a,b]=OPENING_PAIRS[pairIndex], pa=pointAt(a,t), pb=pointAt(b,t)
+        ctx.save();ctx.translate(W/2,H/2);ctx.scale(zoom,zoom);ctx.translate(-W/2,-H/2)
         if(prior>0) edgeLine({a,b},t,.48*prior,COLORS.white,1,0,1.6)
         nodeDot(a,t,.95); nodeDot(b,t,.95)
         const flash=Math.sin(Math.PI*clamp(p/.3))*fadeWindow(p,.12)
         if(flash>0){edgeLine({a,b},t,.35+.65*flash,COLORS.white,clamp(p/.24),0,2.4);const q=clamp(p/.28),x=lerp(pa.x,pb.x,q),y=lerp(pa.y,pb.y,q);glow(x,y,105,sprites.white,flash*.9)}
+        ctx.restore()
       }
 
-      function persistentSparks(count,t,alpha=1) { for(let i=0;i<count;i++) sparkPair(i,t,1,alpha) }
+      function persistentSparks(count,t,alpha=1,zoom=3) { for(let i=0;i<count;i++) sparkPair(i,t,1,alpha,zoom) }
       function sceneProgress(id,t) { const i=sceneById.get(id), s=scenes[i], end=scenes[i+1]?.t ?? cues.sure; return clamp((t-s.t)/(end-s.t)) }
       function activeScene(t) { let i=0; for(let n=0;n<scenes.length;n++){if(t>=scenes[n].t)i=n;else break} return { ...scenes[i], index:i, p:sceneProgress(scenes[i].id,t) } }
 
@@ -231,7 +239,7 @@
       function s1_kivilcim_2(p,t){sparkPair(0,t,1,1);sparkPair(1,t,p)}
       function s1_kivilcim_3(p,t){persistentSparks(2,t);sparkPair(2,t,p)}
       function s1_iliski(p,t){persistentSparks(3,t,lerp(.55,1,easeInOut(p)))}
-      function s2_ag_acilis(p,t){const q=easeInOut(p);network(t,q,fadeWindow(p),{zoom:lerp(3,1.18,q)});persistentSparks(3,t,1-q*.45)}
+      function s2_ag_acilis(p,t){const q=easeInOut(p),zoom=lerp(3,1.18,q);network(t,q,fadeWindow(p),{zoom});persistentSparks(3,t,1-q,zoom)}
       function s2_ag_tam(p,t){const q=easeInOut(clamp(p/.42));network(t,1,1,{zoom:lerp(1.18,1,q)})}
       function s3_yeni_iliskiler(p,t){network(t,1,1);newEdges.forEach(e=>{const q=clamp((p-e.reveal*.78)/.22);if(q>0)edgeLine(e,t,.2,COLORS.white,easeInOut(q),0,1.15)})}
       function s3_bizimle(p,t){network(t,1,1,{aqua:easeInOut(p)});newEdges.forEach(e=>edgeLine(e,t,.18,e.center?COLORS.aqua:COLORS.white,1,0,e.center?1.5:1))}
@@ -262,9 +270,9 @@
         nodeDot(chain[0],t,alpha,COLORS.aqua);if(first>0)nodeDot(chain[1],t,alpha,COLORS.mid);if(second>0)nodeDot(chain[2],t,alpha,COLORS.green)
       }
 
-      function drawRadar(t,p,appear=1) {
-        const center={x:960,y:540},q=easeInOut(p),radius=20+q*520
-        ctx.globalAlpha=(1-q)*.8*appear;ctx.strokeStyle=COLORS.aqua;ctx.lineWidth=2;ctx.beginPath();ctx.arc(center.x,center.y,radius,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;glow(center.x,center.y,lerp(120.2,110,appear),sprites.aqua,.72)
+      function drawRadar(t,p,appear=1,pan=0) {
+        const customer=pointAt(chainSets[0][0],t),center={x:customer.x+pan,y:customer.y},q=easeInOut(p),radius=20+q*520
+        ctx.globalAlpha=(1-q)*.8*appear;ctx.strokeStyle=COLORS.aqua;ctx.lineWidth=3;ctx.beginPath();ctx.arc(center.x,center.y,radius,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;glow(center.x,center.y,lerp(120.2,110,appear),sprites.aqua,.72*appear)
       }
 
       function drawOpportunityBridges(t,p,solidProgress=0) {
@@ -314,15 +322,24 @@
         const frozen=sceneStart('s5_donma'),pan=panAt(frozen),q=easeInOut(clamp((t-frozen)/TRANSITION)),opacity=lerp(.3,.15,q)
         network(frozen,1,opacity,{pan});drawEstablishedEdges(frozen,opacity,{pan,settle:1});drawGaps(frozen,1-q,1,pan)
       }
-      function s5_peki(p,t){const frozen=sceneStart('s5_donma'),pan=panAt(frozen);network(frozen,1,.15,{pan});drawEstablishedEdges(frozen,.15,{pan,settle:1});const pulse=.72+.28*Math.sin(p*Math.PI*3),appear=easeInOut(clamp((t-sceneStart('s5_peki'))/TRANSITION));glow(960,540,95+35*pulse,sprites.aqua,.72*appear);ctx.fillStyle=COLORS.aqua;ctx.globalAlpha=appear;ctx.beginPath();ctx.arc(960,540,5+pulse*2,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1}
+      function s5_peki(p,t){
+        const frozen=sceneStart('s5_donma'),pan=panAt(frozen)
+        network(frozen,1,.15,{pan});drawEstablishedEdges(frozen,.15,{pan,settle:1})
+        const customer=pointAt(chainSets[0][0],frozen),pulse=.72+.28*Math.sin(p*Math.PI*3),appear=easeInOut(clamp((t-sceneStart('s5_peki'))/TRANSITION))
+        ctx.save();ctx.translate(pan,0)
+        glow(customer.x,customer.y,95+35*pulse,sprites.aqua,.72*appear)
+        nodeDot(chainSets[0][0],frozen,appear,COLORS.aqua)
+        ctx.restore()
+      }
       function s6_zincir_musteri(p,t){
         const q=easeInOut(p),resume=easeInOut(clamp((t-sceneStart('s6_zincir_musteri'))/TRANSITION))
         const frozen=sceneStart('s5_donma'),networkTime=lerp(frozen,t,resume),pan=panAt(frozen)*(1-resume)
         network(networkTime,1,lerp(.15,.6,q),{pan})
         drawEstablishedEdges(networkTime,.15*(1-resume),{pan,settle:1})
-        drawRadar(t,p,resume)
-        ctx.globalAlpha=1-resume;ctx.fillStyle=COLORS.aqua;ctx.beginPath();ctx.arc(960,540,6.44,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1
-        nodeDot(chainSets[0][0],t,easeInOut(clamp((q-.1)/.3)),COLORS.aqua)
+        drawRadar(networkTime,p,resume,pan)
+        ctx.save();ctx.translate(pan,0)
+        nodeDot(chainSets[0][0],networkTime,Math.max(1-resume,easeInOut(clamp((q-.1)/.3))),COLORS.aqua)
+        ctx.restore()
       }
       function s6_zincir_isletme(p,t){network(t,1,.6);drawChain(chainSets[0],t,easeInOut(p),0,1)}
       function s6_zincir_tedarikci(p,t){network(t,1,.6);drawChain(chainSets[0],t,1,easeInOut(p),1)}
