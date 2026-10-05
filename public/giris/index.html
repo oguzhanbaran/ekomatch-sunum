@@ -38,7 +38,8 @@
       'use strict'
 
       const W = 1920, H = 1080, TRANSITION = .62
-      const COLORS = { bg: '#0B1620', center: '#13283B', white: '#F3F7F7', orange: '#EF8A3C', aqua: '#02ABBF', mid: '#05AA6A', green: '#5AC526' }
+      const COLORS = { bg: '#0B1620', center: '#13283B', white: '#F3F7F7', orange: '#EF8A3C', aqua: '#36D9E6', mid: '#05AA6A', green: '#5AC526' }
+      const NETWORK_NODE_COUNT = 80, NETWORK_EDGE_COUNT = 110, NEW_EDGE_COUNT = 14
       const canvas = document.querySelector('#stage')
       const ctx = canvas.getContext('2d', { alpha: false })
       const voice = document.querySelector('#voice')
@@ -83,7 +84,7 @@
 
       function prepareSprites() {
         sprites = {
-          white: makeGlow('rgba(243,247,247,1)'), aqua: makeGlow('rgba(2,171,191,1)'),
+          white: makeGlow('rgba(243,247,247,1)'), aqua: makeGlow('rgba(54,217,230,1)'),
           green: makeGlow('rgba(90,197,38,1)'), orange: makeGlow('rgba(239,138,60,1)')
         }
       }
@@ -94,11 +95,12 @@
           { x: 875, y: 610, business: false }, { x: 1090, y: 630, business: false },
           { x: 1170, y: 590, business: true }, { x: 970, y: 545, business: false },
         ]
-        while (nodes.length < 220) {
+        while (nodes.length < NETWORK_NODE_COUNT) {
           const angle = rand() * Math.PI * 2, radius = 90 + Math.pow(rand(), .64) * 820
+          const x = 960 + Math.cos(angle) * radius, y = 540 + Math.sin(angle) * radius * .57
+          if (nodes.some(n => Math.hypot(n.x-x,n.y-y) < 70)) continue
           nodes.push({
-            x: 960 + Math.cos(angle) * radius,
-            y: 540 + Math.sin(angle) * radius * .57,
+            x, y,
             business: rand() < .15,
             phase: rand() * Math.PI * 2,
             reveal: rand(),
@@ -114,11 +116,11 @@
         for (let i = 6; i < nodes.length; i++) {
           const nearest = nodes.map((n,j) => ({ j, d: j === i ? Infinity : Math.hypot(n.x-nodes[i].x,n.y-nodes[i].y) })).sort((a,b)=>a.d-b.d)
           addEdge(i, nearest[0].j)
-          if (rand() < .48) addEdge(i, nearest[1].j)
+          if (rand() < .30) addEdge(i, nearest[1].j)
         }
-        while (edges.length < 310) { const a = Math.floor(rand()*nodes.length), b = Math.floor(rand()*nodes.length); if (Math.hypot(nodes[a].x-nodes[b].x,nodes[a].y-nodes[b].y) < 270) addEdge(a,b) }
-        while (newEdges.length < 40) { const a = Math.floor(rand()*nodes.length), b = Math.floor(rand()*nodes.length); if (Math.hypot(nodes[a].x-nodes[b].x,nodes[a].y-nodes[b].y) < 340) addEdge(a,b,true) }
-        particles = Array.from({length: 42}, () => ({ edge: Math.floor(rand()*edges.length), phase: rand(), speed: .05 + rand()*.08 }))
+        while (edges.length < NETWORK_EDGE_COUNT) { const a = Math.floor(rand()*nodes.length), b = Math.floor(rand()*nodes.length); if (Math.hypot(nodes[a].x-nodes[b].x,nodes[a].y-nodes[b].y) < 270) addEdge(a,b) }
+        while (newEdges.length < NEW_EDGE_COUNT) { const a = Math.floor(rand()*nodes.length), b = Math.floor(rand()*nodes.length); if (Math.hypot(nodes[a].x-nodes[b].x,nodes[a].y-nodes[b].y) < 340) addEdge(a,b,true) }
+        particles = Array.from({length: 22}, () => ({ edge: Math.floor(rand()*edges.length), phase: rand(), speed: .05 + rand()*.08 }))
         const closest = (x,y,exclude=[]) => nodes.map((n,i)=>({i,d:exclude.includes(i)?Infinity:Math.hypot(n.x-x,n.y-y)})).sort((a,b)=>a.d-b.d)[0].i
         const chainTargets = [
           [[875,610],[1010,440],[1170,590]], [[360,390],[540,460],[700,360]],
@@ -174,15 +176,16 @@
 
       function glow(x,y,size,sprite,alpha=1) { ctx.globalAlpha = alpha; ctx.drawImage(sprite,x-size/2,y-size/2,size,size); ctx.globalAlpha = 1 }
       function nodeDot(i,t,alpha=1,color=COLORS.white,outside=0,freeze=false) {
-        const n=nodes[i], p=pointAt(i,t,freeze,outside), r=n.business?6:2.4
-        glow(p.x,p.y,n.business?64:34,color===COLORS.orange?sprites.orange:color===COLORS.aqua?sprites.aqua:color===COLORS.green?sprites.green:sprites.white,alpha*.32)
+        const n=nodes[i], p=pointAt(i,t,freeze,outside), r=n.business?9:5
+        glow(p.x,p.y,n.business?48:26,color===COLORS.orange?sprites.orange:color===COLORS.aqua?sprites.aqua:color===COLORS.green?sprites.green:sprites.white,alpha*.18)
         ctx.globalAlpha=alpha; ctx.fillStyle=color; ctx.beginPath(); ctx.arc(p.x,p.y,r,0,Math.PI*2); ctx.fill()
-        if(n.business){ctx.strokeStyle=color;ctx.globalAlpha=alpha*.7;ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(p.x,p.y,r+6,0,Math.PI*2);ctx.stroke()} ctx.globalAlpha=1
+        if(n.business){ctx.strokeStyle=color;ctx.globalAlpha=alpha*.9;ctx.lineWidth=3;ctx.beginPath();ctx.arc(p.x,p.y,r+7,0,Math.PI*2);ctx.stroke()} ctx.globalAlpha=1
       }
 
       function edgeLine(edge,t,alpha=.18,color=COLORS.white,grow=1,outside=0,width=1,freeze=false) {
         const a=pointAt(edge.a,t,freeze,outside), b=pointAt(edge.b,t,freeze,outside), x=lerp(a.x,b.x,grow), y=lerp(a.y,b.y,grow)
-        ctx.globalAlpha=alpha; ctx.strokeStyle=color; ctx.lineWidth=width; ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(x,y);ctx.stroke();ctx.globalAlpha=1
+        // Retain scene fades while giving ordinary connections a visible, sharp core.
+        ctx.globalAlpha=clamp(alpha*3,0,.95); ctx.strokeStyle=color; ctx.lineWidth=Math.max(3.5,width*2.5); ctx.lineCap='round'; ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(x,y);ctx.stroke();ctx.globalAlpha=1
       }
 
       function network(t, reveal=1, opacity=1, options={}) {
@@ -196,14 +199,14 @@
           if(warm)color=mixColor(color,COLORS.orange,warm)
           if(positive)color=mixColor(color,mixColor(COLORS.aqua,COLORS.green,clamp(((nodes[e.a].x+nodes[e.b].x)/2-450)/1020)),positive)
           const emphasis=Math.max(warm,cool,positive)
-          edgeLine(e,t,lerp(.12,.24,emphasis)*opacity,color,1,outside,lerp(1,1.45,emphasis),freeze)
+          edgeLine(e,t,lerp(.20,.25,emphasis)*opacity,color,1,outside,lerp(1,1.45,emphasis),freeze)
         })
         nodes.forEach((n,i)=>{
           if((n.reveal||0)>reveal)return
           const warm=n.business&&Math.hypot(n.x-960,(n.y-540)*1.6)>490?orange:0
           let color=warm?mixColor(COLORS.white,COLORS.orange,warm):COLORS.white
           if(positive)color=mixColor(color,mixColor(COLORS.aqua,COLORS.green,clamp((n.x-450)/1020)),positive)
-          nodeDot(i,t,(n.business?.72:.52)*opacity,color,outside,freeze)
+          nodeDot(i,t,(n.business?1:.9)*opacity,color,outside,freeze)
         })
         ctx.restore()
       }
@@ -249,7 +252,7 @@
       function gradientLine(aIndex,bIndex,t,grow=1,alpha=1,width=3,dashed=false,offset=0) {
         const a=pointAt(aIndex,t),b=pointAt(bIndex,t),x=lerp(a.x,b.x,grow),y=lerp(a.y,b.y,grow)
         const gradient=ctx.createLinearGradient(a.x,a.y,b.x,b.y);gradient.addColorStop(0,COLORS.aqua);gradient.addColorStop(.52,COLORS.mid);gradient.addColorStop(1,COLORS.green)
-        ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle=gradient;ctx.lineWidth=width;ctx.lineCap='round';if(dashed){ctx.setLineDash([12,16]);ctx.lineDashOffset=offset}ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(x,y);ctx.stroke();ctx.restore()
+        ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle=gradient;ctx.lineWidth=Math.max(6,width*1.6);ctx.lineCap='round';if(dashed){ctx.setLineDash([20,18]);ctx.lineDashOffset=offset}ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(x,y);ctx.stroke();ctx.restore()
         if(grow>0&&grow<1)glow(x,y,86,sprites.green,alpha*.72)
       }
 
