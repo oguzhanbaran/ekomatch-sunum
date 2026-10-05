@@ -45,7 +45,7 @@ function Presentation({ onDirectNavigation }: { onDirectNavigation: () => void }
   return <MotionConfig reducedMotion="user"><PresentationShell index={index} setIndex={navigate}>
     <AnimatePresence mode="wait" custom={direction}>
       <motion.div
-        key={scenes[index].id}
+        key={scenes[index].kind === 'perspective' ? 'perspective-pair' : scenes[index].id}
         className="scene-frame"
         custom={direction}
         variants={variants}

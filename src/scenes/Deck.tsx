@@ -3,8 +3,11 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowRight, Check, Minus, X, ScanSearch, UserCheck, Handshake, Banknote, Database, Layers, Network, BrainCircuit, ShieldCheck, Monitor, ChevronRight, RotateCcw, BookOpen, User, Package, Megaphone, Unlink, Activity, Radar, Link, Landmark, type LucideIcon } from 'lucide-react'
 import { EkoMark } from '../components/Brand'
 import { EconomicNetwork } from '../components/Network'
+import { PerspectiveSlides } from '../components/PerspectiveSlides'
 import * as data from '../data/deckData'
 import provinces from '../data/provinces.json'
+import { WhiteSpaceProfiles } from '../components/WhiteSpaceProfiles'
+import { customerWhiteSpaces, businessWhiteSpaces } from '../data/whiteSpaceExamples'
 
 const miniLogoUrl = new URL('../../logo-mini.png', import.meta.url).href
 const ktLogoUrl = new URL('../../kt-logo.png', import.meta.url).href
@@ -53,8 +56,18 @@ const provinceNames = ['Adana','Adıyaman','Afyonkarahisar','Ağrı','Amasya','A
 function B2C() {
   const [province, setProvince] = useState(16)
   const [layer, setLayer] = useState(0)
+  const [customer, setCustomer] = useState(0)
+  const [business, setBusiness] = useState(0)
   const high = [6,16,27,34,35,41,42,54].includes(province)
-  return <><div className="b2c-layout"><div className="space-layers">{data.b2cLayers.map(([title, desc], i) => <button key={title} aria-pressed={layer === i} onClick={() => setLayer(i)}><span>0{i + 1}</span><div><h2>{title} White Space</h2><p>{desc}</p></div></button>)}</div><div className="turkey-map"><div className="map-heading"><Tag>TEMSİLİ TALEP / POS AÇIĞI</Tag><label>İl <select value={province} onChange={e => setProvince(Number(e.target.value))}>{provinceNames.map((n, i) => <option value={i + 1} key={n}>{n}</option>)}</select></label></div><svg viewBox="0 0 970 425" role="img" aria-label="81 ilde temsili talep ve POS kapsama açığı haritası">{provinces.map(p => <path key={p.code} d={p.rings.map(r => `M${r.map(pt => pt.join(',')).join('L')}Z`).join('')} className={p.code === province ? 'selected' : [6,16,27,34,35,41,42,54].includes(p.code) ? 'high' : p.code % 3 === 0 ? 'medium' : 'low'} onClick={() => setProvince(p.code)}><title>{provinceNames[p.code - 1]} · temsili sinyal</title></path>)}</svg><div className="map-readout" aria-live="polite"><strong>{provinceNames[province - 1]}</strong><span>{high ? 'Talep yüksek · POS kapsaması düşük' : 'Talep / POS dengesi izleniyor'}</span></div><div className="map-legend"><span>◻ Düşük açık</span><span>▧ Orta açık</span><span>■ Yüksek açık</span></div></div></div><Insight>{['Kasap örneği: benzer müşteri grubunda kategori ilişkisi var; müşteride yok.', 'Kasap örneği: tekil davranışlar açılmaz; yeterli örneklemle bölgesel sinyal üretilir.', 'Kasap örneği: banka POS kapsaması zayıfsa işyeri edinim fırsatı değerlendirilir.'][layer]}</Insight><p className="deck-source">MCC ürünü değil, işyeri kategorisini gösterir. Harita: OCHA / HDX; ekonomik sinyaller temsilidir.</p></>
+  const insight = layer === 0 ? customerWhiteSpaces[customer].insight : layer === 2 ? businessWhiteSpaces[business].insight : 'Tekil müşteri sinyalleri anonim olarak toplulaştırılır; bölgesel talep ve POS kapsaması birlikte değerlendirilir.'
+  return <>
+    <div className="b2c-layout">
+      <div className="space-layers">{data.b2cLayers.map(([title, desc], i) => <button key={title} aria-pressed={layer === i} onClick={() => setLayer(i)}><span>0{i + 1}</span><div><h2>{title} White Space</h2><p>{desc}</p></div></button>)}</div>
+      {layer === 0 ? <WhiteSpaceProfiles kind="customer" profiles={customerWhiteSpaces} selected={customer} onSelect={setCustomer} /> : layer === 2 ? <WhiteSpaceProfiles kind="business" profiles={businessWhiteSpaces} selected={business} onSelect={setBusiness} /> : <div className="turkey-map"><div className="map-heading"><Tag>TEMSİLİ TALEP / POS AÇIĞI</Tag><label>İl <select value={province} onChange={e => setProvince(Number(e.target.value))}>{provinceNames.map((n, i) => <option value={i + 1} key={n}>{n}</option>)}</select></label></div><svg viewBox="0 0 970 425" role="img" aria-label="81 ilde temsili talep ve POS kapsama açığı haritası">{provinces.map(p => <path key={p.code} d={p.rings.map(r => `M${r.map(pt => pt.join(',')).join('L')}Z`).join('')} className={p.code === province ? 'selected' : [6,16,27,34,35,41,42,54].includes(p.code) ? 'high' : p.code % 3 === 0 ? 'medium' : 'low'} onClick={() => setProvince(p.code)}><title>{provinceNames[p.code - 1]} · temsili sinyal</title></path>)}</svg><div className="map-readout" aria-live="polite"><strong>{provinceNames[province - 1]}</strong><span>{high ? 'Talep yüksek · POS kapsaması düşük' : 'Talep / POS dengesi izleniyor'}</span></div><div className="map-legend"><span>◻ Düşük açık</span><span>▧ Orta açık</span><span>■ Yüksek açık</span></div></div>}
+    </div>
+    <Insight>{insight}</Insight>
+    <p className="deck-source">{layer === 1 ? 'Harita: OCHA / HDX; ekonomik sinyaller temsilidir.' : layer === 0 ? 'Müşteriler ve kategori örnekleri temsilidir. MCC ürünü değil, işyeri kategorisini gösterir; boşluk kesin ihtiyaç değildir.' : 'İşletmeler ve ürün boşlukları temsilidir; ihtiyaç şubeci tarafından doğrulanır.'}</p>
+  </>
 }
 
 function Flywheel() {
@@ -93,7 +106,7 @@ function Positioning() {
 }
 
 function Opportunity() {
-  return <><div className="opportunity-layout"><div className="cash-story"><div className="financial-number"><strong>590</strong><span>milyar TL</span></div><p>Diğer banka POS’larındaki harcama hacmi</p><ol><li>Kasap kategorisinde bölgesel talep sinyali.</li><li>Bankanın POS kapsaması sınırlı.</li><li>İşyeri edinimi → yeni ödeme ilişkisi.</li></ol></div><div><div className="financial-number"><strong>22</strong><span>milyar TL</span></div><p>Binde 1 senaryosunda fırsat hacmi</p><div className="volume-stages" aria-label="Verilen hacim dizisi, milyar TL">{[970,652,590].map((n, i) => <div key={n}><strong>{n}</strong><i style={{ height: `${n / 970 * 130}px` }} /><span>{['KT kartları', 'Ara baz*', 'Dış POS'][i]}</span></div>)}</div><p className="deck-source">*Ara bazın tanımı ve 22 trilyon TL senaryo bazı teyit bekliyor.</p></div></div><div className="finance-footer"><Insight warning>Hacim, gelir değildir. Kasap hikâyesi temsilidir.</Insight><Appendix /></div></>
+  return <><div className="opportunity-layout"><div className="cash-story"><div className="financial-number"><strong>564</strong><span>milyar TL</span></div><p>Diğer banka POS’larındaki harcama hacmi</p><ol><li>Kasap kategorisinde bölgesel talep sinyali.</li><li>Bankanın POS kapsaması sınırlı.</li><li>İşyeri edinimi → yeni ödeme ilişkisi.</li></ol></div><div><div className="financial-number"><strong>22</strong><span>milyar TL</span></div><p>Binde 1 senaryosunda fırsat hacmi</p><div className="volume-stages" aria-label="Verilen hacim dizisi, milyar TL">{[855,652,564].map((n, i) => <div key={n}><strong>{n}</strong><i style={{ height: `${n / 855 * 130}px` }} /><span>{['KT kartları', 'Ara baz*', 'Dış POS'][i]}</span></div>)}</div><p className="deck-source">*Ara bazın tanımı ve 22 trilyon TL senaryo bazı teyit bekliyor.</p></div></div><div className="finance-footer"><Insight warning>Hacim, gelir değildir. Kasap hikâyesi temsilidir.</Insight><Appendix /></div></>
 }
 
 function Revenue() {
@@ -106,7 +119,7 @@ function SlideBody({ kind }: { kind: string }) {
   const icons = [ScanSearch, UserCheck, Handshake, Banknote]
   switch (kind) {
     case 'definition': return <><p className="deck-lead">Bankanın geçmiş ekonomik ilişkilerinden öğrenir; henüz oluşmamış potansiyel ilişkileri keşfeder, talep ile arzı buluşturur.</p><div className="definition-grid">{data.definition.map((name, i) => { const Icon = icons[i]; return <div key={name}><Icon /><h2>{name}</h2></div> })}</div><Insight>Henüz kurulmamış ilişki, keşfedilmeyi bekleyen bir fırsattır.</Insight></>
-    case 'metrics': return <><div className="metrics-grid">{data.metrics.map(([value, unit, label]) => <div key={label}><strong>{value}</strong><span>{unit}</span><p>{label}</p></div>)}</div><Insight>Boşluk küçük değil: harcama bizde başlıyor, başka bankada bitiyor.</Insight><p className="deck-source">Kaynak: BKM 2025–2026 kart verileri, Kuveyt Türk kurumsal tanıtım (Aralık 2025) · 590 milyar TL hesabında %90 off-us oranı varsayımı kullanılmıştır.</p></>
+    case 'metrics': return <><div className="metrics-grid">{data.metrics.map(([value, unit, label]) => <div key={label}><strong>{value}</strong><span>{unit}</span><p>{label}</p></div>)}</div><Insight>Boşluk küçük değil: harcama bizde başlıyor, başka bankada bitiyor.</Insight><p className="deck-source">Kaynak: BKM 2025–2026 kart verileri, Kuveyt Türk kurumsal tanıtım (Aralık 2025) · 564 milyar TL hesabında %90 off-us oranı varsayımı kullanılmıştır.</p></>
     case 'heatmap': return <Heatmap />
     case 'comparison': return <><div className="approach-row old"><Tag>MEVCUT YAKLAŞIM</Tag><Steps items={['Müşteri gelir', 'Ürün önerilir', 'Kampanya gönderilir', 'İlişki banka dışında kalır']} icons={[User, Package, Megaphone, Unlink]} /></div><div className="approach-row new"><Tag>EKOMATCH</Tag><Steps items={['Veri', 'Fırsat keşfi', 'Şubeci doğrular', 'Arz eşleşir', 'Yeni ticaret', 'Finansman / POS']} icons={[Activity, Radar, UserCheck, Link, Handshake, Landmark]} humanDecisionAt={2} /></div><p className="deck-source">Kavramsal süreç karşılaştırması.</p></>
     case 'b2b': return <B2B />
@@ -134,6 +147,7 @@ export function DeckScene({ index }: { index: number }) {
   const reduced = useReducedMotion()
   const root = useRef<HTMLElement>(null)
   useEffect(() => { root.current?.focus({ preventScroll: true }) }, [index])
+  if (slide.kind === 'perspective') return <PerspectiveSlides slide={slide} />
   if (slide.kind === 'cover' || slide.kind === 'final' || slide.kind === 'divider') {
     const ease = [0.22, 1, 0.36, 1] as const
     return <section ref={root} tabIndex={-1} className={`scene deck-scene deck-${slide.kind}`} aria-label={slide.shortTitle}>{slide.kind === 'final' ? <motion.div className="final-network-layer" initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0 : 1.1, ease }}><EconomicNetwork rich className="deck-background-network" /></motion.div> : <EconomicNetwork className="deck-background-network" />}<div className="deck-veil" /><div className={`deck-center ${slide.kind === 'final' ? 'final-composition' : ''}`}>

@@ -41,9 +41,9 @@ Fontlar, logo ve harita yereldir; dış internet servisi gerekmez. Yerel sunucu 
 
 ## İçerik
 
-Kapak → Problem / Fırsat → Çözüm / Mimari → Uygulama / Yol Haritası → Rekabet / Değer → Ekonomik Katkı → Strateji / Kapanış.
+Kapak → Problem / Fırsat → Bugünkü Bakış → Yeni Bakış → Çözüm / Mimari → Uygulama / Yol Haritası → Rekabet / Değer → Ekonomik Katkı → Strateji / Kapanış → Ek: Mevcut Durum.
 
-23 ana sahneye ek olarak finansal sahnelerde **Hesaplar ve varsayımlar** altında dört ek panel vardır. Gerçek Ek 1–4 dosyaları paylaşılmadığından bu paneller mevcut aritmetiği ve teyit listesini içerir.
+23 sahneye ek olarak finansal sahnelerde **Hesaplar ve varsayımlar** altında dört ek panel vardır. Gerçek Ek 1–4 dosyaları paylaşılmadığından bu paneller mevcut aritmetiği ve teyit listesini içerir.
 
 - Başlıklar, notlar, içerik, finansal girdiler: `src/data/deckData.ts`
 - Güncel sahneler: `src/scenes/Deck.tsx`
@@ -55,7 +55,7 @@ Eski Scenes.tsx ve projectData.ts önceki sürümdür; uygulama onları kullanma
 
 ## Veri doğruluğu ve eksikler
 
-33,4 trilyon TL; 970 / 652 / 590 milyar TL; 10,3 milyon müşteri; 453 şube; 13 kişi; yaklaşık 45 milyon TL maliyet ve 155 + 245 = 400 milyon TL katkı, kullanıcının metninden alınmıştır. Dönemleri ve birincil kaynakları paylaşılmamıştır; gerçekleşmiş veya dışarıdan doğrulanmış sonuç gibi sunulmaz.
+33,4 trilyon TL; 855 / 652 / 564 milyar TL; 10,3 milyon müşteri; 458 şube; 13 kişi; yaklaşık 45 milyon TL maliyet ve 155 + 245 = 400 milyon TL katkı, kullanıcının metninden alınmıştır. Dönemleri ve birincil kaynakları paylaşılmamıştır; gerçekleşmiş veya dışarıdan doğrulanmış sonuç gibi sunulmaz.
 
 - 22 milyar TL için binde 1 hesabı 22 trilyon TL baz gerektirir. Bu baz ve 652 ara tutarının tanımı teyit bekler.
 - Kötü / iyi senaryo tutarları verilmemiştir. “Kötü senaryoda bile maliyetin üzerinde” sonucu çıkarılmaz.
@@ -76,7 +76,7 @@ npm run test:presentation
 
 Test macOS Google Chrome kullanır. Farklı ortam için EKOMATCH_CHROME ve EKOMATCH_TEST_URL değişkenlerini ayarlayın. lint betiği TypeScript tip kontrolüdür; ayrı ESLint yapılandırması yoktur.
 
-23 sahne 1920×1080, 1440×900, 1366×768, 1024×768, 768×1024 ve 375×812 boyutlarında kontrol edilir. Klavye, trackpad, tam ekran, genel görünüm, notlar, B2B akışı, B2C haritası, senaryolar, ekler, logo kuralı ve dış internet olmadan yerel çalışma test edilir.
+23 sahne 1920×1080, 1440×900, 1366×768, 1024×768, 768×1024 ve 375×812 boyutlarında kontrol edilir. Klavye, trackpad, tam ekran, genel görünüm, notlar, B2C etkileşimleri, senaryolar, ekler, logo kuralı ve dış internet olmadan yerel çalışma test edilir.
 
 Rapor `test-results/audit.json`, 1920×1080 görüntüleri aynı klasördedir. Headless animasyon ölçümü fiziksel projektör testi veya 60 FPS garantisi değildir. Gerçek salonda yazı okunabilirliği ayrıca kontrol edilmelidir.
 

@@ -380,3 +380,99 @@
 @media (prefers-reduced-motion: reduce) {
   .deck-final .network__potential.is-selected { animation: none; }
 }
+
+/* The same network stays mounted while the two perspectives change. */
+.deck-perspective { isolation: isolate; }
+.perspective-layout { position: relative; z-index: 1; display: grid; grid-template-columns: 42% 58%; flex: 1; min-height: 0; }
+.perspective-copy-slot { min-width: 0; }
+.perspective-copy { display: flex; flex-direction: column; gap: clamp(14px, 2.1vh, 24px); }
+.perspective-copy .deck-tag { margin: 0; font-size: clamp(19px, 1.4vw, 28px); }
+.perspective-copy h1 { margin: 0; font: 600 clamp(24px, 2.5vw, 48px)/1.08 var(--font-display); letter-spacing: -.045em; text-wrap: balance; }
+.perspective-description { margin: 0; color: var(--muted); font-size: clamp(20px, 1.5vw, 29px); line-height: 1.45; }
+.perspective-items { display: flex; flex-direction: column; gap: clamp(13px, 2.3vh, 25px); padding: 0; margin: 5px 0; list-style: none; }
+.perspective-items li { display: flex; align-items: flex-start; gap: 14px; }
+.perspective-items svg { flex: 0 0 24px; width: 24px; height: 24px; color: var(--muted); margin-top: 2px; }
+.is-new-view .perspective-items svg { color: var(--aqua); }
+.perspective-items h2 { margin: 0 0 5px; color: var(--ink); font: 500 clamp(25px, 1.85vw, 35px)/1.2 var(--font-display); }
+.perspective-items p { margin: 0; color: var(--muted); font-size: clamp(19px, 1.35vw, 26px); line-height: 1.35; }
+.perspective-example { margin: 0; border-left: 2px solid var(--aqua); padding: 12px 16px; background: #4de3b709; color: var(--muted); font-size: clamp(19px, 1.35vw, 26px); line-height: 1.4; }
+.perspective-emphasis { margin: 0; color: var(--muted); font-size: clamp(22px, 1.55vw, 30px); line-height: 1.35; }
+.is-new-view .perspective-emphasis { color: var(--aqua); }
+.perspective-visual { position: relative; min-width: 0; min-height: 0; }
+.perspective-network { position: absolute; inset: 0 0 45px; width: 100%; height: calc(100% - 45px); overflow: visible; }
+.perspective-network line, .perspective-business { vector-effect: non-scaling-stroke; }
+.perspective-existing line { stroke: var(--ink); stroke-width: 1; }
+.perspective-node { fill: var(--ink); opacity: .45; }
+.perspective-business { fill: none; stroke: var(--ink); stroke-width: 1; opacity: .6; }
+.perspective-gap { opacity: 0; animation: perspective-reveal .4s ease var(--reveal-delay) forwards; }
+.perspective-gap line { stroke: var(--aqua); stroke-width: 1.5; stroke-dasharray: 5 8; animation: perspective-flow 12s linear infinite; }
+.perspective-glow { fill: var(--aqua); opacity: .14; filter: blur(6px); }
+.perspective-endpoint { fill: var(--aqua); opacity: .9; }
+.perspective-legend { position: absolute; right: 0; bottom: 0; display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 12px 22px; color: var(--muted); font-size: clamp(15px, 1vw, 19px); }
+.perspective-legend span { display: flex; align-items: center; gap: 8px; }
+.perspective-legend i { display: block; width: 26px; border-top: 1px solid var(--muted); opacity: .5; }
+.perspective-legend .is-potential { border-top: 1px dashed var(--aqua); opacity: 1; }
+@keyframes perspective-reveal { to { opacity: 1; } }
+@keyframes perspective-flow { to { stroke-dashoffset: -52; } }
+@media (max-height: 800px) and (min-width: 1000px) {
+  .perspective-copy { gap: 6px; }
+  .perspective-copy .deck-tag { font-size: 18px; }
+  .perspective-description { font-size: 19px; }
+  .perspective-items { gap: 6px; margin: 0; }
+  .perspective-items h2 { font-size: 23px; }
+  .perspective-items p, .perspective-example { font-size: 18px; }
+  .perspective-example { padding: 7px 10px; }
+  .perspective-emphasis { font-size: 20px; }
+  .perspective-legend { font-size: 14px; }
+  .perspective-legend { bottom: 20px; }
+}
+@media (max-width: 999px) {
+  .perspective-layout { flex: 0 0 auto; grid-template-columns: 42% 58%; min-height: 650px; }
+  .perspective-copy h1 { font-size: 22px; }
+  .perspective-copy .deck-tag { font-size: 18px; }
+  .perspective-description { font-size: 19px; }
+  .perspective-items h2 { font-size: 21px; }
+  .perspective-items p, .perspective-example { font-size: 18px; }
+  .perspective-emphasis { font-size: 20px; }
+  .perspective-legend { font-size: 14px; }
+}
+@media (max-width: 600px) {
+  .perspective-layout { grid-template-columns: 1fr; gap: 20px; }
+  .perspective-copy h1 { font-size: clamp(22px, 6vw, 30px); }
+  .perspective-visual { height: 340px; }
+  .perspective-legend { gap: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .perspective-gap { animation: none; opacity: 1; }
+  .perspective-gap line { animation: none; }
+}
+
+.whitespace-profiles { min-width: 0; display: flex; flex-direction: column; gap: clamp(12px, 1.8vh, 20px); }
+.deck-body .whitespace-profiles > .deck-tag { margin: 0; }
+.whitespace-selectors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.whitespace-selectors button { min-height: 48px; padding: 10px 12px; border: 1px solid var(--line-strong); background: var(--surface); font-size: var(--label); cursor: pointer; }
+.whitespace-selectors button:hover { border-color: var(--aqua); }
+.whitespace-selectors button[aria-pressed=true] { border-color: var(--aqua); background: #123e30; color: var(--aqua); }
+.whitespace-detail { display: flex; flex-direction: column; gap: clamp(12px, 1.8vh, 20px); }
+.whitespace-existing { display: flex; flex-direction: column; gap: 9px; padding-bottom: 14px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: var(--label); }
+.whitespace-existing > div { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.whitespace-existing > div span { display: inline-flex; align-items: center; gap: 6px; }
+.whitespace-existing svg { opacity: .6; }
+.deck-body .whitespace-detail > h2 { margin: 0; font-size: var(--copy); }
+.whitespace-gaps { display: grid; gap: 10px; }
+.whitespace-gap-card { display: flex; align-items: center; gap: 14px; padding: clamp(14px, 1.5vw, 24px); border: 1px dashed #4de3b755; border-left: 3px solid var(--aqua); background: #4de3b709; }
+.whitespace-gap-card > svg { flex: 0 0 28px; color: var(--aqua); }
+.whitespace-gap-card > div { flex: 1; min-width: 0; }
+.whitespace-gap-card h3 { margin: 0 0 7px; font: 500 clamp(21px, 1.6vw, 30px)/1.2 var(--font-display); color: var(--aqua-soft); }
+.deck-body .whitespace-gap-card p { font-size: var(--label); }
+.whitespace-status { align-self: flex-start; flex-shrink: 0; font-size: 12px; color: var(--aqua); padding-top: 4px; }
+@media (max-height: 800px) and (min-width: 1000px) {
+  .whitespace-profiles, .whitespace-detail { gap: 10px; }
+  .whitespace-gap-card { padding: 12px; gap: 10px; }
+  .whitespace-existing { padding-bottom: 10px; }
+}
+@media (max-width: 600px) {
+  .whitespace-selectors button { padding: 10px 6px; font-size: 13px; }
+  .whitespace-gap-card { flex-wrap: wrap; }
+  .whitespace-status { margin-left: 42px; padding: 0; }
+}

@@ -15,12 +15,22 @@
     #subtitle.on { opacity: 1; }
     #debug { position: fixed; z-index: 5; top: 18px; right: 18px; min-width: 190px; display: none; padding: 10px 12px; border: 1px solid rgba(243,247,247,.18); color: #d7e9e9; background: rgba(3,10,15,.78); font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; pointer-events: none; }
     #debug.on { display: block; }
+    .opening-controls { position: fixed; z-index: 6; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); display: flex; gap: 6px; }
+    .opening-controls button { display: inline-flex; align-items: center; gap: 5px; min-height: 32px; padding: 6px 9px; border: 1px solid rgba(255,255,255,.2); border-radius: 6px; background: rgba(11,22,32,.25); color: #fff; font: 11px/1.2 inherit; font-size: 11px; cursor: pointer; opacity: .2; transition: opacity .2s ease, background .2s ease; }
+    .opening-controls button:hover, .opening-controls button:focus-visible { opacity: .85; background: rgba(11,22,32,.7); }
+    .opening-controls button:focus-visible { outline: 2px solid #02ABBF; outline-offset: 3px; }
+    .opening-controls svg { width: 13px; height: 13px; }
   </style>
 </head>
 <body aria-label="EkoMatch seslendirmeli açılış animasyonu">
   <canvas id="stage" aria-hidden="true"></canvas>
   <div id="subtitle" aria-live="polite"></div>
   <div id="debug"></div>
+  <div class="opening-controls" role="group" aria-label="Açılış kontrolleri">
+    <button id="restart" type="button" title="Açılışı başa sar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6" /></svg>Başa sar</button>
+    <button id="pause" type="button" title="Açılışı oynat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 4 12 8-12 8V4Z" /></svg><span>Devam et</span></button>
+    <button id="skip" type="button" title="Açılışı atla ve sunuma geç"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 4 12 8-12 8V4ZM20 4v16" /></svg>Atla</button>
+  </div>
   <audio id="voice" preload="auto" src="ekomatch_seslendirme.mp3"></audio>
   <audio id="music" preload="auto" src="music.mp3"></audio>
   <script>
@@ -35,6 +45,15 @@
       const music = document.querySelector('#music')
       const subtitle = document.querySelector('#subtitle')
       const debug = document.querySelector('#debug')
+      const pauseButton = document.querySelector('#pause')
+      function updatePauseButton() {
+        const paused = voice.paused
+        pauseButton.querySelector('span').textContent = paused ? 'Devam et' : 'Durdur'
+        pauseButton.title = paused ? 'Açılışı oynat' : 'Açılışı durdur'
+        pauseButton.querySelector('path').setAttribute('d', paused ? 'm6 4 12 8-12 8V4Z' : 'M8 4v16M16 4v16')
+      }
+      voice.addEventListener('play',updatePauseButton)
+      voice.addEventListener('pause',updatePauseButton)
       const logoImage = new Image()
       logoImage.src = 'logo.png'
       let cues = null, scenes = [], sceneById = new Map(), nodes = [], edges = [], newEdges = [], particles = [], gaps = [], chainSets = []
@@ -239,9 +258,9 @@
         nodeDot(chain[0],t,alpha,COLORS.aqua);if(first>0)nodeDot(chain[1],t,alpha,COLORS.mid);if(second>0)nodeDot(chain[2],t,alpha,COLORS.green)
       }
 
-      function drawRadar(t,p) {
+      function drawRadar(t,p,appear=1) {
         const center={x:960,y:540},q=easeInOut(p),radius=20+q*520
-        ctx.globalAlpha=(1-q)*.8;ctx.strokeStyle=COLORS.aqua;ctx.lineWidth=2;ctx.beginPath();ctx.arc(center.x,center.y,radius,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;glow(center.x,center.y,110,sprites.aqua,.72)
+        ctx.globalAlpha=(1-q)*.8*appear;ctx.strokeStyle=COLORS.aqua;ctx.lineWidth=2;ctx.beginPath();ctx.arc(center.x,center.y,radius,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;glow(center.x,center.y,lerp(120.2,110,appear),sprites.aqua,.72)
       }
 
       function drawOpportunityBridges(t,p,solidProgress=0) {
@@ -292,7 +311,15 @@
         network(frozen,1,opacity,{pan});drawEstablishedEdges(frozen,opacity,{pan,settle:1});drawGaps(frozen,1-q,1,pan)
       }
       function s5_peki(p,t){const frozen=sceneStart('s5_donma'),pan=panAt(frozen);network(frozen,1,.15,{pan});drawEstablishedEdges(frozen,.15,{pan,settle:1});const pulse=.72+.28*Math.sin(p*Math.PI*3),appear=easeInOut(clamp((t-sceneStart('s5_peki'))/TRANSITION));glow(960,540,95+35*pulse,sprites.aqua,.72*appear);ctx.fillStyle=COLORS.aqua;ctx.globalAlpha=appear;ctx.beginPath();ctx.arc(960,540,5+pulse*2,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1}
-      function s6_zincir_musteri(p,t){const q=easeInOut(p);network(t,1,lerp(.15,.6,q));drawRadar(t,p);nodeDot(chainSets[0][0],t,easeInOut(clamp((q-.1)/.3)),COLORS.aqua)}
+      function s6_zincir_musteri(p,t){
+        const q=easeInOut(p),resume=easeInOut(clamp((t-sceneStart('s6_zincir_musteri'))/TRANSITION))
+        const frozen=sceneStart('s5_donma'),networkTime=lerp(frozen,t,resume),pan=panAt(frozen)*(1-resume)
+        network(networkTime,1,lerp(.15,.6,q),{pan})
+        drawEstablishedEdges(networkTime,.15*(1-resume),{pan,settle:1})
+        drawRadar(t,p,resume)
+        ctx.globalAlpha=1-resume;ctx.fillStyle=COLORS.aqua;ctx.beginPath();ctx.arc(960,540,6.44,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1
+        nodeDot(chainSets[0][0],t,easeInOut(clamp((q-.1)/.3)),COLORS.aqua)
+      }
       function s6_zincir_isletme(p,t){network(t,1,.6);drawChain(chainSets[0],t,easeInOut(p),0,1)}
       function s6_zincir_tedarikci(p,t){network(t,1,.6);drawChain(chainSets[0],t,1,easeInOut(p),1)}
       function s6_zincir_cogalma(p,t){network(t,1,.62);drawChain(chainSets[0],t,1,1,1);chainSets.slice(1).forEach((chain,i)=>{const q=easeInOut(clamp((p-i*.09)/.36));if(q>0)drawChain(chain,t,q,clamp(q*1.45-.45),q)})}
@@ -370,8 +397,12 @@
       function reset() {voice.pause();music.pause();voice.currentTime=0;if(!music.error)music.currentTime=0;started=false;ended=false;subtitle.textContent='';subtitle.classList.remove('on')}
 
       addEventListener('resize',resize)
+      document.querySelector('#restart').addEventListener('click',event=>{event.stopPropagation();reset();begin()})
+      pauseButton.addEventListener('click',event=>{event.stopPropagation();if(voice.paused)begin();else{voice.pause();music.pause()}})
+      document.querySelector('#skip').addEventListener('click',event=>{event.stopPropagation();finish()})
       addEventListener('click',()=>{if(!started)begin()})
       addEventListener('keydown',event=>{
+        if(event.target instanceof HTMLButtonElement && (event.key===' ' || event.key==='Enter'))return
         if(event.key===' '){event.preventDefault();if(!started)begin();else if(voice.paused)begin();else{voice.pause();music.pause()}}
         if(event.key==='ArrowLeft'){event.preventDefault();seek(-2)}
         if(event.key==='ArrowRight'){event.preventDefault();seek(2)}
