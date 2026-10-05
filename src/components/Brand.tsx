@@ -1,6 +1,15 @@
 import { motion } from 'framer-motion'
 
 const logoUrl = new URL('../../Ekomatch Logo.PNG', import.meta.url).href
+const ktLogoUrl = new URL('../../kt-logo.png', import.meta.url).href
+const archiLogoUrl = new URL('../../archi-logo.png', import.meta.url).href
+
+export function SlidePartnerMarks() {
+  return <div className="slide-partner-marks" aria-label="Proje paydaşları">
+    <span className="slide-partner-mark is-kt"><img src={ktLogoUrl} alt="Kuveyt Türk" draggable={false} /></span>
+    <span className="slide-partner-mark is-archi"><img src={archiLogoUrl} alt="Architecht" draggable={false} /></span>
+  </div>
+}
 
 export function EkoMark({ compact = false }: { compact?: boolean }) {
   return (

@@ -4,6 +4,7 @@ import { LoginGate } from './components/LoginGate'
 import { PresentationShell } from './components/PresentationShell'
 import { scenes } from './data/deckData'
 import { DeckScene } from './scenes/Deck'
+import { SlidePartnerMarks } from './components/Brand'
 
 const AUTH_SESSION_KEY = 'ekomatch:authenticated'
 
@@ -37,6 +38,7 @@ function Presentation({ onDirectNavigation }: { onDirectNavigation: () => void }
         className="scene-frame"
       >
         <DeckScene index={index} />
+        {scenes[index].kind !== 'cover' && scenes[index].kind !== 'divider' && <SlidePartnerMarks />}
       </div>
   </PresentationShell></MotionConfig>
 }

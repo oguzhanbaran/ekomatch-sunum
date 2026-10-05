@@ -2,6 +2,14 @@
 :root { --copy: clamp(18px, 1.4vw, 28px); --label: clamp(15px, 1.05vw, 21px); --subheading: clamp(23px, 1.85vw, 36px); --muted: #b9cbc4; }
 .deck-scene { padding: clamp(78px, 8vh, 96px) 5vw 100px; display: flex; flex-direction: column; gap: 3vh; background: radial-gradient(ellipse at 90% 15%, #13372e88, transparent 55%); }
 .deck-scene:focus { outline: none; }
+.slide-partner-marks { position: absolute; z-index: 5; top: 50px; right: 96px; display: flex; align-items: center; gap: 24px; height: 44px; pointer-events: none; }
+/* Use the artwork bounds rather than the transparent bitmap margins. */
+.slide-partner-mark { position: relative; display: block; flex-shrink: 0; }
+.slide-partner-mark img { position: absolute; display: block; max-width: none; height: auto; filter: none; }
+.slide-partner-mark.is-kt { width: 162.1px; height: 31.6px; }
+.slide-partner-mark.is-kt img { width: 192px; left: -14.9px; top: -38.2px; }
+.slide-partner-mark.is-archi { width: 125.28px; height: 42.84px; }
+.slide-partner-mark.is-archi img { width: 153.6px; left: -14.28px; top: -14.28px; }
 .deck-heading { position: relative; z-index: 2; flex-shrink: 0; }
 .deck-tag { margin: 0 0 12px; color: var(--aqua); font: 500 var(--label)/1.35 var(--font-mono); letter-spacing: .08em; }
 .deck-heading h1 { max-width: 1500px; margin: 0; font: 600 clamp(36px, 3.65vw, 72px)/1.08 var(--font-display); letter-spacing: -.045em; text-wrap: balance; }

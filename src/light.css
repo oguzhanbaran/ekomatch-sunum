@@ -47,11 +47,22 @@
   display: grid;
   grid-template-columns: repeat(2, 460px);
   justify-content: center;
-  justify-items: center;
   align-items: center;
-  gap: 64px;
+  gap: 96px;
   margin-top: 32px;
+  min-height: 258.75px;
+  flex-wrap: nowrap;
 }
+/* Reserve the visible artwork bounds, excluding each file's transparent margins.
+   Keep the source bitmaps intact and retain their existing scale. */
+[data-theme=light] .deck-partner-slot { position: relative; display: block; flex-shrink: 0; }
+[data-theme=light] .deck-partner-slot.is-kt { width: 388.365px; height: 75.708px; }
+[data-theme=light] .deck-partner-slot.is-archi { width: 293.625px; height: 100.406px; }
+[data-theme=light] .deck-partner-slot.is-kt { justify-self: end; }
+[data-theme=light] .deck-partner-slot.is-archi { justify-self: start; }
+[data-theme=light] .deck-partner-slot .deck-cover-partner { position: absolute; max-width: none; }
+[data-theme=light] .deck-partner-slot .deck-cover-partner.is-kt { left: -35.698px; top: -91.521px; }
+[data-theme=light] .deck-partner-slot .deck-cover-partner.is-archi { left: -33.469px; top: -33.469px; }
 [data-theme=light] .deck-cover-mini { width: 120px; height: 120px; }
 [data-theme=light] :is(.deck-cover-mini, .chapter-logo) {
   object-fit: contain;
