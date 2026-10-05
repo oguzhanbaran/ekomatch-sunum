@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 
-const logoUrl = new URL('../../Ekomatch Logo YENI.png', import.meta.url).href
+const logoUrl = new URL('../../Ekomatch Logo.PNG', import.meta.url).href
 
 export function EkoMark({ compact = false }: { compact?: boolean }) {
   return (
