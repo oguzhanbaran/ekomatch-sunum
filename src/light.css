@@ -297,3 +297,31 @@
 [data-theme=light] .deck-kind-comparison .step-product-label { position: absolute; top: calc(100% + 28px); left: 50%; transform: translateX(-50%); font-size: 22px; line-height: 1.4; color: #075448; white-space: nowrap; }
 [data-theme=light] .deck-kind-comparison .approach-row.old .step-product-label { color: #2F3F4D; }
 [data-theme=light] .deck-kind-comparison .approach-row.new li:first-child strong { white-space: nowrap; }
+
+/* Large type for the customer-to-supply-chain example. */
+[data-theme=light] .deck-kind-b2c :is(h1, h2, h3) { color: #13283B; }
+[data-theme=light] .deck-kind-b2c .deck-heading h1 { font-size: 60px; white-space: nowrap; }
+[data-theme=light] .deck-kind-b2c :is(p, span, strong, button, label) { color: #2F3F4D; }
+[data-theme=light] .deck-kind-b2c .deck-tag { color: #13283B; }
+[data-theme=light] .chain-example { display: flex; flex-direction: column; gap: 24px; }
+[data-theme=light] .chain-example .space-layers button h2 { font-size: 34px; font-weight: 600; }
+[data-theme=light] .chain-example .space-layers button p { font-size: 28px; line-height: 1.4; }
+[data-theme=light] .chain-panel { min-width: 0; }
+[data-theme=light] .chain-example .whitespace-selectors { display: flex; }
+[data-theme=light] .chain-example .whitespace-selectors button { font-size: 28px; }
+[data-theme=light] .chain-example .whitespace-existing { font-size: 28px; }
+[data-theme=light] .chain-example .whitespace-existing span { white-space: pre-wrap; }
+[data-theme=light] .chain-gap { padding: 18px; border: 2px solid #647789; border-left: 5px solid #007F78; }
+[data-theme=light] .chain-gap > div { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+[data-theme=light] .chain-example .chain-gap h3 { font-size: 34px; line-height: 1.2; font-weight: 600; margin: 0; }
+[data-theme=light] .chain-gap span { font-size: 28px; white-space: nowrap; }
+[data-theme=light] .chain-example .chain-gap p { font-size: 28px; line-height: 1.4; margin: 12px 0 0; }
+[data-theme=light] .chain-example .chain-category-limit { font-size: 28px; line-height: 1.4; }
+[data-theme=light] .chain-example .map-readout { font-size: 30px; line-height: 1.4; color: #2F3F4D; }
+[data-theme=light] .chain-example .map-legend { font-size: 26px; justify-content: flex-start; gap: 24px; }
+[data-theme=light] .chain-example .map-legend span { display: inline-flex; align-items: center; gap: 10px; color: #2F3F4D; }
+[data-theme=light] .map-legend i { display: inline-block; width: 26px; height: 26px; border: 1px solid #13283B; flex-shrink: 0; }
+[data-theme=light] .demand-low { background: #FFFFFF; }
+[data-theme=light] .demand-medium { background: #b4d8d4; }
+[data-theme=light] .demand-high { background: #007F78; }
+[data-theme=light] .chain-example .deck-insight { font-size: 34px; font-weight: 500; color: #075448; }

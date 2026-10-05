@@ -48,23 +48,10 @@ ANLATIM NOTU
   'cozum': `HEDEF SÜRE: 7 saniye
 
 Bu keşfi iki model yaklaşımıyla destekliyoruz: işletmeler için ekonomik ikizler, bireysel müşteriler için davranışsal ikizler. İkisini aynı ekonomik ağda birleştiriyoruz.`,
-  'davranissal-ikiz': `HEDEF SÜRE: 42 saniye
-
-Fırsatları üç düzeyde ele alıyoruz.
-
-İlk düzey müşteri. Örneğin benzer harcama davranışlarına sahip kişilerde ev ve yapı kategorisi görülürken, bu müşteride henüz görünmeyebilir. Burada potansiyel bir kategori ilişkisi yakalıyoruz.
-
-İkinci düzey bölge. Benzer sinyalleri yeterli ölçekte anonim olarak bir araya getirip hangi bölgede talep yoğunlaştığını inceliyoruz. Bunu bankanın POS kapsamasıyla birlikte değerlendiriyoruz.
-
-Üçüncü düzey işyeri. Örneğin benzer fırınların kullandığı bir üretim ekipmanı, bu işletmede henüz bulunmayabilir. Bu da şubecinin görüşmesinde ele alabileceği bir fırsat oluşturur.
-
-Bu örnekler temsilidir. Harcama kategorisi verisi tek başına tam ürünü veya kesin ihtiyacı göstermez; her fırsatın doğrulanması gerekir.
-
-ANLATIM NOTU
-Önce Müşteri ekranını göster. İkinci paragrafta Bölge’ye, üçüncü paragrafta İşyeri’ne geç. İşyeri örneğinde “Mahalle fırını”nı seç. Bütün örnekleri tek tek açma.
-
-ZAMAN KONTROLÜ
-Bu slaydın sonunda, video dâhil yaklaşık 3:23 hedefle.`,
+  'davranissal-ikiz': `Bir örnekle gösterelim. Müşterimiz A market, akaryakıt ve giyimde harcama yapıyor. Harcama davranışı ona benzeyen müşterilerin çoğu yapı market kategorisine girmiş, o henüz girmemiş. Bu bir boşluk; tek bir müşteri için küçük bir sinyal. Biz yalnızca işyeri kategorisine bakıyoruz; ne alındığını ya da nedenini çıkarmıyoruz.
+Bu sinyalleri anonim olarak ilçe bazında topladığımızda, özellikle kentsel dönüşümün sürdüğü bölgelerde talebin yoğunlaştığını, bankamızla çalışan işyerinin ise az olduğunu görüyoruz. Bireysel veri bankada kalıyor; işletmeye yalnızca anonim toplam gidiyor.
+O bölgedeki bir yapı market zinciri bankamızın müşterisi. Ona ölçek, bölge ve büyüme bakımından en çok benzeyen kırk işletmeye bakıyoruz: yirmi altısı üreticilerden vadeli alımını Tedarikçi Finansmanı ile yapmış, on yedisi ekipmanını finansal kiralamayla finanse etmiş. Bu zincir yapmamış.
+Bu bir ihtiyaç tespiti değil, bir görüşme sinyali. Şubemiz görüşüyor; ihtiyaç gerçekse müşterimiz olan üreticileri alternatif olarak sunuyoruz, seçimi taraflar yapıyor. Örnekteki iş yeri, ürün adları ve oranlar temsilidir.`,
   'ekonomik-dongu': `HEDEF SÜRE: 22 saniye
 
 Bu üç düzey birbirini besleyen bir ekonomik döngü oluşturuyor.
@@ -198,7 +185,7 @@ Bu slaydı ana sunuma eklemek yerine hacim, müşteri tabanı veya uygulama öl�
 }
 
 export type Slide = { id: string; shortTitle: string; eyebrow: string; title: string; note: string; kind: string; chapter?: string }
-const s = (id: string, shortTitle: string, eyebrow: string, title: string, kind: string, note: string, chapter?: string): Slide => ({ id, shortTitle, eyebrow, title, kind, note: speakerNotes[id] ? `${speakerNotes[id]}\n\nEK HATIRLATMA\n${note}` : note, chapter })
+const s = (id: string, shortTitle: string, eyebrow: string, title: string, kind: string, note: string, chapter?: string): Slide => ({ id, shortTitle, eyebrow, title, kind, note: speakerNotes[id] ? (note ? `${speakerNotes[id]}\n\nEK HATIRLATMA\n${note}` : speakerNotes[id]) : note, chapter })
 
 export const scenes: Slide[] = [
   s('acilis', 'Kapak', 'EKOMATCH', 'Yapay Zekâ Destekli Ekonomik İlişki ve Fırsat Keşif Platformu', 'cover', 'Kesikli bağlantı henüz kurulmamış ekonomik ilişkiyi temsil eder. Önce fırsat, sonra reel ticaret ve finansman.'),
@@ -207,7 +194,7 @@ export const scenes: Slide[] = [
   s('yeni-bakis', 'Yeni Bakış', '02 / YENİ BAKIŞ', 'EkoMatch, henüz kurulmamış olanlara bakıyor.', 'perspective', 'Birbirine benzeyen müşteriler ve işletmeler çoğu zaman benzer ilişkiler kurar. Benzerlerinin kurduğu ama bir müşterinin henüz kurmadığı ilişki bir boşluktur. EkoMatch bu boşlukları görür; her biri bankanın önceden görebileceği bir fırsattır.\n\nBenzerlerini buluyoruz: davranışı ve yapısı birbirine benzeyen müşteri ve işletmeleri. Sonra boşluğu görüyoruz: benzerlerinde kurulmuş, ona henüz kurulmamış ilişkiyi. En sonunda şubemiz doğruluyor ve banka ilişkinin kurulmasını destekliyor.'),
   s('ekomatch-nedir', 'NASIL ÇALIŞIR?', '01 / PROBLEM & FIRSAT', 'EkoMatch dört adımda çalışır.', 'definition', 'EkoMatch dört adımda çalışıyor. Önce benzerlerinin geçmişinden öğrenip henüz kurulmamış ilişkileri buluyor. Bu fırsat gerekçesiyle şubemize geliyor ve gerçek ihtiyacı şubemiz doğruluyor; yapay zekâ kararı kendi başına vermiyor. İhtiyaç doğrulanırsa uygun alternatifler sunuluyor, seçimi taraflar yapıyor. Kurulan ticaretin üzerine de ödeme, POS ve finansman geliyor.'),
   s('cozum', 'Çözüm & Mimari', 'BÖLÜM 02', 'İki model, tek ekonomik ağ.', 'divider', 'Economic Twin şirketlerin geçmiş ticari ilişkilerinden; Behavioral Twin MCC kategori dizilerinden öğrenir.', 'Çözüm & Mimari'),
-  s('davranissal-ikiz', 'B2C · Üç White Space', '02 / ÇÖZÜM & MİMARİ', 'Benzer davranışlardan bölgesel talep.', 'b2c', 'Kasap hikâyesi temsilidir: davranışsal ikizlerde görülen kategori ilişkileri müşteride yoksa potansiyel sinyal oluşur. Yeterli ölçekte anonim toplulaştırma ve banka POS kapsaması birlikte değerlendirilir. MCC tam ürünü veya özel hayat olayını göstermez.'),
+  s('davranissal-ikiz', 'BİR ÖRNEK', '02 / ÇÖZÜM & MİMARİ', 'Bir müşteriden bir tedarik zincirine.', 'b2c', ''),
   s('ekonomik-dongu', 'Ekonomik Döngü', '02 / ÇÖZÜM & MİMARİ', 'B2B ve B2C, aynı ağın iki tarafı.', 'flywheel', 'Bölgesel talep → POS/işyeri fırsatı → işletmede büyüme → yeni tedarikçi → reel ticaret → finansman ve POS → yeni veri → yeniden öğrenme.'),
   s('teknoloji', 'Teknoloji Yığını', '02 / ÇÖZÜM & MİMARİ', 'Banka içinde çalışan, izlenebilir bir altyapı.', 'stack', 'Bunlar sunumda önerilen teknoloji seçenekleridir; tamamlanmış entegrasyon veya kurulu altyapı iddiası değildir. LLM ve RAG on-prem açıklama katmanıdır.'),
   s('uygulama', 'Uygulama & Yol Haritası', 'BÖLÜM 03', 'Kanıtla. Pilotta ölç. Kontrollü yaygınlaştır.', 'divider', 'Veri erişimi, anonimleştirme, model, açıklama, şube entegrasyonu, pilot ve ölçüm birbirine bağlı iş paketleridir.', 'Uygulama & Yol Haritası'),
@@ -237,7 +224,7 @@ export const b2bStory = [
   ['Tedarik alternatifleri', 'Bankanın müşterisi olan keresteciler uyuma göre değerlendirilir. Kalite garantisi verilmez.'],
   ['Reel ticaret', 'Tarafların kararıyla yeni ilişki kurulur; ödeme ve finansman ihtiyacı bu ticaretten doğar.'],
 ]
-export const b2cLayers = [['Müşteri', 'Benzerlerimde var, bende yok.'], ['Bölge', 'Anonim sinyaller aynı kategoride yoğunlaşıyor.'], ['İşyeri', 'Benzer işletmelerde var, bu işyerinde yok.']]
+export const b2cLayers = [['Müşteri', 'Benzerlerinde var, bu müşteride yok.'], ['Bölge', 'Talep yoğunlaşıyor, bankanın kapsaması düşük.'], ['İşletme', 'Benzerlerinin finansmanı var, bu işletmede yok.']]
 export const loop = ['Bölgesel talep sinyali', 'POS / işyeri fırsatı', 'İşletmede büyüme', 'Yeni tedarikçi ilişkisi', 'Reel ticaret', 'Finansman + POS', 'Yeni veri', 'Model yeniden öğrenir']
 export const architecture = [['Veri', 'Kart · POS · finansman · NACE'], ['Temsil', 'Economic Twin + Behavioral Twin temsilleri'], ['Zekâ', 'Benzerlik · kümeleme · dizi · bağlantı tahmini · skorlama'], ['Fırsat ve karar', 'White Space + insan onayı'], ['Deneyim', 'Şube ve genel müdürlük ekranları']]
 export const stack = [['Veri & özellik deposu', 'SQL · feature store'], ['Temsil & vektör', 'pgvector / Milvus'], ['Graf analitiği', 'Graf veritabanı / analitik altyapı'], ['Makine öğrenmesi', 'Kümeleme · dizi · bağlantı tahmini · artımsal etki'], ['LLM & RAG', 'Banka içinde · açıklama katmanı'], ['Servis & MLOps', 'FastAPI · Redis · model izleme']]

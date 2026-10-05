@@ -51,6 +51,16 @@ export function PresentationShell({ index, setIndex, children }: Props) {
       if (notes && event.key === 'Escape') return setNotes(false)
       if (overview || notes) return
       if (event.key === ' ' && target.closest('button, a')) return
+      if (scenes[index].id === 'davranissal-ikiz') {
+        const forward = ['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(event.key)
+        const backward = ['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)
+        if (forward || backward) {
+          const cards = Array.from(document.querySelectorAll<HTMLButtonElement>('.chain-example .space-layers button'))
+          const selected = cards.findIndex(card => card.getAttribute('aria-pressed') === 'true')
+          const next = selected + (forward ? 1 : -1)
+          if (cards[next]) { event.preventDefault(); cards[next].click(); return }
+        }
+      }
       if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(event.key)) { event.preventDefault(); go(index + 1) }
       if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)) { event.preventDefault(); go(index - 1) }
       if (event.key.toLowerCase() === 'o') setOverview(v => !v)

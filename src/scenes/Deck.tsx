@@ -6,8 +6,6 @@ import { EconomicNetwork } from '../components/Network'
 import { PerspectiveSlides } from '../components/PerspectiveSlides'
 import * as data from '../data/deckData'
 import provinces from '../data/provinces.json'
-import { WhiteSpaceProfiles } from '../components/WhiteSpaceProfiles'
-import { customerWhiteSpaces, businessWhiteSpaces } from '../data/whiteSpaceExamples'
 
 const miniLogoUrl = new URL('../../logo-mini.png', import.meta.url).href
 const ktLogoUrl = new URL('../../kt-logo.png', import.meta.url).href
@@ -54,20 +52,25 @@ function B2B() {
 
 const provinceNames = ['Adana','Adıyaman','Afyonkarahisar','Ağrı','Amasya','Ankara','Antalya','Artvin','Aydın','Balıkesir','Bilecik','Bingöl','Bitlis','Bolu','Burdur','Bursa','Çanakkale','Çankırı','Çorum','Denizli','Diyarbakır','Edirne','Elazığ','Erzincan','Erzurum','Eskişehir','Gaziantep','Giresun','Gümüşhane','Hakkâri','Hatay','Isparta','Mersin','İstanbul','İzmir','Kars','Kastamonu','Kayseri','Kırklareli','Kırşehir','Kocaeli','Konya','Kütahya','Malatya','Manisa','Kahramanmaraş','Mardin','Muğla','Muş','Nevşehir','Niğde','Ordu','Rize','Sakarya','Samsun','Siirt','Sinop','Sivas','Tekirdağ','Tokat','Trabzon','Tunceli','Şanlıurfa','Uşak','Van','Yozgat','Zonguldak','Aksaray','Bayburt','Karaman','Kırıkkale','Batman','Şırnak','Bartın','Ardahan','Iğdır','Yalova','Karabük','Kilis','Osmaniye','Düzce']
 function B2C() {
-  const [province, setProvince] = useState(16)
   const [layer, setLayer] = useState(0)
-  const [customer, setCustomer] = useState(0)
-  const [business, setBusiness] = useState(0)
-  const high = [6,16,27,34,35,41,42,54].includes(province)
-  const insight = layer === 0 ? customerWhiteSpaces[customer].insight : layer === 2 ? businessWhiteSpaces[business].insight : 'Tekil müşteri sinyalleri anonim olarak toplulaştırılır; bölgesel talep ve POS kapsaması birlikte değerlendirilir.'
-  return <>
+  const reduced = useReducedMotion()
+  const insights = ['Yapı market, bu müşteri için potansiyel bir fırsat alanı.', 'Bireysel veri bankada kalır; yalnızca anonim toplam görünür.', 'Şubemiz doğrular; bankanın müşterisi üreticilerle eşleştirir.']
+  const gaps = layer === 0 ? [['Yapı market', "Benzer 40 müşterinin 27'sinde var."]] : [['Tedarikçi Finansmanı', "Benzer 40 işletmenin 26'sında var."], ['Finansal kiralama', "Benzer 40 işletmenin 17'sinde var."]]
+  return <div className="chain-example">
     <div className="b2c-layout">
-      <div className="space-layers">{data.b2cLayers.map(([title, desc], i) => <button key={title} aria-pressed={layer === i} onClick={() => setLayer(i)}><span>0{i + 1}</span><div><h2>{title} White Space</h2><p>{desc}</p></div></button>)}</div>
-      {layer === 0 ? <WhiteSpaceProfiles kind="customer" profiles={customerWhiteSpaces} selected={customer} onSelect={setCustomer} /> : layer === 2 ? <WhiteSpaceProfiles kind="business" profiles={businessWhiteSpaces} selected={business} onSelect={setBusiness} /> : <div className="turkey-map"><div className="map-heading"><Tag>TEMSİLİ TALEP / POS AÇIĞI</Tag><label>İl <select value={province} onChange={e => setProvince(Number(e.target.value))}>{provinceNames.map((n, i) => <option value={i + 1} key={n}>{n}</option>)}</select></label></div><svg viewBox="0 0 970 425" role="img" aria-label="81 ilde temsili talep ve POS kapsama açığı haritası">{provinces.map(p => <path key={p.code} d={p.rings.map(r => `M${r.map(pt => pt.join(',')).join('L')}Z`).join('')} className={p.code === province ? 'selected' : [6,16,27,34,35,41,42,54].includes(p.code) ? 'high' : p.code % 3 === 0 ? 'medium' : 'low'} onClick={() => setProvince(p.code)}><title>{provinceNames[p.code - 1]} · temsili sinyal</title></path>)}</svg><div className="map-readout" aria-live="polite"><strong>{provinceNames[province - 1]}</strong><span>{high ? 'Talep yüksek · POS kapsaması düşük' : 'Talep / POS dengesi izleniyor'}</span></div><div className="map-legend"><span>◻ Düşük açık</span><span>▧ Orta açık</span><span>■ Yüksek açık</span></div></div>}
+      <div className="space-layers">{data.b2cLayers.map(([title, desc], i) => <button key={title} aria-pressed={layer === i} onClick={() => setLayer(i)}><span>0{i + 1}</span><div><h2>{title}</h2><p>{desc}</p></div></button>)}</div>
+      <motion.div key={layer} className="chain-panel" initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0 : .3 }}>
+        {layer === 1 ? <div className="turkey-map"><div className="map-heading"><Tag>TEMSİLİ TALEP · İŞYERİ KAPSAMASI</Tag></div><svg viewBox="0 0 970 425" role="img" aria-label="Bursa seçili talep ve işyeri kapsaması haritası">{provinces.map(p => <path key={p.code} d={p.rings.map(r => `M${r.map(pt => pt.join(',')).join('L')}Z`).join('')} className={p.code === 16 ? 'selected' : [6,16,27,34,35,41,42,54].includes(p.code) ? 'high' : p.code % 3 === 0 ? 'medium' : 'low'}><title>{provinceNames[p.code - 1]}</title></path>)}</svg><div className="map-readout">Dönüşüm bölgelerinde talep yüksek · kapsama düşük</div><div className="map-legend"><span>Talep:</span><span><i className="demand-low" />düşük</span><span><i className="demand-medium" />orta</span><span><i className="demand-high" />yüksek</span></div></div> : <div className="whitespace-profiles">
+          <Tag>{layer === 0 ? 'TEMSİLİ MÜŞTERİ · KATEGORİ BOŞLUĞU' : 'TEMSİLİ İŞLETME · FİNANSMAN BOŞLUĞU'}</Tag>
+          <div className="whitespace-selectors"><button type="button" aria-pressed="true">{layer === 0 ? 'Müşteri A' : 'Yapı market zinciri'}</button></div>
+          <div className="whitespace-existing"><span>{layer === 0 ? 'Mevcut: ✓ Market  ✓ Akaryakıt  ✓ Giyim' : 'Mevcut: ✓ POS  ✓ Ticari hesap'}</span></div>
+          <div className="whitespace-gaps">{gaps.map(([name, detail]) => <div className="chain-gap" key={name}><div><h3>{name}</h3><span>Henüz yok</span></div><p>{detail}</p></div>)}</div>
+          {layer === 0 && <p className="chain-category-limit">Yalnızca işyeri kategorisi; ürün ya da neden çıkarılmaz.</p>}
+        </div>}
+      </motion.div>
     </div>
-    <Insight>{insight}</Insight>
-    <p className="deck-source">{layer === 1 ? 'Harita: OCHA / HDX; ekonomik sinyaller temsilidir.' : layer === 0 ? 'Müşteriler ve kategori örnekleri temsilidir. MCC ürünü değil, işyeri kategorisini gösterir; boşluk kesin ihtiyaç değildir.' : 'İşletmeler ve ürün boşlukları temsilidir; ihtiyaç şubeci tarafından doğrulanır.'}</p>
-  </>
+    <Insight>{insights[layer]}</Insight>
+  </div>
 }
 
 function Flywheel() {
