@@ -132,15 +132,6 @@ export function PresentationShell({ index, setIndex, children }: Props) {
 
     <div id="scene" className="stage" style={{ width: 1920, height: 1080, position: 'absolute', left: '50%', top: '50%', transform: `translate(-50%, -50%) scale(${canvasScale})` }} tabIndex={-1} inert={overview || notes}>{children}</div>
 
-    <footer className="controls" inert={overview || notes || !controlsVisible}>
-      <button className="controls__nav" onClick={() => go(index - 1)} disabled={index === 0} aria-label="Önceki sahne"><ChevronLeft /></button>
-      <div className="progress-wrap">
-        <div className="progress-meta"><span>{String(index + 1).padStart(2, '0')} / {total}</span><span>{scenes[index].shortTitle}</span></div>
-        <div className="progress" role="progressbar" aria-label="Sunum ilerlemesi" aria-valuenow={index + 1} aria-valuemin={1} aria-valuemax={total}><motion.div animate={{ scaleX: (index + 1) / total }} /></div>
-      </div>
-      <button className="controls__nav is-next" onClick={() => go(index + 1)} disabled={index === total - 1} aria-label="Sonraki sahne"><ChevronRight /></button>
-    </footer>
-
     <AnimatePresence>{notes && <motion.aside role="dialog" aria-modal="true" aria-label="Konuşmacı notları" className="notes" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 30 }}><button onClick={() => setNotes(false)} aria-label="Notları kapat"><X /></button><span>KONUŞMACI NOTU · {String(index + 1).padStart(2, '0')}</span><h2>{scenes[index].shortTitle}</h2><p>{scenes[index].note}</p><div className="notes__keys"><kbd>Esc</kbd> kapat · notlar açıkken sahne sabit kalır</div></motion.aside>}</AnimatePresence>
 
     <AnimatePresence>{overview && <motion.div role="dialog" aria-modal="true" aria-label="Sunum akışı" className="overview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>

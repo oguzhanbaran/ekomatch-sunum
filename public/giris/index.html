@@ -144,7 +144,8 @@
       }
 
       function logicalTransform() {
-        const dpr = canvas.width / innerWidth, scale = Math.min(innerWidth/W, innerHeight/H)
+        // Fill the viewport proportionally, cropping the outer edges instead of adding black bars.
+        const dpr = canvas.width / innerWidth, scale = Math.max(innerWidth/W, innerHeight/H)
         const ox = (innerWidth-W*scale)/2, oy = (innerHeight-H*scale)/2
         ctx.setTransform(dpr*scale,0,0,dpr*scale,dpr*ox,dpr*oy)
       }
