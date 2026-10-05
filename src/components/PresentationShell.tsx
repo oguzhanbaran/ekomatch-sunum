@@ -1,17 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Expand, Grid2X2, Maximize, Minimize, RotateCcw, StickyNote, Sun, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Expand, Grid2X2, Maximize, Minimize, RotateCcw, StickyNote, X } from 'lucide-react'
 import { scenes } from '../data/deckData'
 
 type Props = {
-  projection: boolean
-  toggleProjection: () => void
   index: number
   setIndex: (index: number) => void
   children: React.ReactNode
 }
 
-export function PresentationShell({ index, setIndex, children, projection, toggleProjection }: Props) {
+export function PresentationShell({ index, setIndex, children }: Props) {
   const [overview, setOverview] = useState(false)
   const [notes, setNotes] = useState(false)
   const [fullscreen, setFullscreen] = useState(false)
@@ -47,7 +45,6 @@ export function PresentationShell({ index, setIndex, children, projection, toggl
       if (event.ctrlKey || event.metaKey || event.altKey || event.repeat || document.querySelector('dialog[open]')) return
       const target = event.target as HTMLElement
       if (target.closest('input, select, textarea, [contenteditable=true]')) return
-      if (event.key.toLowerCase() === 'p') { toggleProjection(); revealControls(); return }
       if (event.key.toLowerCase() === 'c') { revealControls(); return }
       if (event.key === 'Tab') revealControls()
       if (overview && event.key === 'Escape') return setOverview(false)
@@ -64,7 +61,7 @@ export function PresentationShell({ index, setIndex, children, projection, toggl
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [go, index, notes, overview, total, toggleProjection, revealControls])
+  }, [go, index, notes, overview, total, revealControls])
 
   useEffect(() => {
     const onWheel = (event: WheelEvent) => {
@@ -127,14 +124,13 @@ export function PresentationShell({ index, setIndex, children, projection, toggl
       <div className="topbar__spacer" aria-hidden="true" />
       <div className="topbar__chapter"><span>{String(index + 1).padStart(2, '0')}</span>{scenes[index].shortTitle}</div>
       <div className="topbar__tools">
-        <button className="projection-toggle" onClick={toggleProjection} aria-pressed={projection} aria-label="Projeksiyon Modu" title="Projeksiyon Modu (P)"><Sun /><span>Projeksiyon Modu</span></button>
         <button onClick={() => setNotes(v => !v)} aria-label="Konuşmacı notları" title="Konuşmacı notları (N)"><StickyNote /></button>
         <button onClick={() => setOverview(true)} aria-label="Sahne görünümü" title="Genel görünüm (O)"><Grid2X2 /></button>
         <button onClick={toggleFullscreen} aria-label={fullscreen ? 'Tam ekrandan çık' : 'Tam ekran'} title="Tam ekran (F)">{fullscreen ? <Minimize /> : <Maximize />}</button>
       </div>
     </header>
 
-    <div id="scene" className="stage" style={projection ? { width: 1920, height: 1080, position: 'absolute', left: '50%', top: '50%', transform: `translate(-50%, -50%) scale(${canvasScale})` } : undefined} tabIndex={-1} inert={overview || notes}>{children}</div>
+    <div id="scene" className="stage" style={{ width: 1920, height: 1080, position: 'absolute', left: '50%', top: '50%', transform: `translate(-50%, -50%) scale(${canvasScale})` }} tabIndex={-1} inert={overview || notes}>{children}</div>
 
     <footer className="controls" inert={overview || notes || !controlsVisible}>
       <button className="controls__nav" onClick={() => go(index - 1)} disabled={index === 0} aria-label="Önceki sahne"><ChevronLeft /></button>

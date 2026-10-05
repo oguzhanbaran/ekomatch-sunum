@@ -1,5 +1,214 @@
+// Eight-minute delivery plan: 47-second opening + 403-second speech + 30-second transition allowance.
+const speakerNotes: Record<string, string> = {
+  'acilis': `HEDEF SÜRE: 12 saniye
+
+Merhaba. EkoMatch ile bankanın elindeki ekonomik ilişki verisini, yeni ticaret fırsatlarını keşfetmek için kullanmayı öneriyoruz. Amacımız, müşterinin olası talebini doğru işletmeyle buluşturmak ve bu ilişkiden doğan finansal ihtiyaca hizmet etmek.
+
+ANLATIM NOTU
+Projenin uzun başlığını kelimesi kelimesine okumak yerine doğrudan ne yaptığını anlat.
+
+AÇILIŞ VE SÜRE PLANI
+47 saniyelik açılış videosu oynarken konuşma. Son karede logo göründükten sonra kısa bir duraklama yap ve kapak slaydına geç.
+Ana anlatım 6 dakika 43 saniye; video ile birlikte 7 dakika 30 saniye. Kalan 30 saniye geçişler ve duraklamalar için ayrıldı. Süreler prova hedefidir.
+23. slayt soru gelirse kullanılacak ektir; ana sunumu 22. slaytta bitir.`,
+  'problem': `HEDEF SÜRE: 6 saniye
+
+Müşterimiz bizimle bankacılık ilişkisi kuruyor. Ancak onun alışveriş, tedarik ve ticaret ilişkileri her zaman bizim ekosistemimizde gelişmiyor.
+
+ANLATIM NOTU
+Bu bir bölüm geçişi. Beklemeden üçüncü slayta ilerle.`,
+  'bugunku-bakis': `HEDEF SÜRE: 20 saniye
+
+Bugün müşterimiz hakkında oldukça değerli bilgilere sahibiz. Hangi kartı kullanıyor, hangi finansmanı almış, hangi kategorilerde harcama yapıyor, görebiliyoruz. CRM ve kampanya sistemleri bu kayıtları anlamlandırıyor.
+
+Ancak bu verilerin ortak bir özelliği var: Gerçekleşmiş işlemleri ve kurulmuş ilişkileri gösteriyorlar. Henüz kurulmamış bir ilişkiyi keşfetmek için bu kayıtların arasındaki örüntülere de bakmamız gerekiyor.
+
+ANLATIM NOTU
+Son cümlede ağdaki mevcut bağlantılara işaret et. “Henüz kurulmamış” ifadesini vurgula.`,
+  'yeni-bakis': `HEDEF SÜRE: 25 saniye
+
+EkoMatch burada farklı bir soru soruyor: Bir müşterinin veya işletmenin benzerlerinde görülen, fakat kendisinde henüz oluşmamış ilişki ne olabilir?
+
+Örneğin benzer akaryakıt istasyonları elektrikli araç şarj ünitesi kurmuş, incelediğimiz istasyon henüz kurmamış olabilir. Bu fark bize görüşmeye değer bir fırsat gösterir.
+
+Buna ekonomik boşluk, yani White Space diyoruz. Bu boşluk kesin ihtiyaç anlamına gelmez. Yapay zekâ sinyali üretir; şubeci müşteriyle görüşerek gerçek ihtiyacı doğrular.
+
+ANLATIM NOTU
+Yeni bağlantılar belirirken örneği anlat. “Kesin ihtiyaç anlamına gelmez” cümlesini kısa ve net söyle.`,
+  'ekomatch-nedir': `HEDEF SÜRE: 22 saniye
+
+Bu yaklaşımı dört adımlı bir iş akışına dönüştürüyoruz.
+
+Önce benzer müşteri ve işletmelerden öğrenerek fırsatı keşfediyoruz. Ardından şubeci, müşteri görüşmesiyle ihtiyacı doğruluyor. Doğrulanan talebi, bankanın ekosistemindeki uygun tedarikçi veya işletmelerle eşleştiriyoruz. Son olarak oluşan ticarete ödeme ve finansman çözümleriyle hizmet ediyoruz.
+
+Böylece veriden başlayan süreç, doğrulanmış bir ihtiyaca ve yeni bir ekonomik ilişkiye ilerliyor.
+
+ANLATIM NOTU
+Dört ikonu soldan sağa takip et; her adım için bir cümle yeterli.`,
+  'yaklasim': `HEDEF SÜRE: 22 saniye
+
+Bu slaytta iki farklı başlangıç noktasını karşılaştırıyoruz. Ürün ve kampanya odaklı akışlarda müşteriye uygun bankacılık teklifini belirlemek öne çıkıyor. EkoMatch ise müşterinin kurabileceği yeni ekonomik ilişkiyi araştırarak başlıyor.
+
+Önce fırsat keşfediliyor, ardından ihtiyaç doğrulanıyor ve taraflar buluşuyor. Finansman ve POS ihtiyacı bu ticaretin içinden doğuyor.
+
+Bu yaklaşımı mevcut CRM ve kampanya sistemlerini tamamlayan bir fırsat keşif katmanı olarak konumluyoruz.
+
+ANLATIM NOTU
+Üst sırayı kısa geç; ağırlığı alttaki EkoMatch akışına ver.`,
+  'cozum': `HEDEF SÜRE: 7 saniye
+
+Bu keşfi iki model yaklaşımıyla destekliyoruz: işletmeler için ekonomik ikizler, bireysel müşteriler için davranışsal ikizler. İkisini aynı ekonomik ağda birleştiriyoruz.`,
+  'davranissal-ikiz': `HEDEF SÜRE: 42 saniye
+
+Fırsatları üç düzeyde ele alıyoruz.
+
+İlk düzey müşteri. Örneğin benzer harcama davranışlarına sahip kişilerde ev ve yapı kategorisi görülürken, bu müşteride henüz görünmeyebilir. Burada potansiyel bir kategori ilişkisi yakalıyoruz.
+
+İkinci düzey bölge. Benzer sinyalleri yeterli ölçekte anonim olarak bir araya getirip hangi bölgede talep yoğunlaştığını inceliyoruz. Bunu bankanın POS kapsamasıyla birlikte değerlendiriyoruz.
+
+Üçüncü düzey işyeri. Örneğin benzer fırınların kullandığı bir üretim ekipmanı, bu işletmede henüz bulunmayabilir. Bu da şubecinin görüşmesinde ele alabileceği bir fırsat oluşturur.
+
+Bu örnekler temsilidir. Harcama kategorisi verisi tek başına tam ürünü veya kesin ihtiyacı göstermez; her fırsatın doğrulanması gerekir.
+
+ANLATIM NOTU
+Önce Müşteri ekranını göster. İkinci paragrafta Bölge’ye, üçüncü paragrafta İşyeri’ne geç. İşyeri örneğinde “Mahalle fırını”nı seç. Bütün örnekleri tek tek açma.
+
+ZAMAN KONTROLÜ
+Bu slaydın sonunda, video dâhil yaklaşık 3:23 hedefle.`,
+  'ekonomik-dongu': `HEDEF SÜRE: 22 saniye
+
+Bu üç düzey birbirini besleyen bir ekonomik döngü oluşturuyor.
+
+Bir bölgede keşfedilen talep, yeni bir işyeri veya POS ilişkisine dönüşebilir. İşletmenin büyümesi yeni ekipman ve tedarikçi ihtiyacı doğurabilir. Bu ihtiyaç yeni ticareti, ticaret de ödeme ve finansman ilişkilerini oluşturur.
+
+Gerçekleşen işlemler ve şubeciden gelen geri bildirimler modelin öğrenmesine katkı sağlar. Böylece her doğrulanmış ilişki, sonraki fırsatların keşfini destekler.
+
+ANLATIM NOTU
+Döngüyü parmağınla veya imleçle takip et. Sekiz adımı ayrı ayrı okumaya çalışma.`,
+  'teknoloji': `HEDEF SÜRE: 23 saniye
+
+Önerdiğimiz altyapıyı banka içinde çalışan ve sonuçları izlenebilen bir yapı olarak tasarlıyoruz.
+
+Veri katmanı kart, POS ve finansman kayıtlarını hazırlıyor. Benzerlik modelleri ve graf analitiği, müşterilerle işletmeler arasındaki ilişki örüntülerini inceliyor. Makine öğrenmesi bu örüntülerden fırsat sinyalleri ve skorlar üretiyor.
+
+Dil modeli ise fırsatın gerekçesini şubecinin anlayabileceği şekilde açıklıyor. Finansal hesapları ve karar kurallarını tanımlı sistemlerde tutuyor, modellerin performansını ayrıca izliyoruz.
+
+ANLATIM NOTU
+Teknoloji isimlerini listelemek yerine her katmanın yaptığı işi anlat.`,
+  'uygulama': `HEDEF SÜRE: 6 saniye
+
+Uygulama yaklaşımımız üç aşamalı: Önce teknik olarak kanıtlamak, ardından pilotta iş etkisini ölçmek ve sonuçlara göre kontrollü yaygınlaştırmak.`,
+  'yol-haritasi': `HEDEF SÜRE: 26 saniye
+
+Önerdiğimiz on iki aylık planda ilk dört ay veri erişimi, hazırlık ve anonimleştirme çalışmalarına odaklanıyoruz. Üçüncü aydan itibaren ikiz modelleri, ardından fırsat skoru ve açıklama katmanı geliştiriliyor.
+
+Altıncı ile dokuzuncu ay arasında şube ekranı ve entegrasyonları hazırlıyoruz. Dokuzuncu ayda kontrollü pilot başlıyor; son aşamada sonuçları ölçerek yaygınlaştırma kararını veriyoruz.
+
+Dördüncü, sekizinci ve on ikinci aylardaki karar kapılarında veri uygunluğunu, model doğruluğunu ve iş etkisini değerlendiriyoruz. Bu aylık dağılım önerilen çalışma planımız.
+
+ANLATIM NOTU
+Yedi satırı ayrı ayrı okumak yerine veri, model, entegrasyon ve pilot olmak üzere dört grupta anlat.`,
+  'kaynak': `HEDEF SÜRE: 16 saniye
+
+Başvuru planındaki kaynak ihtiyacımız on üç kişilik ekip ve yaklaşık kırk beş milyon liralık bütçe.
+
+Veri mühendisliği, veri bilimi, ürün, entegrasyon, altyapı ve iş birimi yetkinliklerini birlikte ele alıyoruz. Bu aşamada toplam kaynak çerçevesi belirli; rol bazlı kişi dağılımı ve maliyet kalemlerinin ayrıntıları planlama sürecinde netleştirilecek.`,
+  'rekabet': `HEDEF SÜRE: 6 saniye
+
+EkoMatch’in değerini, yeni ekonomik ilişki keşfini müşteri görüşmesi, eşleştirme ve finansman süreciyle bir araya getirmesinde görüyoruz.`,
+  'benchmark': `HEDEF SÜRE: 20 saniye
+
+Buradaki tablo ürün kategorileri düzeyinde kavramsal bir karşılaştırma.
+
+EkoMatch’in önerilen kapsamı; bireysel ve ticari müşteri sinyallerini birlikte değerlendirmek, talebi arzla eşleştirmek ve fırsatı gerekçesiyle şubeciye sunmak üzerine kurulu.
+
+Öne çıkardığımız nokta, keşiften ticarete kadar bütün akışın bağlantılı olması. İnsan doğrulaması da bu akışın bir parçası. Belirli ürünlerin yetenekleri farklılaşabileceği için tabloyu bu çerçevede değerlendirmek gerekiyor.
+
+ANLATIM NOTU
+Tablodaki tüm işaretleri okumak yerine üç özellik seç: B2B+B2C, eşleştirme, insan onayı.`,
+  'swot': `HEDEF SÜRE: 26 saniye
+
+Güçlü tarafımız, bankaya özgü ilişki verisini bireysel ve ticari müşteri tarafında birlikte değerlendirebilmek. İnsan onayı ve reel ticarete dayalı yaklaşım da bu gücü destekliyor.
+
+Zayıf taraflarımız veri kalitesine bağımlılık, yeni müşterilerde geçmiş verinin sınırlı olması ve şubelerin sistemi benimseme ihtiyacı.
+
+Fırsat tarafında POS payını artırma ve yeni ticari ilişkiler kazanma potansiyeli var. Risk tarafında ise yanlış fırsat sinyalleri, gizlilik gereklilikleri ve model performansının zamanla değişmesi bulunuyor. Bu nedenle pilot ölçümü ve insan doğrulamasını merkeze alıyoruz.
+
+ANLATIM NOTU
+Dört bölüme sırayla işaret et. Riskleri hızlıca geçiştirmek yerine son cümlede nasıl yöneteceğini bağla.
+
+ZAMAN KONTROLÜ
+Bu slaydın sonunda, video dâhil yaklaşık 5:48 hedefle.`,
+  'ekonomik-katki': `HEDEF SÜRE: 6 saniye
+
+Şimdi bu yaklaşımın ekonomik karşılığına bakalım. Burada işlem hacmini, bankaya oluşabilecek gelir katkısından ayrı değerlendirmemiz gerekiyor.`,
+  'ekonomik-firsat': `HEDEF SÜRE: 26 saniye
+
+Sunumda kullandığımız çalışma rakamlarına göre, Kuveyt Türk kartlarıyla yapılan yaklaşık sekiz yüz elli beş milyar liralık harcamanın beş yüz altmış dört milyarı diğer bankaların POS’larında gerçekleşiyor.
+
+Bu, müşterimizle başlayan ödeme ilişkisinin işyeri tarafında başka bir bankaya uzandığını gösteriyor. EkoMatch ile talebin yoğunlaştığı alanları görerek işyeri ve POS kazanımını daha hedefli hâle getirmeyi amaçlıyoruz.
+
+Ekrandaki yirmi iki milyar liralık fırsat senaryosunun hesap bazı ise teyit bekliyor; bu tutarı kesin kazanım olarak değerlendirmiyoruz.
+
+ANLATIM NOTU
+Ana mesaj “kart müşterisi bizde, işyeri ilişkisi başka bankada”. 652 ara tutarının tanımı sorulursa mevcut hesapta teyit beklediğini açıkça söyle.`,
+  'bankaya-katki': `HEDEF SÜRE: 25 saniye
+
+Sunumdaki katkı projeksiyonu iki kalemden oluşuyor: yüz elli beş milyon lira POS ve iki yüz kırk beş milyon lira finansman katkısı. Toplamda dört yüz milyon liralık bir potansiyel öngörülüyor.
+
+Bu tutar gerçekleşmiş gelir değil. Dönem, gelir marjları ve net veya brüt tanımı netleştirilmeli; ardından pilotta ölçülen dönüşüm oranlarıyla doğrulanmalı.
+
+Yaklaşık kırk beş milyon liralık maliyetle sağlıklı karşılaştırma yapmak için de aynı dönem ve kapsamı kullanmamız gerekiyor.
+
+ANLATIM NOTU
+Beklenen senaryoda kal. Sayısal girdileri olmayan iyi ve kötü senaryolar hakkında getiri iddiasında bulunma.`,
+  'strateji-kapanis': `HEDEF SÜRE: 6 saniye
+
+Son olarak, bu yaklaşımın sunumda ele aldığımız Kuveyt Türk strateji başlıklarına nasıl katkı sağlayabileceğini birlikte değerlendirelim.`,
+  'strateji': `HEDEF SÜRE: 22 saniye
+
+EkoMatch, güncel yapay zekâ yöntemlerini somut bir müşteri ihtiyacına bağlıyor. Gerekçeli fırsat sinyalleri ve insan doğrulaması, kontrollü karar sürecini destekliyor.
+
+Müşteri açısından doğru zamanda, ihtiyacına uygun bir görüşme hedefliyoruz. Banka açısından yeni POS ve finansman ilişkileriyle sürdürülebilir gelir potansiyeli oluşturmayı amaçlıyoruz.
+
+Şubeciye de görüşmesini hazırlayabileceği bir içgörü sunuyoruz: Hangi müşteriyle, hangi olası ihtiyaç hakkında ve hangi gerekçeyle iletişim kurabilir?
+
+ANLATIM NOTU
+Sol başlıklarla sağ açıklamaları eşleştirerek ilerle. Son soruyu dinleyiciye bakarak söyle.`,
+  'final': `HEDEF SÜRE: 17 saniye
+
+EkoMatch ile önerimiz, bankanın ekonomik ağını henüz kurulmamış ilişkileri de keşfedebilecek şekilde değerlendirmek.
+
+Yapay zekâ fırsatı görünür kılsın, şubeci ihtiyacı doğrulasın, banka tarafların buluşmasını desteklesin.
+
+Çünkü henüz kurulmamış bir ilişki, keşfedilmeyi bekleyen bir fırsattır.
+
+Talebi keşfet. Arzla buluştur. Ekonomik ağı büyüt.
+
+Teşekkür ederim.
+
+ANLATIM NOTU
+Son üç cümleyi yavaş söyle. Teşekkür ettikten sonra logolu kapanış ekranında kal.
+
+ZAMAN KONTROLÜ
+Video ve anlatım sonunda 7:30 hedefle. Geçişler ve duraklamalar için ayrılan 30 saniyeyle toplam süre 8 dakika.`,
+  'mevcut-durum': `EK SLAYT — SORU GELİRSE
+HEDEF SÜRE: 30–35 saniye; ana 8 dakikalık anlatıma dâhil değil.
+
+Bu ek slayt, fırsatın ölçeğini değerlendirmek için kullandığımız çalışma rakamlarını bir arada gösteriyor.
+
+Sunumda Türkiye’de yıllık kartlı harcama hacmi otuz üç virgül dört trilyon lira, Kuveyt Türk kartlarıyla yapılan harcama yaklaşık sekiz yüz elli beş milyar lira olarak yer alıyor. Bunun yaklaşık beş yüz altmış dört milyarı diğer banka POS’larında gerçekleşiyor.
+
+On virgül üç milyon müşteri ve dört yüz elli sekiz şubelik yapı da önerdiğimiz keşif ve insan doğrulaması yaklaşımının ölçeğini anlatıyor.
+
+Bu verilerin dönem ve kapsamlarını eşleştirerek pilot hedeflerini netleştirmemiz gerekiyor.
+
+ANLATIM NOTU
+Bu slaydı ana sunuma eklemek yerine hacim, müşteri tabanı veya uygulama ölçeği sorulduğunda kullan.`,
+}
+
 export type Slide = { id: string; shortTitle: string; eyebrow: string; title: string; note: string; kind: string; chapter?: string }
-const s = (id: string, shortTitle: string, eyebrow: string, title: string, kind: string, note: string, chapter?: string): Slide => ({ id, shortTitle, eyebrow, title, kind, note, chapter })
+const s = (id: string, shortTitle: string, eyebrow: string, title: string, kind: string, note: string, chapter?: string): Slide => ({ id, shortTitle, eyebrow, title, kind, note: speakerNotes[id] ? `${speakerNotes[id]}\n\nEK HATIRLATMA\n${note}` : note, chapter })
 
 export const scenes: Slide[] = [
   s('acilis', 'Kapak', 'EKOMATCH', 'Yapay Zekâ Destekli Ekonomik İlişki ve Fırsat Keşif Platformu', 'cover', 'Kesikli bağlantı henüz kurulmamış ekonomik ilişkiyi temsil eder. Önce fırsat, sonra reel ticaret ve finansman.'),

@@ -27,13 +27,13 @@ Vite göreli dosya yolları ürettiği için yayın, depo adından bağımsız o
 
 Fontlar, logo ve harita yereldir; dış internet servisi gerekmez. Yerel sunucu açık kalmalıdır. Doğrudan file:// veya sunucu kapalıyken yeniden yükleme desteklenmez; service worker kurulmamıştır.
 
-## Projeksiyon Modu
+## Sunum görünümü
 
-İlk kullanımda aktif olan açık tema, düz beyaz zemin, koyu lacivert başlıklar ve koyu gövde metinleri kullanır. 1920×1080 tasarım alanında başlıklar 60 px, gövde 30–36 px, tablo ve grafik etiketleri en az 26 px’tir. Slaytların tümü 16:9 oranıyla ekrana sığdırılır; içerik ve 23 sahnelik sıra korunur.
+Açılış animasyonu orijinal koyu görünümündedir. Diğer 23 slayt düz beyaz zemin, koyu lacivert başlıklar ve koyu gövde metinleri kullanır. 1920×1080 tasarım alanında başlıklar 60 px, gövde 30–36 px, tablo ve grafik etiketleri en az 26 px’tir. Slaytlar 16:9 oranıyla ekrana sığdırılır; içerik ve sıra korunur. Tema değiştirme düğmesi ve P kısayolu kaldırılmıştır.
 
-**P** veya üst araç çubuğundaki **Projeksiyon Modu** düğmesi temayı değiştirir. Seçim tarayıcıda hatırlanır; koyu tema alternatif olarak korunur. Araç çubuğu ve alt gezinme alanı fare hareketinde, **C** veya **Tab** ile görünür, 2,5 saniye hareketsizlikten sonra gizlenir. **F**, ok tuşları, **N** ve **O** çalışmaya devam eder. Logolar aynı görseller ve oranlarla, açık zemine uygun koyu renk işlemiyle gösterilir.
+Araç çubuğu ve alt gezinme alanı fare hareketinde, **C** veya **Tab** ile görünür, 2,5 saniye hareketsizlikten sonra gizlenir. **F**, ok tuşları, **N** ve **O** çalışmaya devam eder. Logolar aynı görseller ve oranlarla, açık zemine uygun koyu renk işlemiyle gösterilir.
 
-`node tests/projection-audit.mjs` tüm slaytların açık temasını, beş ekran boyutunda oran/taşma/yazı boyutlarını, B2C örneklerini ve tema/klavye/tam ekran kontrollerini doğrular. Görseller ve rapor `test-results/projection/` altında üretilir.
+`node tests/projection-audit.mjs` tüm slaytların açık temasını, beş ekran boyutunda oran/taşma/yazı boyutlarını, B2C örneklerini ve klavye/tam ekran kontrollerini doğrular. Görseller ve rapor `test-results/projection/` altında üretilir.
 
 ## Kontroller
 
