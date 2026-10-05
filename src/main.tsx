@@ -21,6 +21,9 @@ import '@fontsource/dm-mono/latin-ext-500.css'
 import App from './App'
 import './styles.css'
 import './deck.css'
+import './projection.css'
+
+try { document.documentElement.dataset.projection = String(localStorage.getItem('ekomatch:projection') !== 'false') } catch { document.documentElement.dataset.projection = 'true' }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

@@ -1,18 +1,35 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Expand, Grid2X2, Maximize, Minimize, RotateCcw, StickyNote, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Expand, Grid2X2, Maximize, Minimize, RotateCcw, StickyNote, Sun, X } from 'lucide-react'
 import { scenes } from '../data/deckData'
 
 type Props = {
+  projection: boolean
+  toggleProjection: () => void
   index: number
   setIndex: (index: number) => void
   children: React.ReactNode
 }
 
-export function PresentationShell({ index, setIndex, children }: Props) {
+export function PresentationShell({ index, setIndex, children, projection, toggleProjection }: Props) {
   const [overview, setOverview] = useState(false)
   const [notes, setNotes] = useState(false)
   const [fullscreen, setFullscreen] = useState(false)
+  const [controlsVisible, setControlsVisible] = useState(false)
+  const [canvasScale, setCanvasScale] = useState(() => Math.min(window.innerWidth / 1920, window.innerHeight / 1080))
+  const controlsTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const revealControls = useCallback(() => {
+    setControlsVisible(true)
+    clearTimeout(controlsTimer.current)
+    controlsTimer.current = setTimeout(() => {
+      if (!document.activeElement?.closest('.topbar, .controls')) setControlsVisible(false)
+    }, 2500)
+  }, [])
+  useEffect(() => {
+    const resize = () => setCanvasScale(Math.min(window.innerWidth / 1920, window.innerHeight / 1080))
+    window.addEventListener('resize', resize)
+    return () => { window.removeEventListener('resize', resize); clearTimeout(controlsTimer.current) }
+  }, [])
   const wheelLast = useRef(0)
   const wheelNav = useRef(0)
   const touchStart = useRef<{ x: number; y: number } | null>(null)
@@ -30,6 +47,9 @@ export function PresentationShell({ index, setIndex, children }: Props) {
       if (event.ctrlKey || event.metaKey || event.altKey || event.repeat || document.querySelector('dialog[open]')) return
       const target = event.target as HTMLElement
       if (target.closest('input, select, textarea, [contenteditable=true]')) return
+      if (event.key.toLowerCase() === 'p') { toggleProjection(); revealControls(); return }
+      if (event.key.toLowerCase() === 'c') { revealControls(); return }
+      if (event.key === 'Tab') revealControls()
       if (overview && event.key === 'Escape') return setOverview(false)
       if (notes && event.key === 'Escape') return setNotes(false)
       if (overview || notes) return
@@ -44,7 +64,7 @@ export function PresentationShell({ index, setIndex, children }: Props) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [go, index, notes, overview, total])
+  }, [go, index, notes, overview, total, toggleProjection, revealControls])
 
   useEffect(() => {
     const onWheel = (event: WheelEvent) => {
@@ -91,7 +111,7 @@ export function PresentationShell({ index, setIndex, children }: Props) {
     } catch { /* Unsupported browser / presentation host: native window controls remain available. */ }
   }
 
-  return <main className="presentation" onTouchStart={e => {
+  return <main className={`presentation${controlsVisible ? ' controls-visible' : ''}`} onPointerMove={revealControls} onBlurCapture={e => { if ((e.target as HTMLElement).closest('.topbar, .controls')) revealControls() }} onFocusCapture={e => { if ((e.target as HTMLElement).closest('.topbar, .controls')) revealControls() }} onTouchStart={e => {
     touchStart.current = null
     if (overview || notes || (e.target as HTMLElement).closest('button, select, input, dialog, .benchmark-scroll, .gantt, .relation-heatmap')) return
     touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
@@ -103,19 +123,20 @@ export function PresentationShell({ index, setIndex, children }: Props) {
   }}>
     <a href="#scene" className="skip-link">Sunuma geç</a>
     <div className="presentation__grain" />
-    <header className="topbar" inert={overview || notes}>
+    <header className="topbar" inert={overview || notes || !controlsVisible}>
       <div className="topbar__spacer" aria-hidden="true" />
       <div className="topbar__chapter"><span>{String(index + 1).padStart(2, '0')}</span>{scenes[index].shortTitle}</div>
       <div className="topbar__tools">
+        <button className="projection-toggle" onClick={toggleProjection} aria-pressed={projection} aria-label="Projeksiyon Modu" title="Projeksiyon Modu (P)"><Sun /><span>Projeksiyon Modu</span></button>
         <button onClick={() => setNotes(v => !v)} aria-label="Konuşmacı notları" title="Konuşmacı notları (N)"><StickyNote /></button>
         <button onClick={() => setOverview(true)} aria-label="Sahne görünümü" title="Genel görünüm (O)"><Grid2X2 /></button>
         <button onClick={toggleFullscreen} aria-label={fullscreen ? 'Tam ekrandan çık' : 'Tam ekran'} title="Tam ekran (F)">{fullscreen ? <Minimize /> : <Maximize />}</button>
       </div>
     </header>
 
-    <div id="scene" className="stage" tabIndex={-1} inert={overview || notes}>{children}</div>
+    <div id="scene" className="stage" style={projection ? { width: 1920, height: 1080, position: 'absolute', left: '50%', top: '50%', transform: `translate(-50%, -50%) scale(${canvasScale})` } : undefined} tabIndex={-1} inert={overview || notes}>{children}</div>
 
-    <footer className="controls" inert={overview || notes}>
+    <footer className="controls" inert={overview || notes || !controlsVisible}>
       <button className="controls__nav" onClick={() => go(index - 1)} disabled={index === 0} aria-label="Önceki sahne"><ChevronLeft /></button>
       <div className="progress-wrap">
         <div className="progress-meta"><span>{String(index + 1).padStart(2, '0')} / {total}</span><span>{scenes[index].shortTitle}</span></div>
