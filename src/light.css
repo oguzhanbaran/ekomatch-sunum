@@ -313,19 +313,21 @@
 [data-theme=light] .cost-reference { border-color: #102A43; margin-bottom: 24px; }
 [data-theme=light] .deck-kind-revenue .deck-heading h1 { width: 1256px; margin-left: 236px; font-size: 60px; white-space: nowrap; }
 [data-theme=light] .deck-kind-revenue .deck-body { width: 1256px; align-self: center; }
-[data-theme=light] .deck-kind-revenue .revenue-summary { display: flex; flex-direction: column; gap: 48px; }
-[data-theme=light] .deck-kind-revenue .revenue-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
-[data-theme=light] .deck-kind-revenue .revenue-card { display: flex; flex-direction: column; align-items: center; min-width: 0; padding: 36px 28px; border: 2px solid #647789; border-radius: 16px; background: var(--surface); text-align: center; }
-[data-theme=light] .deck-kind-revenue .revenue-label { margin: 0; font-size: 28px; line-height: 1.4; color: #13283B; }
-[data-theme=light] .deck-kind-revenue .revenue-amount { margin-top: 24px; font-family: var(--font-display); font-size: 96px; line-height: 1.05; font-weight: 700; color: #13283B; }
-[data-theme=light] .deck-kind-revenue .revenue-unit { margin-top: 8px; font-size: 30px; line-height: 1.4; color: #13283B; }
-[data-theme=light] .deck-kind-revenue .revenue-multiple { margin-top: 28px; font-size: 34px; line-height: 1.35; font-weight: 600; color: #13283B; white-space: nowrap; }
-[data-theme=light] .deck-kind-revenue .revenue-card.is-expected { border-color: #13283B; background: #13283B; }
-[data-theme=light] .deck-kind-revenue .is-expected :is(.revenue-amount, .revenue-multiple) { color: #FFFFFF; }
-[data-theme=light] .deck-kind-revenue .is-expected :is(.revenue-label, .revenue-unit) { color: #15B79E; }
-[data-theme=light] .deck-kind-revenue .revenue-conclusion { display: flex; flex-direction: column; gap: 20px; }
-[data-theme=light] .deck-kind-revenue .revenue-conclusion .deck-insight { border-left: 4px solid #0A6B5C; font-size: 34px; font-weight: 500; color: #075448; }
-[data-theme=light] .deck-kind-revenue .revenue-origin { font-size: 30px; color: #2F3F4D; }
+/* Only the Etki slide: one model, two scenarios, three years. */
+[data-theme=light] .impact-slide { display: flex; flex-direction: column; gap: 30px; color: #13283B; }
+[data-theme=light] .impact-main { display: grid; grid-template-columns: 730px 490px; gap: 36px; align-items: stretch; }
+[data-theme=light] .impact-chart-title { font-size: 30px; font-weight: 600; margin: 0; }
+[data-theme=light] .impact-chart-title span { font-size: 26px; font-weight: 500; color: #2F3F4D; }
+[data-theme=light] .impact-legend { display: flex; gap: 32px; margin: 14px 0 4px; font-size: 28px; }
+[data-theme=light] .impact-legend span, [data-theme=light] .impact-totals h2 { display: flex; align-items: center; gap: 12px; }
+[data-theme=light] :is(.impact-legend, .impact-totals) i { display: inline-block; width: 20px; height: 20px; border-radius: 3px; }
+[data-theme=light] .impact-chart svg { display: block; width: 730px; height: 360px; overflow: visible; }
+[data-theme=light] .impact-totals { display: grid; gap: 18px; }
+[data-theme=light] .impact-totals article { border: 2px solid; border-left-width: 6px; border-radius: 12px; padding: 18px 24px; }
+[data-theme=light] .impact-totals h2 { font-size: 30px; line-height: 1.2; margin: 0 0 8px; }
+[data-theme=light] .impact-totals p { font-size: 26px; line-height: 1.3; margin: 0; color: #2F3F4D; }
+[data-theme=light] .impact-totals strong { display: block; font-family: var(--font-display); font-size: 58px; line-height: 1.2; font-weight: 700; margin: 2px 0 8px; }
+[data-theme=light] .impact-totals strong span { font-size: 30px; font-weight: 600; }
 [data-theme=light] .strategy-table > div { grid-template-columns: 620px 48px 1fr; gap: 32px; padding: 22px 16px; min-height: 110px; border-top: 2px solid #647789; align-items: center; }
 [data-theme=light] .strategy-table > div:first-child { height: 110px; grid-template-rows: minmax(0, 1fr); }
 [data-theme=light] .strategy-table h2 { font-size: 32px; margin: 0; line-height: 1.35; }
@@ -414,3 +416,12 @@
 [data-theme=light] .deck-perspective .perspective-year-value { font-size: 96px; line-height: 1; font-weight: 700; font-variant-numeric: tabular-nums; color: #13283B; }
 [data-theme=light] .deck-perspective .perspective-today { font-size: 34px; line-height: 1.3; font-weight: 500; color: #075448; }
 [data-theme=light] .deck-perspective :is(.perspective-legend, .perspective-node-legend) { font-size: 26px; line-height: 1.2; }
+
+/* Partner logos identify the two strategy groups on slide 18. */
+[data-theme=light] .partner-strategies { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 80px; align-items: start; }
+[data-theme=light] .strategy-brand { height: 70px; display: flex; align-items: center; margin-bottom: 20px; }
+[data-theme=light] .strategy-brand .slide-partner-mark { transform: scale(1.5); transform-origin: left center; }
+[data-theme=light] .architecht-strategies { position: relative; }
+[data-theme=light] .architecht-strategies::before { content: ""; position: absolute; left: -40px; top: 0; bottom: 0; width: 2px; background: #647789; }
+[data-theme=light] .partner-strategy-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 32px; }
+[data-theme=light] .partner-strategy-list li { border-top: 2px solid #647789; padding-top: 24px; font-size: 34px; line-height: 1.45; color: #13283B; font-weight: 600; }

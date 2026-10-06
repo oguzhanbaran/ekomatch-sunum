@@ -6,6 +6,7 @@ import { EconomicNetwork } from '../components/Network'
 import { PerspectiveSlides } from '../components/PerspectiveSlides'
 import * as data from '../data/deckData'
 import provinces from '../data/provinces.json'
+import { impactScenarios, impactNumber } from '../data/impactModel'
 
 const miniLogoUrl = new URL('../../logo-mini.png', import.meta.url).href
 const b2bStepImages = [
@@ -183,22 +184,27 @@ function Positioning() {
 }
 
 function Revenue() {
-  const scenarios = [
-    ['Kötü giderse', '~120', 'maliyetin ~2,7 katı'],
-    ['Beklenen', '~245', 'maliyetin ~5,4 katı'],
-    ['İyi giderse', '~490', 'maliyetin ~10,9 katı'],
-  ]
-  return <div className="revenue-summary">
-    <div className="revenue-cards">{scenarios.map(([label, value, multiple], i) => <article key={label} className={`revenue-card${i === 1 ? ' is-expected' : ''}`} aria-label={`${label} senaryo`}>
-      <p className="revenue-label">{label}</p>
-      <strong className="revenue-amount">{value}</strong>
-      <span className="revenue-unit">milyon TL / yıl</span>
-      <p className="revenue-multiple">{multiple}</p>
-    </article>)}</div>
-    <div className="revenue-conclusion">
-      <Insight>Kötü senaryoda bile yatırım maliyetinin yaklaşık 2,7 katı.</Insight>
-      <p className="revenue-origin">Olgun yapıda; gelir, yeni ticari ilişkilerin finansmanından doğar.</p>
+  const ceiling = 3000
+  return <div className="impact-slide">
+    <div className="impact-main">
+      <div className="impact-chart">
+        <p className="impact-chart-title">Yıllık brüt gelir <span>· milyon TL</span></p>
+        <div className="impact-legend">{impactScenarios.map(s => <span key={s.label}><i style={{ background: s.color }} />{s.label}</span>)}</div>
+        <svg viewBox="0 0 730 360" role="img" aria-label={impactScenarios.map(s => `${s.label}: ${s.years.map((y, i) => `Yıl ${i + 1}: ${impactNumber(y.revenue)} milyon TL`).join(', ')}`).join('. ')}>
+          {[1000, 2000, 3000].map(value => <g key={value}><line x1="78" x2="722" y1={310 - value / ceiling * 264} y2={310 - value / ceiling * 264} stroke="#13283B" strokeOpacity=".2" /><text x="65" y={318 - value / ceiling * 264} textAnchor="end" fontSize="26" fill="#2F3F4D">{impactNumber(value)}</text></g>)}
+          {[0, 1, 2].map(year => <g key={year}>
+            {impactScenarios.map((s, index) => { const height = s.years[year].revenue / ceiling * 264; const x = 110 + year * 215 + index * 88; return <g key={s.label}><rect x={x} y={310 - height} width="70" height={height} rx="5" fill={s.color} /><text x={x + 35} y={298 - height} textAnchor="middle" fontSize="28" fontWeight="600" fill="#13283B">{impactNumber(s.years[year].revenue)}</text></g> })}
+            <text x={189 + year * 215} y="352" textAnchor="middle" fontSize="30" fill="#13283B">Yıl {year + 1}</text>
+          </g>)}
+        </svg>
+      </div>
+      <div className="impact-totals">{impactScenarios.map(s => <article key={s.label} style={{ borderColor: s.color }}>
+        <h2><i style={{ background: s.color }} />{s.label}</h2>
+        <p>3 yılda toplam brüt gelir</p>
+        <strong>{impactNumber(s.total / 1000, 2)} <span>milyar TL</span></strong>
+      </article>)}</div>
     </div>
+    <Insight>Katılım bankacılığı: önce reel ekonomik ilişki, sonra finansman.</Insight>
   </div>
 }
 
@@ -243,7 +249,16 @@ function SlideBody({ kind }: { kind: string }) {
     case 'swot': return <div className="deck-swot">{data.swot.map(([name, items], i) => <div key={name}><span className="deck-number">0{i + 1}</span><h2>{name}</h2><ul>{items.map(t => <li key={t}>{t}</li>)}</ul></div>)}</div>
     case 'risks': return <div className="deck-risks">{data.risks.map(([name, text], i) => <div key={name}><span className="deck-number">0{i + 1}</span><h2>{name}</h2><ArrowRight /><p>{text}</p></div>)}</div>
     case 'revenue': return <Revenue />
-    case 'strategy': return <><div className="strategy-table">{data.strategies.map(([name, text]) => <div key={name}><h2>{name}</h2><ArrowRight /><p>{text}</p></div>)}</div><Insight>Katılım bankacılığı: önce reel ekonomik ilişki, sonra finansman.</Insight></>
+    case 'strategy': return <><div className="partner-strategies">
+      <section className="partner-strategy-group" aria-label="Kuveyt Türk stratejileri">
+        <div className="strategy-brand"><span className="slide-partner-mark is-kt"><img src={ktLogoUrl} alt="Kuveyt Türk" draggable={false} /></span></div>
+        <ul className="partner-strategy-list">{data.strategies.map(([name]) => <li key={name}>{name}</li>)}</ul>
+      </section>
+      <section className="partner-strategy-group architecht-strategies" aria-label="Architecht stratejileri">
+        <div className="strategy-brand"><span className="slide-partner-mark is-archi"><img src={archiLogoUrl} alt="Architecht" draggable={false} /></span></div>
+        <ul className="partner-strategy-list">{data.architechtStrategies.map(text => <li key={text}>{text}</li>)}</ul>
+      </section>
+    </div></>
     default: return null
   }
 }

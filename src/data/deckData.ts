@@ -1,3 +1,4 @@
+import { impactNotes } from './impactModel'
 // Eight-minute delivery plan: 47-second opening + 403-second speech + 30-second transition allowance.
 const speakerNotes: Record<string, string> = {
   'acilis': `HEDEF SÜRE: 12 saniye
@@ -116,7 +117,7 @@ Bu slaydın sonunda, video dâhil yaklaşık 5:48 hedefle.`,
   'ekonomik-katki': `HEDEF SÜRE: 6 saniye
 
 Şimdi bu yaklaşımın ekonomik karşılığına bakalım. Burada işlem hacmini, bankaya oluşabilecek gelir katkısından ayrı değerlendirmemiz gerekiyor.`,
-  'bankaya-katki': `Gelirimiz yeni ticari ilişkilerin finansmanından doğuyor. Beklenen senaryoda yılda yaklaşık bin yeni finansman, yaklaşık 4,9 milyar lira hacim ve yaklaşık yüzde beş net kâr payıyla yılda yaklaşık 245 milyon lira. Kötü giderse bunun yarısı; yine de proje maliyetinin yaklaşık 2,7 katı. Bu rakamlar olgun yapı içindir; ilk yıl kademeli ilerliyoruz. Oranlar, pilotta ölçeceğimiz varsayımlardır.`,
+  'bankaya-katki': impactNotes,
   'strateji-kapanis': `HEDEF SÜRE: 6 saniye
 
 Son olarak, bu yaklaşımın sunumda ele aldığımız Kuveyt Türk strateji başlıklarına nasıl katkı sağlayabileceğini birlikte değerlendirelim.`,
@@ -129,7 +130,7 @@ Müşteri açısından doğru zamanda, ihtiyacına uygun bir görüşme hedefliy
 Şubeciye de görüşmesini hazırlayabileceği bir içgörü sunuyoruz: Hangi müşteriyle, hangi olası ihtiyaç hakkında ve hangi gerekçeyle iletişim kurabilir?
 
 ANLATIM NOTU
-Sol başlıklarla sağ açıklamaları eşleştirerek ilerle. Son soruyu dinleyiciye bakarak söyle.`,
+Kuveyt Türk başlıklarını EkoMatch katkılarıyla eşleştirerek ilerle. Architecht tarafında herkes için yenilikçi ve sürdürülebilir finansal teknolojiler sunmak; finansal teknolojide yapay zekâ dönüşümüne öncülük eden en güvenilir iş ortağı olmak stratejilerini vurgula.`,
   'final': `HEDEF SÜRE: 17 saniye
 
 EkoMatch ile önerimiz, bankanın ekonomik ağını henüz kurulmamış ilişkileri de keşfedebilecek şekilde değerlendirmek.
@@ -177,13 +178,13 @@ export const scenes: Slide[] = [
   s('teknoloji', 'Teknoloji Yığını', '02 / ÇÖZÜM & MİMARİ', 'Banka içinde çalışan, izlenebilir bir altyapı.', 'stack', 'Bunlar sunumda önerilen teknoloji seçenekleridir; tamamlanmış entegrasyon veya kurulu altyapı iddiası değildir. LLM ve RAG on-prem açıklama katmanıdır.'),
   s('uygulama', 'Uygulama & Yol Haritası', 'BÖLÜM 03', 'Kanıtla. Pilotta ölç. Kontrollü yaygınlaştır.', 'divider', 'Veri erişimi, anonimleştirme, model, açıklama, şube entegrasyonu, pilot ve ölçüm birbirine bağlı iş paketleridir.', 'Uygulama & Yol Haritası'),
   s('yol-haritasi', '12 Aylık Yol Haritası', '03 / UYGULAMA & YOL HARİTASI', 'Her fazın çıktısı ve karar kapısı var.', 'roadmap', ''),
-  s('kaynak', 'Kaynak Planı & Maliyet', '03 / UYGULAMA & YOL HARİTASI', "Yatırımın yaklaşık %78'i ekip.", 'resources', ''),
+  s('kaynak', 'Kaynak Planı & Maliyet', '03 / UYGULAMA & YOL HARİTASI', '13 kişilik ekip, 12 ay, yaklaşık 45 milyon TL.', 'resources', ''),
   s('rekabet', 'Rekabet & Değer', 'BÖLÜM 04', 'Ürünün ötesinde, yeni ekonomik ilişki.', 'divider', 'Karşılaştırma ürün kategorileri düzeyinde kavramsaldır. Adı geçen bir rakibin doğrulanmış yetenek denetimi değildir.', 'Rekabet & Değer'),
   s('swot', 'SWOT', '04 / REKABET & DEĞER', 'Güçlü veri, kontrollü büyüme.', 'swot', 'Güç: bankaya özgü ilişki verisi, bireysel ve ticari tek ağ, açıklanabilirlik ve insan onayı, katılım bankacılığı uyumu. Zayıflık: veri kalitesi, kategori verisinin sınırı, soğuk başlangıç, benimsenme. Fırsat ve tehditler stratejik değerlendirmelerdir.'),
   s('ekonomik-katki', 'Ekonomik Katkı', 'BÖLÜM 05', 'Potansiyelden ölçülebilir katkıya.', 'divider', 'Ekonomik katkı bölümüne geçiş. Hacim ile gelir projeksiyonunu ayrı değerlendirin.', 'Ekonomik Katkı'),
-  s('bankaya-katki', 'ETKİ', '05 / EKONOMİK KATKI', 'Yılda yaklaşık 245 milyon TL net gelir.', 'revenue', ''),
+  s('bankaya-katki', 'ETKİ', '05 / EKONOMİK KATKI', 'Her ilişki, büyüyen gelir potansiyeli.', 'revenue', ''),
   s('strateji-kapanis', 'Strateji & Kapanış', 'BÖLÜM 06', 'Stratejiyi reel ticaretle buluştur.', 'divider', 'Strateji ve kapanış bölümüne geçiş.', 'Strateji & Kapanış'),
-  s('strateji', 'Kuveyt Türk Stratejileri', '06 / STRATEJİ & KAPANIŞ', 'Reel ekonomiden, sürdürülebilir değere.', 'strategy', 'Strateji ifadeleri kullanıcı tarafından sağlanan sunum metnindendir. Güncel kurumsal strateji belgesi bu çalışmaya eklenmedi; resmî dönem ve kaynak teyit edilmelidir.'),
+  s('strateji', 'Kuveyt Türk & Architecht Stratejileri', '06 / STRATEJİ & KAPANIŞ', 'Reel ekonomiden, sürdürülebilir değere.', 'strategy', 'Strateji ifadeleri kullanıcı tarafından sağlanan sunum metnindendir. Güncel kurumsal strateji belgesi bu çalışmaya eklenmedi; resmî dönem ve kaynak teyit edilmelidir.'),
   s('final', 'Kapanış', 'EKOMATCH', 'Henüz kurulmamış ilişki, keşfedilmeyi bekleyen bir fırsattır.', 'final', 'Talebi keşfet. Arzla buluştur. Ekonomik ağı büyüt. Tek büyük logo yalnızca bu sahnede görünür.'),
 ]
 
@@ -254,10 +255,15 @@ export const benchmarkRows: { label: string; values: number[] }[] = [
   { label: 'Önce ticaret, sonra finansman', values: [2, 0, 0, 0, 1] },
 ]
 export const swot = [
-  ['Güçlü yönler', ['Bankaya özgü ilişki verisi', 'Bireysel + ticari tek ağ', 'Açıklanabilir ve insan onaylı', 'Katılım bankacılığıyla uyum']],
-  ['Zayıf yönler', ['Veri kalitesine bağımlılık', 'Kategori, ürünü göstermez', 'Soğuk başlangıç', 'Şubenin benimsemesi gerekli']],
-  ['Fırsatlar', ['Ticari ağ ve finansman büyümesi', 'Ticari müşteri kazanımı', 'Katılım ekosistemine ihracat', 'Açık bankacılık']],
-  ['Tehditler', ['KVKK / BDDK değişiklikleri', 'Yanlış pozitif fırsatlar', 'Tedarikçi riski algısı', 'Model kayması']],
+  ['Güçlü yönler', ['Bankaya özgü ilişki verisi', 'Bireysel + ticari tek ağ', 'Katılım bankacılığıyla uyum']],
+  ['Zayıf yönler', ['Veri kalitesine bağımlılık', 'Kategori, ürünü göstermez']],
+  ['Fırsatlar', ['Ticari ağ ve finansman büyümesi', 'Ticari müşteri kazanımı', 'Katılım ekosistemine ihracat']],
+  ['Tehditler', ['Yanlış pozitif fırsatlar', 'Tedarikçi riski algısı']],
 ] as const
 export const risks = [['Gizlilik', 'Anonimleştirme, toplulaştırma ve minimum örneklem eşiği.'], ['Yanlış pozitif', 'Şubeci doğrulaması, güven skoru ve geri besleme.'], ['Tedarikçi riski', 'Birden fazla alternatif; uyum skoru garanti değildir.'], ['Aşırı otomasyon', 'Kredi ve limit kararları yetkili banka süreçlerinde kalır.']]
 export const strategies = [['En güncel teknolojiler', 'Benzerlik modelleri ve açıklanabilir yapay zekâ ile ekonomik ağ analizi.'], ['Etkin risk yönetimi & aktif kalite', 'Reel ticarete dayalı, insan onaylı finansman.'], ['Müşteriye yalın deneyim', 'Doğru zamanda doğru ilişki; veriye dayalı şube görüşmesi.'], ['Sürdürülebilir yüksek kârlılık', 'Yeni ticari finansman geliri potansiyeli.'], ['Geleceğin yetkinlikleri & dinamik takımlar', 'Şubeciyi fırsat içgörüsüyle güçlendiren deneyim.']]
+
+export const architechtStrategies = [
+  'Herkes için yenilikçi ve sürdürülebilir finansal teknolojiler sunmak.',
+  'Finansal teknolojide yapay zekâ dönüşümüne öncülük eden en güvenilir iş ortağı olmak.',
+] as const

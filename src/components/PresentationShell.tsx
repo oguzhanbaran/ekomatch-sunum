@@ -162,7 +162,7 @@ export function PresentationShell({ index, setIndex, children }: Props) {
       <div className="topbar__spacer" aria-hidden="true" />
     </header>
 
-    <div id="scene" className="stage" style={{ width: 1920, height: 1080, position: 'absolute', left: '50%', top: '50%', transform: `translate(-50%, -50%) scale(${canvasScale})` }} tabIndex={-1} inert={overview || notes}>{children}{!['cover', 'divider'].includes(scenes[index].kind) && <SlidePartnerMarks />}</div>
+    <div id="scene" className="stage" style={{ width: 1920, height: 1080, position: 'absolute', left: '50%', top: '50%', transform: `translate(-50%, -50%) scale(${canvasScale})` }} tabIndex={-1} inert={overview || notes}>{children}{!['cover', 'divider', 'strategy'].includes(scenes[index].kind) && <SlidePartnerMarks />}</div>
 
     <AnimatePresence>{notes && <motion.aside role="dialog" aria-modal="true" aria-label="Konuşmacı notları" className="notes" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 30 }}><button onClick={() => setNotes(false)} aria-label="Notları kapat"><X /></button><span>KONUŞMACI NOTU · {String(index + 1).padStart(2, '0')}</span><h2>{scenes[index].shortTitle}</h2><p>{scenes[index].note}</p><div className="notes__keys"><kbd>Esc</kbd> kapat · notlar açıkken sahne sabit kalır</div></motion.aside>}</AnimatePresence>
 
