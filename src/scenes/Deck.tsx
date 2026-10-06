@@ -106,7 +106,7 @@ function Flywheel() {
       <div className="loop-center"><span>TEK</span><strong>EKONOMİK AĞ</strong></div>
       {data.loop.map((label, i) => <button key={label} className={active === i ? 'active' : ''} style={{ left: points[i].x, top: points[i].y }} onClick={() => setActive(i)} aria-label={`${i + 1}. ${labels[i]}`} aria-pressed={active === i}>{i === 2 && <UserCheck className="loop-human-icon" size={28} aria-hidden="true" />}<span className="loop-box-label"><span className="loop-box-line">{labels[i]}</span></span></button>)}
     </div>
-    <div className="loop-copy"><Tag>{data.loopDetails[active].label}</Tag><h2>{data.loop[active]}</h2><p>{data.loopDetails[active].description}</p><button className="deck-button secondary" onClick={advance}>Döngüyü ilerlet <ArrowRight /></button></div>
+    <div className="loop-copy"><h2>{labels[active]}</h2><p>{data.loopDetails[active].description}</p><button className="deck-button secondary" onClick={advance}>Döngüyü ilerlet <ArrowRight /></button></div>
   </div>
 }
 
