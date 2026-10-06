@@ -1,4 +1,4 @@
-export const TIMELINE = { startYear: 1989, endYear: 2026, delay: .8, growth: 8, hold: 1.5, fade: .4, edgeDraw: .35 } as const
+export const TIMELINE = { startYear: 1989, endYear: 2026, delay: .8, growth: 16, hold: 1.5, fade: .4, edgeDraw: .35 } as const
 export const TIMELINE_END = TIMELINE.delay + TIMELINE.growth + TIMELINE.hold
 export type Node = { x: number; y: number; business: boolean; birthYear: number; ringBirthYear: number }
 export type Pair = readonly [number, number]

@@ -1,15 +1,13 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowRight, Check, Minus, X, ScanSearch, UserCheck, Handshake, Banknote, Database, Layers, Network, BrainCircuit, ShieldCheck, Monitor, ChevronRight, RotateCcw, History, User, Users, Store, Package, PackageCheck, Activity, Radar, Link, Landmark, type LucideIcon } from 'lucide-react'
-import { EkoMark } from '../components/Brand'
+import { EkoMark, ktLogoUrl, archiLogoUrl } from '../components/Brand'
 import { EconomicNetwork } from '../components/Network'
 import { PerspectiveSlides } from '../components/PerspectiveSlides'
 import * as data from '../data/deckData'
 import provinces from '../data/provinces.json'
 
 const miniLogoUrl = new URL('../../logo-mini.png', import.meta.url).href
-const ktLogoUrl = new URL('../../kt-logo.png', import.meta.url).href
-const archiLogoUrl = new URL('../../archi-logo.png', import.meta.url).href
 const b2bStepImages = [
   new URL('../../Pics/Slide8/Company.png', import.meta.url).href,
   new URL('../../Pics/Slide8/Similarity.png', import.meta.url).href,
@@ -85,7 +83,7 @@ function B2C() {
 function Flywheel() {
   const [active, setActive] = useState(0)
   const maskId = useId()
-  const lines = [['Bölgesel talep', 'sinyali'], ['İşletme', 'fırsatı'], ['Şubeci', 'doğrular'], ['Tedarikçi', 'alternatifleri'], ['Reel ticaret'], ['Finansman'], ['Yeni veri'], ['Model yeniden', 'öğrenir']]
+  const labels = ['Talep Sinyali', 'Fırsat', 'Kullanıcı', 'Tedarikçi', 'Ticaret', 'Finansman', 'Veri', 'Model Eğitimi']
   const pointAt = (angle: number) => ({ x: 435 + 330 * Math.cos(angle), y: 310 + 270 * Math.sin(angle) })
   const points = data.loop.map((_, i) => pointAt(i * Math.PI / 4 - Math.PI / 2))
   const advance = () => {
@@ -105,7 +103,7 @@ function Flywheel() {
         })}
       </svg>
       <div className="loop-center"><span>TEK</span><strong>EKONOMİK AĞ</strong></div>
-      {data.loop.map((label, i) => <button key={label} className={active === i ? 'active' : ''} style={{ left: points[i].x, top: points[i].y }} onClick={() => setActive(i)} aria-label={`${i + 1}. ${label}`} aria-pressed={active === i}>{i === 2 && <UserCheck className="loop-human-icon" size={28} aria-hidden="true" />}<span className="loop-box-label">{lines[i].map(line => <span className="loop-box-line" key={line}>{line}</span>)}</span></button>)}
+      {data.loop.map((label, i) => <button key={label} className={active === i ? 'active' : ''} style={{ left: points[i].x, top: points[i].y }} onClick={() => setActive(i)} aria-label={`${i + 1}. ${labels[i]}`} aria-pressed={active === i}>{i === 2 && <UserCheck className="loop-human-icon" size={28} aria-hidden="true" />}<span className="loop-box-label"><span className="loop-box-line">{labels[i]}</span></span></button>)}
     </div>
     <div className="loop-copy"><Tag>{data.loopDetails[active].label}</Tag><h2>{data.loop[active]}</h2><p>{data.loopDetails[active].description}</p><button className="deck-button secondary" onClick={advance}>Döngüyü ilerlet <ArrowRight /></button></div>
   </div>
@@ -138,7 +136,7 @@ function Roadmap({ detailed = false }: { detailed?: boolean }) {
     </div>
     <div className="gantt-decision-gates"><div className="gantt-gate-track">{gates.map(gate => <div key={gate.month} className="gantt-decision-gate" style={{ left: `${gate.month / 12 * 100}%` }}><GateDiamond /><strong>Ay {gate.month}</strong><span>{gate.label}</span></div>)}</div></div>
     {detailed && <p className="gantt-gate-legend"><GateDiamond />Karar kapısı: devam / durdur</p>}
-    {!detailed && <div className="gantt-footer"><p className="gantt-gate-legend"><GateDiamond />Karar kapısı: devam / durdur</p><span className="gantt-resource-summary">12 ay · 13 kişi · ~45 milyon TL</span></div>}
+    {!detailed && <div className="gantt-footer"><p className="gantt-gate-legend"><GateDiamond />Karar kapısı: devam / durdur</p></div>}
   </>
 }
 

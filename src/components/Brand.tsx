@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion'
 
 const logoUrl = new URL('../../Ekomatch Logo.PNG', import.meta.url).href
-const ktLogoUrl = new URL('../../kt-logo.png', import.meta.url).href
-const archiLogoUrl = new URL('../../archi-logo.png', import.meta.url).href
+export const ktLogoUrl = new URL('../../kt-logo-siyah.png', import.meta.url).href
+export const archiLogoUrl = new URL('../../archi-logo-siyah.png', import.meta.url).href
 
 export function SlidePartnerMarks() {
   return <div className="slide-partner-marks" aria-label="Proje paydaşları">

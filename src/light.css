@@ -14,6 +14,8 @@
 .presentation.controls-visible .topbar, .presentation.controls-visible .controls,
 .presentation .topbar:focus-within, .presentation .controls:focus-within { opacity: 1; visibility: visible; }
 .presentation .progress { display: none; }
+.presentation .topbar__tools button { display: grid; width: clamp(24px, 2.3vw, 44px); height: clamp(24px, 2.3vw, 44px); }
+.presentation .topbar__tools svg { width: clamp(12px, .9vw, 17px); height: clamp(12px, .9vw, 17px); }
 [data-theme=light] .presentation { background: var(--surface); }
 [data-theme=light] .deck-scene { background: var(--surface); padding: 54px 96px; gap: 28px; overflow: visible; height: 1080px; min-height: 1080px; font-weight: 500; }
 [data-theme=light] .deck-scene *, [data-theme=light] .deck-scene *::before, [data-theme=light] .deck-scene *::after {
@@ -354,7 +356,7 @@
 @media (max-width: 600px) {
   .presentation .topbar { grid-template-columns: 1fr; }
   .presentation .topbar__spacer, .presentation .topbar__chapter { display: none; }
-  .presentation .topbar__tools { justify-self: center; }
+  .presentation .topbar__tools { justify-self: start; }
   .presentation .progress-wrap { width: 45vw; }
 }
 [data-theme=light] .chapter-number { line-height: 1.25; margin-bottom: 16px; }

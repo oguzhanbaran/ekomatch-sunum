@@ -12,6 +12,8 @@
 .slide-partner-mark.is-archi img { width: 153.6px; left: -14.28px; top: -14.28px; }
 .deck-heading { position: relative; z-index: 2; flex-shrink: 0; }
 .deck-tag { margin: 0 0 12px; color: var(--aqua); font: 500 var(--label)/1.35 var(--font-mono); letter-spacing: .08em; }
+/* Keep the reserved header space so removing the section labels does not move content. */
+.deck-heading > .deck-tag, .definition-header > .deck-tag, .comparison-header > .deck-tag, .perspective-fixed-tag { visibility: hidden; }
 .deck-heading h1 { max-width: 1500px; margin: 0; font: 600 clamp(36px, 3.65vw, 72px)/1.08 var(--font-display); letter-spacing: -.045em; text-wrap: balance; }
 .deck-body { position: relative; z-index: 2; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 2.5vh; }
 .deck-body h2 { margin: 0 0 14px; font: 600 var(--subheading)/1.18 var(--font-display); letter-spacing: -.025em; }

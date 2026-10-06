@@ -102,9 +102,9 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--aqua);
 
 .topbar { position: fixed; z-index: 100; left: 3.2vw; right: 3.2vw; top: 20px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; pointer-events: none; }
 .topbar > * { pointer-events: auto; }
-.topbar__chapter { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: rgba(7,17,15,.64); backdrop-filter: blur(14px); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+.topbar__chapter { grid-column: 2; justify-self: center; display: flex; align-items: center; gap: 10px; padding: 9px 14px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: rgba(7,17,15,.64); backdrop-filter: blur(14px); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
 .topbar__chapter span { color: var(--aqua); font-family: var(--font-mono); }
-.topbar__tools { justify-self: end; display: flex; gap: 4px; }
+.topbar__tools { position: fixed; top: 4px; left: inherit; justify-self: start; display: flex; gap: 4px; }
 .topbar__tools button, .notes > button, .overview__head button { width: 42px; height: 42px; display: grid; place-items: center; background: rgba(13,26,23,.72); border: 1px solid var(--line); border-radius: 50%; cursor: pointer; transition: border-color .2s, background .2s, transform .2s; }
 .topbar__tools button:hover, .notes > button:hover, .overview__head button:hover { background: var(--surface-2); border-color: var(--line-strong); transform: translateY(-1px); }
 .topbar__tools svg { width: 17px; }

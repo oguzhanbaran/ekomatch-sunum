@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Expand, Grid2X2, Maximize, Minimize, RotateCcw, StickyNote, X } from 'lucide-react'
 import { scenes } from '../data/deckData'
+import { SlidePartnerMarks } from './Brand'
 
 type Props = {
   index: number
@@ -152,16 +153,16 @@ export function PresentationShell({ index, setIndex, children }: Props) {
     <a href="#scene" className="skip-link">Sunuma geç</a>
     <div className="presentation__grain" />
     <header className="topbar" inert={overview || notes || !controlsVisible}>
-      <div className="topbar__spacer" aria-hidden="true" />
-      <div className="topbar__chapter"><span>{String(index + 1).padStart(2, '0')}</span>{scenes[index].shortTitle}</div>
       <div className="topbar__tools">
         <button onClick={() => setNotes(v => !v)} aria-label="Konuşmacı notları" title="Konuşmacı notları (N)"><StickyNote /></button>
         <button onClick={() => setOverview(true)} aria-label="Sahne görünümü" title="Genel görünüm (O)"><Grid2X2 /></button>
         <button onClick={toggleFullscreen} aria-label={fullscreen ? 'Tam ekrandan çık' : 'Tam ekran'} title="Tam ekran (F)">{fullscreen ? <Minimize /> : <Maximize />}</button>
       </div>
+      <div className="topbar__chapter"><span>{String(index + 1).padStart(2, '0')}</span>{scenes[index].shortTitle}</div>
+      <div className="topbar__spacer" aria-hidden="true" />
     </header>
 
-    <div id="scene" className="stage" style={{ width: 1920, height: 1080, position: 'absolute', left: '50%', top: '50%', transform: `translate(-50%, -50%) scale(${canvasScale})` }} tabIndex={-1} inert={overview || notes}>{children}</div>
+    <div id="scene" className="stage" style={{ width: 1920, height: 1080, position: 'absolute', left: '50%', top: '50%', transform: `translate(-50%, -50%) scale(${canvasScale})` }} tabIndex={-1} inert={overview || notes}>{children}{!['cover', 'divider'].includes(scenes[index].kind) && <SlidePartnerMarks />}</div>
 
     <AnimatePresence>{notes && <motion.aside role="dialog" aria-modal="true" aria-label="Konuşmacı notları" className="notes" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 30 }}><button onClick={() => setNotes(false)} aria-label="Notları kapat"><X /></button><span>KONUŞMACI NOTU · {String(index + 1).padStart(2, '0')}</span><h2>{scenes[index].shortTitle}</h2><p>{scenes[index].note}</p><div className="notes__keys"><kbd>Esc</kbd> kapat · notlar açıkken sahne sabit kalır</div></motion.aside>}</AnimatePresence>
 
