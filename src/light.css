@@ -425,3 +425,25 @@
 [data-theme=light] .architecht-strategies::before { content: ""; position: absolute; left: -40px; top: 0; bottom: 0; width: 2px; background: #647789; }
 [data-theme=light] .partner-strategy-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 32px; }
 [data-theme=light] .partner-strategy-list li { border-top: 2px solid #647789; padding-top: 24px; font-size: 34px; line-height: 1.45; color: #13283B; font-weight: 600; }
+
+/* Projection-friendly example: one message per selected step. */
+[data-theme=light] .chain-simplified .b2c-layout { grid-template-columns: 400px minmax(0, 1fr); gap: 72px; min-height: 510px; align-items: stretch; }
+[data-theme=light] .chain-simplified .space-layers { justify-content: flex-start; gap: 28px; }
+[data-theme=light] .chain-simplified .space-layers button { min-height: 148px; align-items: center; padding: 28px; gap: 24px; }
+[data-theme=light] .chain-simplified .space-layers button[aria-pressed=true] { padding: 26px; }
+[data-theme=light] .chain-simplified .space-layers button h2 { font-size: 40px; margin: 0; }
+[data-theme=light] .chain-simplified .space-layers button > span { font-size: 30px; }
+[data-theme=light] .chain-simplified .chain-panel > .whitespace-profiles { justify-content: flex-start; gap: 28px; padding: 16px 0; }
+[data-theme=light] .chain-simplified .chain-identity span { font-size: 40px; }
+[data-theme=light] .chain-simplified .chain-identity svg { width: 36px; height: 36px; flex-basis: 36px; }
+[data-theme=light] .chain-simplified .chain-gap-status { font-size: 34px; color: #075448; margin: 0; }
+[data-theme=light] .chain-key-figures { display: grid; grid-template-columns: 1fr; margin-top: 16px; gap: 40px; }
+[data-theme=light] .chain-key-figures.has-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+[data-theme=light] .chain-key-figure { border-left: 5px solid #0A6B5C; padding: 12px 0 12px 28px; }
+[data-theme=light] .chain-simplified .chain-key-figure h3 { font-size: 38px; line-height: 1.25; color: #13283B; margin: 0 0 24px; font-weight: 600; }
+[data-theme=light] .chain-key-figure strong { display: block; font-size: 72px; line-height: 1.1; font-family: var(--font-display); font-weight: 700; color: #13283B; }
+[data-theme=light] .chain-simplified .chain-key-figure p { font-size: 32px; margin-top: 16px; color: #2F3F4D; }
+[data-theme=light] .chain-simplified .turkey-map { justify-content: flex-start; gap: 20px; }
+[data-theme=light] .chain-simplified .turkey-map > svg { height: 380px; flex-shrink: 0; }
+[data-theme=light] .chain-simplified .map-readout { font-size: 36px; padding: 0; border: 0; }
+[data-theme=light] .chain-simplified .map-legend { font-size: 28px; gap: 24px; flex-wrap: wrap; }
