@@ -5,6 +5,7 @@ import type { Slide } from '../data/deckData'
 import { PerspectiveNetwork } from './PerspectiveNetwork'
 import { TIMELINE, TIMELINE_END } from '../data/perspectiveNetwork'
 
+
 const existingItems: [LucideIcon, string, string?][] = [
   [CreditCard, 'Kart kullanımı'],
   [Landmark, 'Ürün ve finansman'],

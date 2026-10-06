@@ -62,7 +62,7 @@ function B2C() {
   const reduced = useReducedMotion()
   const lowCoverage = [6, 16, 35]
   const insights = ['Yapı market, bu müşteri için potansiyel bir fırsat alanı.', 'Bireysel veri bankada kalır; yalnızca anonim toplam görünür.', 'Şubemiz doğrular; bankanın müşterisi üreticileri alternatif olarak sunar.']
-  const gaps = layer === 0 ? [['Yapı market', '38 / 100', 'benzer müşteride var']] : [['Tedarikçi Finansmanı', '26 / 40', 'benzer işletmede var'], ['Finansal kiralama', '17 / 40', 'benzer işletmede var']]
+  const gaps = layer === 0 ? [['Yapı market', '38 / 100', 'benzer müşteride var']] : [['Tedarikçi Finansmanı', '26 / 40', 'benzer işletmede var'], ['Leasing', '17 / 40', 'benzer işletmede var']]
   return <div className="chain-example chain-simplified">
     <div className="b2c-layout">
       <div className="space-layers">{data.b2cLayers.map(([title], i) => <button key={title} aria-pressed={layer === i} onClick={() => setLayer(i)}><span>0{i + 1}</span><div><h2>{title}</h2></div></button>)}</div>
