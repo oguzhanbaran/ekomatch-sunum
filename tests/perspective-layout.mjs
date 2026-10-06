@@ -44,7 +44,7 @@ try {
       assert.ok(Math.abs(layout.legendAlign) < .1)
       assert.equal(layout.heading, '60px')
       assert.equal(layout.paragraph, '32px')
-      assert.equal(layout.legendFont, '22px')
+      assert.equal(layout.legendFont, '26px')
       assert.deepEqual(layout.bad, [])
       if (previous) {
         assert.deepEqual(layout.graph, previous.graph)

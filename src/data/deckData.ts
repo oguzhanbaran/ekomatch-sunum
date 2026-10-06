@@ -17,7 +17,7 @@ Müşterimiz bizimle bankacılık ilişkisi kuruyor. Ancak onun alışveriş, te
 
 ANLATIM NOTU
 Bu bir bölüm geçişi. Beklemeden üçüncü slayta ilerle.`,
-  'bugunku-bakis': `HEDEF SÜRE: 20 saniye
+  'bugunku-bakis': `Bu ağ temsilidir; ama gerçek bir gerçeği anlatır. 1989'da küçük bir ağla başladık. Her müşteri, her ödeme, her ticaret bu ağa bir çizgi ekledi. Otuz yedi yılda bu ağ bankamızın hafızası oldu. Bugün bu ağda yalnızca kurulmuş ilişkileri görüyoruz. Peki, henüz kurulmamış olanlar?\n\nHEDEF SÜRE: 20 saniye
 
 Bugün müşterimiz hakkında oldukça değerli bilgilere sahibiz. Hangi kartı kullanıyor, hangi finansmanı almış, hangi kategorilerde harcama yapıyor, görebiliyoruz. CRM ve kampanya sistemleri bu kayıtları anlamlandırıyor.
 

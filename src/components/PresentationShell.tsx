@@ -51,6 +51,12 @@ export function PresentationShell({ index, setIndex, children }: Props) {
       if (notes && event.key === 'Escape') return setNotes(false)
       if (overview || notes) return
       if (event.key === ' ' && target.closest('button, a')) return
+      if (scenes[index].id === 'bugunku-bakis' && ['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(event.key)
+        && document.querySelector('[data-timeline-running="true"]')) {
+        event.preventDefault()
+        window.dispatchEvent(new Event('ekomatch:finish-timeline'))
+        return
+      }
       if (scenes[index].id === 'davranissal-ikiz') {
         const forward = ['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(event.key)
         const backward = ['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)

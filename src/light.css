@@ -325,3 +325,12 @@
 [data-theme=light] .demand-medium { background: #b4d8d4; }
 [data-theme=light] .demand-high { background: #007F78; }
 [data-theme=light] .chain-example .deck-insight { font-size: 34px; font-weight: 500; color: #075448; }
+
+/* Timeline labels are absolute, so the shared artwork never moves between views. */
+[data-theme=light] .deck-perspective .perspective-artwork { position: relative; width: 842.05px; flex-shrink: 0; }
+[data-theme=light] .deck-perspective .perspective-network { display: block; }
+[data-theme=light] .deck-perspective :is(.perspective-network, .perspective-legend) { transform: translateY(45px); }
+[data-theme=light] .deck-perspective .perspective-year { position: absolute; left: 0; top: -111px; display: flex; flex-direction: column; }
+[data-theme=light] .deck-perspective .perspective-year-value { font-size: 96px; line-height: 1; font-weight: 700; font-variant-numeric: tabular-nums; color: #13283B; }
+[data-theme=light] .deck-perspective .perspective-today { font-size: 34px; line-height: 1.3; font-weight: 500; color: #075448; }
+[data-theme=light] .deck-perspective :is(.perspective-legend, .perspective-node-legend) { font-size: 26px; line-height: 1.2; }

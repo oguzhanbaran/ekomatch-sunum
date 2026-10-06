@@ -14,8 +14,10 @@ function Presentation({ onDirectNavigation }: { onDirectNavigation: () => void }
     return found >= 0 ? found : 0
   }, [])
   const [index, setIndex] = useState(initialIndex)
+  const [direction, setDirection] = useState<'forward' | 'backward'>('forward')
 
   const navigate = (next: number) => {
+    setDirection(next < index ? 'backward' : 'forward')
     setIndex(next)
   }
 
@@ -36,7 +38,7 @@ function Presentation({ onDirectNavigation }: { onDirectNavigation: () => void }
         key={scenes[index].kind === 'perspective' ? 'perspective-pair' : scenes[index].id}
         className="scene-frame"
       >
-        <DeckScene index={index} />
+        <DeckScene index={index} direction={direction} />
       </div>
   </PresentationShell></MotionConfig>
 }

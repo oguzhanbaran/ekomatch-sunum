@@ -15,12 +15,23 @@
     #subtitle.on { opacity: 1; }
     #debug { position: fixed; z-index: 5; top: 18px; right: 18px; min-width: 190px; display: none; padding: 10px 12px; border: 1px solid rgba(243,247,247,.18); color: #d7e9e9; background: rgba(3,10,15,.78); font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; pointer-events: none; }
     #debug.on { display: block; }
+    .opening-controls { position: fixed; z-index: 6; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); display: flex; gap: 6px; }
+    .opening-controls button { display: inline-flex; align-items: center; gap: 5px; min-height: 32px; padding: 6px 9px; border: 1px solid rgba(255,255,255,.2); border-radius: 6px; background: rgba(11,22,32,.25); color: #fff; font: 11px/1.2 inherit; font-size: 11px; cursor: pointer; opacity: .2; transition: opacity .2s ease, background .2s ease; }
+    .opening-controls button:hover, .opening-controls button:focus-visible { opacity: .85; background: rgba(11,22,32,.7); }
+    .opening-controls button:focus-visible { outline: 2px solid #02ABBF; outline-offset: 3px; }
+    .transition-complete .opening-controls { display: none; }
+    .opening-controls svg { width: 13px; height: 13px; }
   </style>
 </head>
 <body aria-label="EkoMatch seslendirmeli açılış animasyonu">
   <canvas id="stage" aria-hidden="true"></canvas>
   <div id="subtitle" aria-live="polite"></div>
   <div id="debug"></div>
+  <div class="opening-controls" role="group" aria-label="Açılış kontrolleri">
+    <button id="restart" type="button" title="Açılışı başa sar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6" /></svg>Başa sar</button>
+    <button id="pause" type="button" title="Açılışı oynat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 4 12 8-12 8V4Z" /></svg><span>Devam et</span></button>
+    <button id="skip" type="button" title="Açılışı atla ve sunuma geç"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 4 12 8-12 8V4ZM20 4v16" /></svg>Atla</button>
+  </div>
   <audio id="voice" preload="auto" src="ekomatch_seslendirme.mp3"></audio>
   <audio id="music" preload="auto" src="music.mp3"></audio>
   <script>
@@ -28,13 +39,24 @@
       'use strict'
 
       const W = 1920, H = 1080, TRANSITION = .62
-      const COLORS = { bg: '#0B1620', center: '#13283B', white: '#F3F7F7', orange: '#EF8A3C', aqua: '#02ABBF', mid: '#05AA6A', green: '#5AC526' }
+      const COLORS = { bg: '#0B1620', center: '#13283B', white: '#F3F7F7', orange: '#EF8A3C', aqua: '#36D9E6', mid: '#05AA6A', green: '#5AC526' }
+      const NETWORK_NODE_COUNT = 64, NEW_EDGE_COUNT = 12
+      const OPENING_PAIRS = [[0,1],[2,3],[4,5]]
       const canvas = document.querySelector('#stage')
       const ctx = canvas.getContext('2d', { alpha: false })
       const voice = document.querySelector('#voice')
       const music = document.querySelector('#music')
       const subtitle = document.querySelector('#subtitle')
       const debug = document.querySelector('#debug')
+      const pauseButton = document.querySelector('#pause')
+      function updatePauseButton() {
+        const paused = voice.paused
+        pauseButton.querySelector('span').textContent = paused ? 'Devam et' : 'Durdur'
+        pauseButton.title = paused ? 'Açılışı oynat' : 'Açılışı durdur'
+        pauseButton.querySelector('path').setAttribute('d', paused ? 'm6 4 12 8-12 8V4Z' : 'M8 4v16M16 4v16')
+      }
+      voice.addEventListener('play',updatePauseButton)
+      voice.addEventListener('pause',updatePauseButton)
       const logoImage = new Image()
       logoImage.src = 'logo.png'
       let darkLogo = null, ready = Promise.resolve()
@@ -55,7 +77,25 @@
           g.putImageData(pixels, 0, 0); darkLogo = copy
         }
       })
-      let cues = null, scenes = [], sceneById = new Map(), nodes = [], edges = [], newEdges = [], particles = [], gaps = [], chainSets = []
+      function parentCoverLogo() {
+        try { return window.parent !== window ? window.parent.document.querySelector('.deck-cover-brand img') : null }
+        catch { return null }
+      }
+      const coverLogo = new Image()
+      coverLogo.src = parentCoverLogo()?.src || 'logo_kapak.png'
+      let openingLogoBounds = null, coverLogoBounds = null
+      function imageBounds(image) {
+        const c=document.createElement('canvas');c.width=image.naturalWidth||image.width;c.height=image.naturalHeight||image.height
+        const g=c.getContext('2d');g.drawImage(image,0,0)
+        const data=g.getImageData(0,0,c.width,c.height).data
+        let left=c.width,top=c.height,right=0,bottom=0
+        for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++)if(data[(y*c.width+x)*4+3]>0){left=Math.min(left,x);top=Math.min(top,y);right=Math.max(right,x+1);bottom=Math.max(bottom,y+1)}
+        return {x:left,y:top,width:right-left,height:bottom-top}
+      }
+      const coverReady=Promise.all([logoReady,coverLogo.decode()]).then(()=>{
+        openingLogoBounds=imageBounds(logoImage);coverLogoBounds=imageBounds(coverLogo)
+      })
+      let cues = null, scenes = [], sceneById = new Map(), nodes = [], edges = [], newEdges = [], particles = [], gaps = [], chainSets = [], meshFaces = []
       let sprites = {}, started = false, ended = false, debugOn = false, subtitleOn = false, musicOn = true
       let frameCount = 0, fps = 60, fpsAt = performance.now(), lastFrame = performance.now()
 
@@ -65,8 +105,7 @@
       const fadeWindow = (p, edge = .18) => easeInOut(clamp(p / edge))
       const colorRgb = color => color.startsWith('#') ? [1,3,5].map(i => parseInt(color.slice(i,i+2),16)) : color.match(/[\d.]+/g).slice(0,3).map(Number)
       const mixColor = (a, b, p, alpha = 1) => { const A = colorRgb(a), B = colorRgb(b); return `rgba(${A.map((v,i) => Math.round(lerp(v,B[i],p))).join(',')},${alpha})` }
-      function mulberry32(seed) { return () => { let t = seed += 0x6D2B79F5; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296 } }
-      const rand = mulberry32(0xE601A7C)
+
 
       function makeGlow(color) {
         const c = document.createElement('canvas'), size = 96
@@ -82,58 +121,106 @@
 
       function prepareSprites() {
         sprites = {
-          white: makeGlow('rgba(243,247,247,1)'), aqua: makeGlow('rgba(2,171,191,1)'),
+          white: makeGlow('rgba(243,247,247,1)'), aqua: makeGlow('rgba(54,217,230,1)'),
           green: makeGlow('rgba(90,197,38,1)'), orange: makeGlow('rgba(239,138,60,1)')
         }
       }
 
+      // Delaunay triangles give the reference's connected mesh without a map silhouette.
+      function triangulate(points) {
+        const vertices = [...points, {x:-6000,y:-4000},{x:8000,y:-4000},{x:960,y:8000}]
+        const count=points.length
+        let triangles=[[count,count+1,count+2]]
+        const circleContains = (triangle,p) => {
+          const [a,b,c]=triangle.map(i=>vertices[i]),d=2*(a.x*(b.y-c.y)+b.x*(c.y-a.y)+c.x*(a.y-b.y))
+          if(Math.abs(d)<.0001)return false
+          const aa=a.x*a.x+a.y*a.y,bb=b.x*b.x+b.y*b.y,cc=c.x*c.x+c.y*c.y
+          const x=(aa*(b.y-c.y)+bb*(c.y-a.y)+cc*(a.y-b.y))/d
+          const y=(aa*(c.x-b.x)+bb*(a.x-c.x)+cc*(b.x-a.x))/d
+          return (p.x-x)**2+(p.y-y)**2 < (a.x-x)**2+(a.y-y)**2-.001
+        }
+        for(let i=0;i<count;i++) {
+          const bad=triangles.filter(triangle=>circleContains(triangle,vertices[i])),boundary=new Map()
+          bad.forEach(([a,b,c])=>[[a,b],[b,c],[c,a]].forEach(([a,b])=>{
+            const key=a<b?`${a}-${b}`:`${b}-${a}`
+            if(boundary.has(key))boundary.delete(key);else boundary.set(key,[a,b])
+          }))
+          triangles=triangles.filter(triangle=>!bad.includes(triangle))
+          boundary.forEach(([a,b])=>triangles.push([a,b,i]))
+        }
+        return triangles.filter(triangle=>triangle.every(i=>i<count))
+      }
+
       function buildNetwork() {
+        // Spacious authored positions, softly staggered into an open cloud rather than a border.
         nodes = [
-          { x: 810, y: 475, business: false }, { x: 1010, y: 440, business: true },
-          { x: 875, y: 610, business: false }, { x: 1090, y: 630, business: false },
-          { x: 1170, y: 590, business: true }, { x: 970, y: 545, business: false },
+          {x:810,y:475,business:false}, {x:1010,y:440,business:true},
+          {x:875,y:610,business:false}, {x:1090,y:630,business:false},
+          {x:1170,y:590,business:true}, {x:970,y:545,business:false},
         ]
-        while (nodes.length < 220) {
-          const angle = rand() * Math.PI * 2, radius = 90 + Math.pow(rand(), .64) * 820
-          nodes.push({
-            x: 960 + Math.cos(angle) * radius,
-            y: 540 + Math.sin(angle) * radius * .57,
-            business: rand() < .15,
-            phase: rand() * Math.PI * 2,
-            reveal: rand(),
-          })
-        }
-        const used = new Set(), addEdge = (a,b,isNew=false) => {
-          if (a === b) return false
-          const key = a < b ? `${a}-${b}` : `${b}-${a}`
-          if (used.has(key)) return false
-          used.add(key); (isNew ? newEdges : edges).push({ a, b, reveal: rand(), center: (nodes[a].x + nodes[b].x) / 2 > 650 && (nodes[a].x + nodes[b].x) / 2 < 1270, outer: Math.hypot((nodes[a].x + nodes[b].x)/2-960, ((nodes[a].y + nodes[b].y)/2-540)*1.5) > 530 })
-          return true
-        }
-        for (let i = 6; i < nodes.length; i++) {
-          const nearest = nodes.map((n,j) => ({ j, d: j === i ? Infinity : Math.hypot(n.x-nodes[i].x,n.y-nodes[i].y) })).sort((a,b)=>a.d-b.d)
-          addEdge(i, nearest[0].j)
-          if (rand() < .48) addEdge(i, nearest[1].j)
-        }
-        while (edges.length < 310) { const a = Math.floor(rand()*nodes.length), b = Math.floor(rand()*nodes.length); if (Math.hypot(nodes[a].x-nodes[b].x,nodes[a].y-nodes[b].y) < 270) addEdge(a,b) }
-        while (newEdges.length < 40) { const a = Math.floor(rand()*nodes.length), b = Math.floor(rand()*nodes.length); if (Math.hypot(nodes[a].x-nodes[b].x,nodes[a].y-nodes[b].y) < 340) addEdge(a,b,true) }
-        particles = Array.from({length: 42}, () => ({ edge: Math.floor(rand()*edges.length), phase: rand(), speed: .05 + rand()*.08 }))
-        const closest = (x,y,exclude=[]) => nodes.map((n,i)=>({i,d:exclude.includes(i)?Infinity:Math.hypot(n.x-x,n.y-y)})).sort((a,b)=>a.d-b.d)[0].i
-        const chainTargets = [
-          [[875,610],[1010,440],[1170,590]], [[360,390],[540,460],[700,360]],
-          [[1180,310],[1360,420],[1510,310]], [[1230,720],[1430,650],[1600,760]],
-          [[430,710],[620,680],[800,800]], [[830,250],[970,330],[1120,230]],
-          [[820,760],[980,700],[1140,820]], [[1130,520],[1310,550],[1460,500]],
+        const rows = [
+          [145,[495,710,920,1145,1355]],
+          [250,[310,495,690,880,1070,1270,1480,1625]],
+          [390,[210,390,565,760,950,1135,1320,1510,1720]],
+          [540,[175,350,540,725,1285,1465,1650,1760]],
+          [685,[225,395,580,765,970,1175,1370,1555,1730]],
+          [815,[315,515,710,920,1130,1320,1510,1650]],
+          [940,[490,680,885,1110,1300,1450]],
         ]
-        chainSets = chainTargets.map((targets,chainIndex) => {
-          if(chainIndex===0)return [2,1,4]
-          const ids=[];targets.forEach(([x,y])=>ids.push(closest(x,y,ids)));nodes[ids[0]].business=false;nodes[ids[1]].business=true;nodes[ids[2]].business=true;return ids
+        rows.forEach(([y,xs],row)=>xs.forEach((x,column)=>{
+          const index=nodes.length
+          nodes.push({x:x+Math.sin(index*2.31)*23,y:y+Math.cos(index*1.73)*24,business:false})
+        }))
+        ;[[310,155],[1575,170],[185,825],[1730,825],[865,355]].forEach(([x,y])=>nodes.push({x,y,business:false}))
+        const closest=(x,y,exclude=[])=>nodes.map((n,i)=>({i,d:exclude.includes(i)?Infinity:Math.hypot(n.x-x,n.y-y)})).sort((a,b)=>a.d-b.d)[0].i
+        const chainTargets=[[[390,390],[560,540],[690,250]],[[430,685],[710,815],[970,685]],
+          [[880,250],[1070,250],[1270,250]],[[1320,390],[1465,540],[1650,540]],
+          [[1370,685],[1510,815],[1650,815]],[[710,815],[920,815],[1130,815]]]
+        const assigned=new Set([2,1,4])
+        chainSets=[[2,1,4],...chainTargets.map(targets=>{
+          const ids=[];targets.forEach(([x,y])=>ids.push(closest(x,y,[...assigned,...ids])))
+          ids.forEach(id=>assigned.add(id))
+          nodes[ids[1]].business=true;nodes[ids[2]].business=true
+          return ids
+        })]
+        nodes.forEach((n,i)=>{
+          n.phase=n.x/W*2+n.y/H*.7
+          n.outside=(n.x<540||n.x>1390)
+          n.beacon=n.business||i===2||[8,12,22,30,43,53].includes(i)
+          n.reveal=i<6?0:clamp((Math.hypot(n.x-960,n.y-540)-70)/880)
+          n.edgeFade=clamp(Math.min(n.x-95,1825-n.x,n.y-65,1020-n.y)/150,.35,1)
         })
-        gaps = [[755,435,88],[1050,400,78],[1270,575,92],[970,690,82],[635,655,86],[1435,345,76]].map(([x,y,r],i)=>{
-          const ring=nodes.map((n,index)=>({index,d:Math.abs(Math.hypot(n.x-x,n.y-y)-r)})).sort((a,b)=>a.d-b.d).slice(0,5).map(v=>v.index)
-          const angle=(i*.92+.3), ax=x-Math.cos(angle)*r, ay=y-Math.sin(angle)*r, bx=x+Math.cos(angle)*r, by=y+Math.sin(angle)*r
-          return {x,y,r,ring,a:closest(ax,ay),b:closest(bx,by)}
+        const triangles=triangulate(nodes),segments=new Map(),keyFor=(a,b)=>a<b?`${a}-${b}`:`${b}-${a}`
+        triangles.forEach(([a,b,c])=>[[a,b],[b,c],[c,a]].forEach(([a,b])=>{
+          const key=keyFor(a,b),old=segments.get(key)
+          if(old)old.count++;else segments.set(key,{a,b,count:1})
+        }))
+        const gapPairs=[[2,1],[1,4],...chainSets.slice(1).map(chain=>[chain[0],chain[1]])]
+        const reserved=new Set(gapPairs.map(([a,b])=>keyFor(a,b)))
+        edges=[];newEdges=[]
+        const used=new Set(),addEdge=(a,b,isNew=false,kind='mesh')=>{
+          const key=keyFor(a,b);if(a===b||used.has(key))return
+          used.add(key)
+          const midX=(nodes[a].x+nodes[b].x)/2
+          ;(isNew?newEdges:edges).push({a,b,kind,bend:0,
+            reveal:isNew?newEdges.length/NEW_EDGE_COUNT:Math.max(nodes[a].reveal,nodes[b].reveal),
+            center:midX>650&&midX<1270,outer:Boolean(nodes[a].outside||nodes[b].outside)})
+        }
+        OPENING_PAIRS.forEach(([a,b])=>addEdge(a,b,false,'core'))
+        // Hide convex-hull edges: no enclosing outline, country border or perimeter ring.
+        const interior=[...segments.values()].filter(e=>e.count===2&&!reserved.has(keyFor(e.a,e.b)))
+        interior.forEach((e,i)=>addEdge(e.a,e.b,i%11===5&&newEdges.length<NEW_EDGE_COUNT))
+        // Keep every point attached, even at the soft perimeter.
+        nodes.forEach((n,i)=>{
+          if(edges.some(e=>e.a===i||e.b===i))return
+          const neighbor=nodes.map((other,j)=>({j,d:i===j||reserved.has(keyFor(i,j))?Infinity:Math.hypot(n.x-other.x,n.y-other.y)})).sort((a,b)=>a.d-b.d)[0].j
+          addEdge(i,neighbor)
         })
+        const established=new Set(edges.map(e=>keyFor(e.a,e.b)))
+        meshFaces=triangles.filter(([a,b,c])=>[[a,b],[b,c],[c,a]].every(([a,b])=>established.has(keyFor(a,b)))).map((ids,i)=>({ids,alpha:.05+(i%5)*.015,reveal:Math.max(...ids.map(id=>nodes[id].reveal))}))
+        const outwardEdges=edges.map((e,i)=>e.outer?i:-1).filter(i=>i>=0)
+        particles=Array.from({length:16},(_,i)=>({edge:outwardEdges[(i*7)%outwardEdges.length],phase:(i*.618)%1,speed:.055+(i%4)*.012}))
+        gaps=gapPairs.slice(0,6).map(([a,b])=>({a,b,x:(nodes[a].x+nodes[b].x)/2,y:(nodes[a].y+nodes[b].y)/2,r:Math.min(95,Math.hypot(nodes[a].x-nodes[b].x,nodes[a].y-nodes[b].y)*.4),ring:[a,b]}))
       }
 
       function resize() {
@@ -143,7 +230,8 @@
       }
 
       function logicalTransform() {
-        const dpr = canvas.width / innerWidth, scale = Math.min(innerWidth/W, innerHeight/H)
+        // Fill the viewport proportionally, cropping the outer edges instead of adding black bars.
+        const dpr = canvas.width / innerWidth, scale = Math.max(innerWidth/W, innerHeight/H)
         const ox = (innerWidth-W*scale)/2, oy = (innerHeight-H*scale)/2
         ctx.setTransform(dpr*scale,0,0,dpr*scale,dpr*ox,dpr*oy)
       }
@@ -162,8 +250,9 @@
       function pointAt(i, t, freeze = false, outside = 0) {
         const n = nodes[i], phase = n.phase || i * .77
         const drift = freeze ? 0 : 1
-        let x = n.x + Math.sin(t*.17 + phase) * 7 * drift, y = n.y + Math.cos(t*.13 + phase*1.3) * 5 * drift
-        if (outside && n.business && Math.hypot(x-960,(y-540)*1.6) > 490) {
+        // Local groups breathe together; connections keep a stable, deliberate shape.
+        let x = n.x + Math.sin(t*.17 + phase) * 3 * drift, y = n.y + Math.cos(t*.13 + phase) * 2 * drift
+        if (outside && n.outside) {
           const dx=x-960, dy=y-540, len=Math.hypot(dx,dy)||1
           x += dx/len * outside*90; y += dy/len * outside*60
         }
@@ -172,51 +261,85 @@
 
       function glow(x,y,size,sprite,alpha=1) { ctx.globalAlpha = alpha; ctx.drawImage(sprite,x-size/2,y-size/2,size,size); ctx.globalAlpha = 1 }
       function nodeDot(i,t,alpha=1,color=COLORS.white,outside=0,freeze=false,glowStrength=1) {
-        const n=nodes[i], p=pointAt(i,t,freeze,outside), r=n.business?6:2.4
-        glow(p.x,p.y,n.business?64:34,color===COLORS.orange?sprites.orange:color===COLORS.aqua?sprites.aqua:color===COLORS.green?sprites.green:sprites.white,alpha*.32*glowStrength)
-        ctx.globalAlpha=alpha; ctx.fillStyle=color; ctx.beginPath(); ctx.arc(p.x,p.y,r,0,Math.PI*2); ctx.fill()
-        if(n.business){ctx.strokeStyle=color;ctx.globalAlpha=alpha*.7;ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(p.x,p.y,r+6,0,Math.PI*2);ctx.stroke()} ctx.globalAlpha=1
+        const n=nodes[i],p=pointAt(i,t,freeze,outside),r=n.business?7:n.beacon?5.5:4
+        const sprite=color===COLORS.orange?sprites.orange:color===COLORS.green?sprites.green:sprites.aqua
+        const energy=(n.beacon?.65:.10)*glowStrength
+        const pulse=freeze?1:.88+.12*Math.sin(t*1.1+n.phase*3)
+        glow(p.x,p.y,n.beacon?76:28,sprite,alpha*energy*pulse)
+        if(n.beacon&&glowStrength>0){
+          ctx.save();ctx.strokeStyle=color;ctx.globalAlpha=alpha*.25*glowStrength;ctx.lineWidth=1.2
+          ctx.beginPath();ctx.moveTo(p.x-17,p.y);ctx.lineTo(p.x+17,p.y);ctx.moveTo(p.x,p.y-17);ctx.lineTo(p.x,p.y+17);ctx.stroke();ctx.restore()
+        }
+        ctx.globalAlpha=alpha;ctx.fillStyle=color;ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fill()
+        if(n.business){ctx.strokeStyle=color;ctx.globalAlpha=alpha*.72;ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(p.x,p.y,r+6,0,Math.PI*2);ctx.stroke()}
+        ctx.globalAlpha=1
       }
 
+      function edgePoint(edge,t,q,outside=0,freeze=false) {
+        const a=pointAt(edge.a,t,freeze,outside), b=pointAt(edge.b,t,freeze,outside)
+        const dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy)||1,bend=edge.bend||0
+        const c={x:(a.x+b.x)/2-dy/len*bend,y:(a.y+b.y)/2+dx/len*bend}
+        return {x:(1-q)*(1-q)*a.x+2*(1-q)*q*c.x+q*q*b.x,y:(1-q)*(1-q)*a.y+2*(1-q)*q*c.y+q*q*b.y}
+      }
       function edgeLine(edge,t,alpha=.18,color=COLORS.white,grow=1,outside=0,width=1,freeze=false) {
-        const a=pointAt(edge.a,t,freeze,outside), b=pointAt(edge.b,t,freeze,outside), x=lerp(a.x,b.x,grow), y=lerp(a.y,b.y,grow)
-        ctx.globalAlpha=alpha; ctx.strokeStyle=color; ctx.lineWidth=width; ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(x,y);ctx.stroke();ctx.globalAlpha=1
+        const a=pointAt(edge.a,t,freeze,outside), b=pointAt(edge.b,t,freeze,outside),length=Math.hypot(b.x-a.x,b.y-a.y)||1
+        const start=(nodes[edge.a].business?19:8)/length, end=Math.min(grow,1-(nodes[edge.b].business?19:8)/length)
+        if(end<=start)return
+        const hierarchy=edge.kind==='mesh'?.84:1
+        ctx.globalAlpha=clamp(alpha*3*hierarchy,0,.92);ctx.strokeStyle=color
+        ctx.lineWidth=Math.max(edge.kind==='mesh'?2.8:3.4,width*2.5);ctx.lineCap='round'
+        ctx.beginPath()
+        const first=edgePoint(edge,t,start,outside,freeze);ctx.moveTo(first.x,first.y)
+        const steps=edge.bend?24:1
+        for(let i=1;i<=steps;i++){const p=edgePoint(edge,t,lerp(start,end,i/steps),outside,freeze);ctx.lineTo(p.x,p.y)}
+        ctx.stroke();ctx.globalAlpha=1
       }
 
       function network(t, reveal=1, opacity=1, options={}) {
         const zoom=options.zoom || 1, pan=options.pan || 0, outside=options.outside || 0, freeze=options.freeze || false
         const aqua=clamp(options.aqua || 0), orange=clamp(options.orange || 0), positive=clamp(options.positive || 0)
         ctx.save(); ctx.translate(960+pan,540); ctx.scale(zoom,zoom); ctx.translate(-960,-540)
+        meshFaces.forEach(face=>{
+          if(face.reveal>reveal)return
+          const points=face.ids.map(i=>pointAt(i,t,freeze,outside))
+          ctx.globalAlpha=face.alpha*opacity
+          ctx.fillStyle=options.tint||'#168FAD'
+          ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);points.slice(1).forEach(p=>ctx.lineTo(p.x,p.y));ctx.closePath();ctx.fill()
+        })
+        ctx.globalAlpha=1
         edges.forEach(e => {
           if(e.reveal>reveal)return
           const warm=e.outer?orange:0, cool=e.center?aqua:0
-          let color=cool?mixColor(COLORS.white,COLORS.aqua,cool):COLORS.white
+          const base='#B8E4ED'
+          let color=cool?mixColor(base,COLORS.aqua,cool):base
           if(warm)color=mixColor(color,COLORS.orange,warm)
           if(positive)color=mixColor(color,mixColor(COLORS.aqua,COLORS.green,clamp(((nodes[e.a].x+nodes[e.b].x)/2-450)/1020)),positive)
           if(options.tint)color=options.tint
           const emphasis=Math.max(warm,cool,positive)
-          edgeLine(e,t,lerp(.12,.24,emphasis)*opacity,color,1,outside,lerp(1,1.45,emphasis),freeze)
+          edgeLine(e,t,lerp(.20,.25,emphasis)*opacity*Math.min(nodes[e.a].edgeFade,nodes[e.b].edgeFade),color,1,outside,lerp(1,1.45,emphasis),freeze)
         })
         nodes.forEach((n,i)=>{
           if((n.reveal||0)>reveal)return
-          const warm=n.business&&Math.hypot(n.x-960,(n.y-540)*1.6)>490?orange:0
-          let color=warm?mixColor(COLORS.white,COLORS.orange,warm):COLORS.white
+          const warm=n.outside?orange:0
+          let color=warm?mixColor('#BDEFF5',COLORS.orange,warm):n.beacon?'#DBFCFF':'#9BDDE9'
           if(positive)color=mixColor(color,mixColor(COLORS.aqua,COLORS.green,clamp((n.x-450)/1020)),positive)
           if(options.tint)color=options.tint
-          nodeDot(i,t,(n.business?.72:.52)*opacity,color,outside,freeze,options.glowStrength ?? 1)
+          nodeDot(i,t,(n.beacon?1:.8)*opacity*n.edgeFade,color,outside,freeze,options.glowStrength ?? 1)
         })
         ctx.restore()
       }
 
-      function sparkPair(pairIndex,t,p,prior=0) {
-        const pairs=[[0,1],[2,3],[4,5]], [a,b]=pairs[pairIndex], pa=pointAt(a,t), pb=pointAt(b,t)
+      function sparkPair(pairIndex,t,p,prior=0,zoom=3) {
+        const [a,b]=OPENING_PAIRS[pairIndex], pa=pointAt(a,t), pb=pointAt(b,t)
+        ctx.save();ctx.translate(W/2,H/2);ctx.scale(zoom,zoom);ctx.translate(-W/2,-H/2)
         if(prior>0) edgeLine({a,b},t,.48*prior,COLORS.white,1,0,1.6)
         nodeDot(a,t,.95); nodeDot(b,t,.95)
         const flash=Math.sin(Math.PI*clamp(p/.3))*fadeWindow(p,.12)
         if(flash>0){edgeLine({a,b},t,.35+.65*flash,COLORS.white,clamp(p/.24),0,2.4);const q=clamp(p/.28),x=lerp(pa.x,pb.x,q),y=lerp(pa.y,pb.y,q);glow(x,y,105,sprites.white,flash*.9)}
+        ctx.restore()
       }
 
-      function persistentSparks(count,t,alpha=1) { for(let i=0;i<count;i++) sparkPair(i,t,1,alpha) }
+      function persistentSparks(count,t,alpha=1,zoom=3) { for(let i=0;i<count;i++) sparkPair(i,t,1,alpha,zoom) }
       function sceneProgress(id,t) { const i=sceneById.get(id), s=scenes[i], end=scenes[i+1]?.t ?? cues.sure; return clamp((t-s.t)/(end-s.t)) }
       function activeScene(t) { let i=0; for(let n=0;n<scenes.length;n++){if(t>=scenes[n].t)i=n;else break} return { ...scenes[i], index:i, p:sceneProgress(scenes[i].id,t) } }
 
@@ -228,7 +351,7 @@
       function s1_kivilcim_2(p,t){sparkPair(0,t,1,1);sparkPair(1,t,p)}
       function s1_kivilcim_3(p,t){persistentSparks(2,t);sparkPair(2,t,p)}
       function s1_iliski(p,t){persistentSparks(3,t,lerp(.55,1,easeInOut(p)))}
-      function s2_ag_acilis(p,t){const q=easeInOut(p);network(t,q,fadeWindow(p),{zoom:lerp(3,1.18,q)});persistentSparks(3,t,1-q*.45)}
+      function s2_ag_acilis(p,t){const q=easeInOut(p),zoom=lerp(3,1.18,q);network(t,q,fadeWindow(p),{zoom});persistentSparks(3,t,1-q,zoom)}
       function s2_ag_tam(p,t){const q=easeInOut(clamp(p/.42));network(t,1,1,{zoom:lerp(1.18,1,q)})}
       function s3_yeni_iliskiler(p,t){network(t,1,1);newEdges.forEach(e=>{const q=clamp((p-e.reveal*.78)/.22);if(q>0)edgeLine(e,t,.2,COLORS.white,easeInOut(q),0,1.15)})}
       function s3_bizimle(p,t){network(t,1,1,{aqua:easeInOut(p)});newEdges.forEach(e=>edgeLine(e,t,.18,e.center?COLORS.aqua:COLORS.white,1,0,e.center?1.5:1))}
@@ -249,7 +372,7 @@
       function gradientLine(aIndex,bIndex,t,grow=1,alpha=1,width=3,dashed=false,offset=0) {
         const a=pointAt(aIndex,t),b=pointAt(bIndex,t),x=lerp(a.x,b.x,grow),y=lerp(a.y,b.y,grow)
         const gradient=ctx.createLinearGradient(a.x,a.y,b.x,b.y);gradient.addColorStop(0,COLORS.aqua);gradient.addColorStop(.52,COLORS.mid);gradient.addColorStop(1,COLORS.green)
-        ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle=gradient;ctx.lineWidth=width;ctx.lineCap='round';if(dashed){ctx.setLineDash([12,16]);ctx.lineDashOffset=offset}ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(x,y);ctx.stroke();ctx.restore()
+        ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle=gradient;ctx.lineWidth=Math.max(6,width*1.6);ctx.lineCap='round';if(dashed){ctx.setLineDash([20,18]);ctx.lineDashOffset=offset}ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(x,y);ctx.stroke();ctx.restore()
         if(grow>0&&grow<1)glow(x,y,86,sprites.green,alpha*.72)
       }
 
@@ -259,9 +382,9 @@
         nodeDot(chain[0],t,alpha,COLORS.aqua);if(first>0)nodeDot(chain[1],t,alpha,COLORS.mid);if(second>0)nodeDot(chain[2],t,alpha,COLORS.green)
       }
 
-      function drawRadar(t,p) {
-        const center={x:960,y:540},q=easeInOut(p),radius=20+q*520
-        ctx.globalAlpha=(1-q)*.8;ctx.strokeStyle=COLORS.aqua;ctx.lineWidth=2;ctx.beginPath();ctx.arc(center.x,center.y,radius,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;glow(center.x,center.y,110,sprites.aqua,.72)
+      function drawRadar(t,p,appear=1,pan=0) {
+        const customer=pointAt(chainSets[0][0],t),center={x:customer.x+pan,y:customer.y},q=easeInOut(p),radius=20+q*520
+        ctx.globalAlpha=(1-q)*.8*appear;ctx.strokeStyle=COLORS.aqua;ctx.lineWidth=3;ctx.beginPath();ctx.arc(center.x,center.y,radius,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;glow(center.x,center.y,lerp(120.2,110,appear),sprites.aqua,.72*appear)
       }
 
       function drawOpportunityBridges(t,p,solidProgress=0) {
@@ -281,6 +404,42 @@
       function drawLogo(alpha=1,scale=1,image=logoImage) {
         if(!image || (image instanceof HTMLImageElement && (!image.complete || !image.naturalWidth)))return
         const l=logoLayout();ctx.save();ctx.globalAlpha=alpha;ctx.translate(W/2,H/2);ctx.scale(scale,scale);ctx.translate(-W/2,-H/2);ctx.drawImage(image,l.x,l.y,l.width,l.height);ctx.restore()
+      }
+
+      function coverLogoLayout() {
+        const cover=parentCoverLogo()
+        if(cover) {
+          const rect=cover.getBoundingClientRect(),frame=window.frameElement?.getBoundingClientRect()
+          const scale=Math.max(innerWidth/W,innerHeight/H),ox=(innerWidth-W*scale)/2,oy=(innerHeight-H*scale)/2
+          return {x:(rect.left-(frame?.left||0)-ox)/scale,y:(rect.top-(frame?.top||0)-oy)/scale,width:rect.width/scale,height:rect.height/scale}
+        }
+        // Standalone playback uses the same 1920×1080 cover placement.
+        return {x:560,y:72.65625,width:800,height:800*coverLogo.naturalHeight/coverLogo.naturalWidth}
+      }
+      function visibleLogoBox(layout,bounds,image) {
+        const scale=layout.width/image.naturalWidth
+        return {x:layout.x+bounds.x*scale,y:layout.y+bounds.y*scale,width:bounds.width*scale,height:bounds.height*scale}
+      }
+      function drawHandoffLogo(q) {
+        if(!openingLogoBounds||!coverLogoBounds){drawLogo(1-q,1);drawLogo(q,1,darkLogo);return}
+        if(q>=1&&parentCoverLogo()) {
+          // Copy the cover's actual CSS image box, including its subpixel rounding.
+          const rect=parentCoverLogo().getBoundingClientRect(),frame=window.frameElement?.getBoundingClientRect(),dpr=canvas.width/innerWidth
+          ctx.save();ctx.setTransform(dpr,0,0,dpr,0,0)
+          ctx.drawImage(coverLogo,rect.left-(frame?.left||0),rect.top-(frame?.top||0),rect.width,rect.height)
+          ctx.restore();return
+        }
+        const start=visibleLogoBox(logoLayout(),openingLogoBounds,logoImage)
+        const end=visibleLogoBox(coverLogoLayout(),coverLogoBounds,coverLogo)
+        const width=lerp(start.width,end.width,q),cx=lerp(start.x+start.width/2,end.x+end.width/2,q),cy=lerp(start.y+start.height/2,end.y+end.height/2,q)
+        const draw=(image,bounds,alpha)=>{
+          if(alpha<=0)return
+          const scale=width/bounds.width,height=bounds.height*scale
+          ctx.save();ctx.globalAlpha=alpha
+          ctx.drawImage(image,cx-width/2-bounds.x*scale,cy-height/2-bounds.y*scale,image.naturalWidth*scale,image.naturalHeight*scale)
+          ctx.restore()
+        }
+        draw(logoImage,openingLogoBounds,1-q);draw(coverLogo,coverLogoBounds,q)
       }
 
       function logoPulse(point,color,sprite,p) {
@@ -311,8 +470,25 @@
         const frozen=sceneStart('s5_donma'),pan=panAt(frozen),q=easeInOut(clamp((t-frozen)/TRANSITION)),opacity=lerp(.3,.15,q)
         network(frozen,1,opacity,{pan});drawEstablishedEdges(frozen,opacity,{pan,settle:1});drawGaps(frozen,1-q,1,pan)
       }
-      function s5_peki(p,t){const frozen=sceneStart('s5_donma'),pan=panAt(frozen);network(frozen,1,.15,{pan});drawEstablishedEdges(frozen,.15,{pan,settle:1});const pulse=.72+.28*Math.sin(p*Math.PI*3),appear=easeInOut(clamp((t-sceneStart('s5_peki'))/TRANSITION));glow(960,540,95+35*pulse,sprites.aqua,.72*appear);ctx.fillStyle=COLORS.aqua;ctx.globalAlpha=appear;ctx.beginPath();ctx.arc(960,540,5+pulse*2,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1}
-      function s6_zincir_musteri(p,t){const q=easeInOut(p);network(t,1,lerp(.15,.6,q));drawRadar(t,p);nodeDot(chainSets[0][0],t,easeInOut(clamp((q-.1)/.3)),COLORS.aqua)}
+      function s5_peki(p,t){
+        const frozen=sceneStart('s5_donma'),pan=panAt(frozen)
+        network(frozen,1,.15,{pan});drawEstablishedEdges(frozen,.15,{pan,settle:1})
+        const customer=pointAt(chainSets[0][0],frozen),pulse=.72+.28*Math.sin(p*Math.PI*3),appear=easeInOut(clamp((t-sceneStart('s5_peki'))/TRANSITION))
+        ctx.save();ctx.translate(pan,0)
+        glow(customer.x,customer.y,95+35*pulse,sprites.aqua,.72*appear)
+        nodeDot(chainSets[0][0],frozen,appear,COLORS.aqua)
+        ctx.restore()
+      }
+      function s6_zincir_musteri(p,t){
+        const q=easeInOut(p),resume=easeInOut(clamp((t-sceneStart('s6_zincir_musteri'))/TRANSITION))
+        const frozen=sceneStart('s5_donma'),networkTime=lerp(frozen,t,resume),pan=panAt(frozen)*(1-resume)
+        network(networkTime,1,lerp(.15,.6,q),{pan})
+        drawEstablishedEdges(networkTime,.15*(1-resume),{pan,settle:1})
+        drawRadar(networkTime,p,resume,pan)
+        ctx.save();ctx.translate(pan,0)
+        nodeDot(chainSets[0][0],networkTime,Math.max(1-resume,easeInOut(clamp((q-.1)/.3))),COLORS.aqua)
+        ctx.restore()
+      }
       function s6_zincir_isletme(p,t){network(t,1,.6);drawChain(chainSets[0],t,easeInOut(p),0,1)}
       function s6_zincir_tedarikci(p,t){network(t,1,.6);drawChain(chainSets[0],t,1,easeInOut(p),1)}
       function s6_zincir_cogalma(p,t){network(t,1,.62);drawChain(chainSets[0],t,1,1,1);chainSets.slice(1).forEach((chain,i)=>{const q=easeInOut(clamp((p-i*.09)/.36));if(q>0)drawChain(chain,t,q,clamp(q*1.45-.45),q)})}
@@ -334,16 +510,16 @@
         // The faint network changes tone during the transition, then clears for the final frame.
         const visibility = 1 - easeInOut(clamp((raw - .8) / .2))
         if(visibility > 0)network(0,1,lerp(.1,.12,q)*visibility,{freeze:true,tint:mixColor(COLORS.white,COLORS.center,q),glowStrength:1-q})
-        drawLogo(1-q,1);drawLogo(q,1,darkLogo)
+        drawHandoffLogo(q)
       }
       function bitis(p,t){s10_gecis(p,t)}
 
       function drawParticles(t,strength) {
-        particles.forEach((particle,i)=>{const e=edges[particle.edge];if(!e.outer)return;const a=pointAt(e.a,t,false,strength),b=pointAt(e.b,t,false,strength);let q=(particle.phase+t*particle.speed)%1;if(Math.hypot(b.x-960,b.y-540)<Math.hypot(a.x-960,a.y-540))q=1-q;const x=lerp(a.x,b.x,q),y=lerp(a.y,b.y,q);glow(x,y,38,sprites.orange,strength*.42);ctx.fillStyle=COLORS.orange;ctx.globalAlpha=strength*.8;ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1})
+        particles.forEach((particle,i)=>{const e=edges[particle.edge];if(!e.outer)return;const a=pointAt(e.a,t,false,strength),b=pointAt(e.b,t,false,strength);let q=(particle.phase+t*particle.speed)%1;if(Math.hypot(b.x-960,b.y-540)<Math.hypot(a.x-960,a.y-540))q=1-q;const {x,y}=edgePoint(e,t,q,strength);glow(x,y,38,sprites.orange,strength*.42);ctx.fillStyle=COLORS.orange;ctx.globalAlpha=strength*.8;ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1})
       }
 
       function drawFlowParticles(t,strength,inward=false) {
-        particles.forEach((particle,i)=>{const e=edges[particle.edge],a=pointAt(e.a,t),b=pointAt(e.b,t);let q=(particle.phase+t*particle.speed*1.35)%1;const aDist=Math.hypot(a.x-960,a.y-540),bDist=Math.hypot(b.x-960,b.y-540),towardCenter=aDist>bDist;if((inward&&towardCenter)||(!inward&&!towardCenter))q=1-q;const x=lerp(a.x,b.x,q),y=lerp(a.y,b.y,q),mix=clamp((x-520)/900);glow(x,y,34,mix>.55?sprites.green:sprites.aqua,strength*.34);ctx.fillStyle=mixColor(COLORS.aqua,COLORS.green,mix);ctx.globalAlpha=strength*.78;ctx.beginPath();ctx.arc(x,y,1.8,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1})
+        particles.forEach((particle,i)=>{const e=edges[particle.edge],a=pointAt(e.a,t),b=pointAt(e.b,t);let q=(particle.phase+t*particle.speed*1.35)%1;const aDist=Math.hypot(a.x-960,a.y-540),bDist=Math.hypot(b.x-960,b.y-540),towardCenter=aDist>bDist;if((inward&&towardCenter)||(!inward&&!towardCenter))q=1-q;const {x,y}=edgePoint(e,t,q),mix=clamp((x-520)/900);glow(x,y,34,mix>.55?sprites.green:sprites.aqua,strength*.34);ctx.fillStyle=mixColor(COLORS.aqua,COLORS.green,mix);ctx.globalAlpha=strength*.78;ctx.beginPath();ctx.arc(x,y,1.8,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1})
       }
 
       const renderers={s0_giris,s1_kivilcim_1,s1_kivilcim_2,s1_kivilcim_3,s1_iliski,s2_ag_acilis,s2_ag_tam,s3_yeni_iliskiler,s3_bizimle,s3_disimizda,s4_kurulmus,s4_bosluk,s4_bosluk_vurgu,s5_donma,s5_peki,s6_zincir_musteri,s6_zincir_isletme,s6_zincir_tedarikci,s6_zincir_cogalma,s7_firsat,s7_duzlesme,s8_toplanma,s8_logo,s8_slogan_1,s8_slogan_2,s8_slogan_3,s9_son_kare,s10_gecis,bitis}
@@ -405,8 +581,12 @@
       function reset() {voice.pause();music.pause();voice.currentTime=0;if(!music.error)music.currentTime=0;started=false;ended=false;subtitle.textContent='';subtitle.classList.remove('on')}
 
       addEventListener('resize',resize)
+      document.querySelector('#restart').addEventListener('click',event=>{event.stopPropagation();reset();begin()})
+      pauseButton.addEventListener('click',event=>{event.stopPropagation();if(voice.paused)begin();else{voice.pause();music.pause()}})
+      document.querySelector('#skip').addEventListener('click',async event=>{event.stopPropagation();await ready;started=true;voice.currentTime=endTime()})
       addEventListener('click',()=>{if(!started)begin()})
       addEventListener('keydown',event=>{
+        if(event.target instanceof HTMLButtonElement && (event.key===' ' || event.key==='Enter'))return
         if(event.key===' '){event.preventDefault();if(!started)begin();else if(voice.paused)begin();else{voice.pause();music.pause()}}
         if(event.key==='ArrowLeft'){event.preventDefault();seek(-2)}
         if(event.key==='ArrowRight'){event.preventDefault();seek(2)}
@@ -446,7 +626,7 @@
         voice.src=url;voice.load();await loaded
         addEventListener('pagehide',()=>URL.revokeObjectURL(url),{once:true})
       }
-      ready=Promise.all([logoReady,fetch('cues.json').then(r=>{if(!r.ok)throw new Error('cues.json yüklenemedi');return r.json()}).then(async data=>{
+      ready=Promise.all([coverReady,fetch('cues.json').then(r=>{if(!r.ok)throw new Error('cues.json yüklenemedi');return r.json()}).then(async data=>{
         cues=data;scenes=data.sahneler;sceneById=new Map(scenes.map((s,i)=>[s.id,i]));await alignVoiceEnd()
       })]).catch(error=>{debug.textContent=error.message;debug.classList.add('on');throw error})
     })()

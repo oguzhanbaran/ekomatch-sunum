@@ -164,12 +164,12 @@ function SlideBody({ kind }: { kind: string }) {
   }
 }
 
-export function DeckScene({ index }: { index: number }) {
+export function DeckScene({ index, direction = 'forward' }: { index: number; direction?: 'forward' | 'backward' }) {
   const slide = data.scenes[index]
   const reduced = useReducedMotion()
   const root = useRef<HTMLElement>(null)
   useEffect(() => { root.current?.focus({ preventScroll: true }) }, [index])
-  if (slide.kind === 'perspective') return <PerspectiveSlides slide={slide} />
+  if (slide.kind === 'perspective') return <PerspectiveSlides slide={slide} direction={direction} />
   if (slide.kind === 'definition') return <section ref={root} tabIndex={-1} className="scene deck-scene deck-kind-definition" aria-label={slide.shortTitle}>
     <header className="definition-header"><Tag>{slide.eyebrow}</Tag></header>
     <div className="definition-process-content"><h1>{slide.title}</h1><SlideBody kind={slide.kind} /></div>
