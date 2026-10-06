@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowRight, Check, Minus, X, ScanSearch, UserCheck, Handshake, Banknote, Database, Layers, Network, BrainCircuit, ShieldCheck, Monitor, ChevronRight, RotateCcw, BookOpen, History, Users, Package, PackageCheck, Activity, Radar, Link, Landmark, type LucideIcon } from 'lucide-react'
+import { ArrowRight, Check, Minus, X, ScanSearch, UserCheck, Handshake, Banknote, Database, Layers, Network, BrainCircuit, ShieldCheck, Monitor, ChevronRight, RotateCcw, BookOpen, History, User, Users, Store, Package, PackageCheck, Activity, Radar, Link, Landmark, type LucideIcon } from 'lucide-react'
 import { EkoMark } from '../components/Brand'
 import { EconomicNetwork } from '../components/Network'
 import { PerspectiveSlides } from '../components/PerspectiveSlides'
@@ -54,18 +54,20 @@ const provinceNames = ['Adana','Adıyaman','Afyonkarahisar','Ağrı','Amasya','A
 function B2C() {
   const [layer, setLayer] = useState(0)
   const reduced = useReducedMotion()
-  const insights = ['Yapı market, bu müşteri için potansiyel bir fırsat alanı.', 'Bireysel veri bankada kalır; yalnızca anonim toplam görünür.', 'Şubemiz doğrular; bankanın müşterisi üreticilerle eşleştirir.']
-  const gaps = layer === 0 ? [['Yapı market', "Benzer 40 müşterinin 27'sinde var."]] : [['Tedarikçi Finansmanı', "Benzer 40 işletmenin 26'sında var."], ['Finansal kiralama', "Benzer 40 işletmenin 17'sinde var."]]
+  const lowCoverage = [6, 16, 35]
+  const insights = ['Yapı market, bu müşteri için potansiyel bir fırsat alanı.', 'Bireysel veri bankada kalır; yalnızca anonim toplam görünür.', 'Şubemiz doğrular; bankanın müşterisi üreticileri alternatif olarak sunar.']
+  const gaps = layer === 0 ? [['Yapı market', "Benzer 100 müşterinin 38'inde var."]] : [['Tedarikçi Finansmanı', "Benzer 40 işletmenin 26'sında var."], ['Finansal kiralama', "Benzer 40 işletmenin 17'sinde var."]]
   return <div className="chain-example">
     <div className="b2c-layout">
       <div className="space-layers">{data.b2cLayers.map(([title, desc], i) => <button key={title} aria-pressed={layer === i} onClick={() => setLayer(i)}><span>0{i + 1}</span><div><h2>{title}</h2><p>{desc}</p></div></button>)}</div>
       <motion.div key={layer} className="chain-panel" initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0 : .3 }}>
-        {layer === 1 ? <div className="turkey-map"><div className="map-heading"><Tag>TEMSİLİ TALEP · İŞYERİ KAPSAMASI</Tag></div><svg viewBox="0 0 970 425" role="img" aria-label="Bursa seçili talep ve işyeri kapsaması haritası">{provinces.map(p => <path key={p.code} d={p.rings.map(r => `M${r.map(pt => pt.join(',')).join('L')}Z`).join('')} className={p.code === 16 ? 'selected' : [6,16,27,34,35,41,42,54].includes(p.code) ? 'high' : p.code % 3 === 0 ? 'medium' : 'low'}><title>{provinceNames[p.code - 1]}</title></path>)}</svg><div className="map-readout">Dönüşüm bölgelerinde talep yüksek · kapsama düşük</div><div className="map-legend"><span>Talep:</span><span><i className="demand-low" />düşük</span><span><i className="demand-medium" />orta</span><span><i className="demand-high" />yüksek</span></div></div> : <div className="whitespace-profiles">
+        {layer === 1 ? <div className="turkey-map"><div className="map-heading"><Tag>TEMSİLİ TALEP · TİCARİ AĞ</Tag></div><svg viewBox="0 0 970 425" role="img" aria-label="Talep ve ticari ağ haritası; Bursa, Ankara ve İzmir'de ticari ağ seyrek">{[...provinces].sort((a, b) => Number(lowCoverage.includes(a.code)) - Number(lowCoverage.includes(b.code))).map(p => <path key={p.code} d={p.rings.map(r => `M${r.map(pt => pt.join(',')).join('L')}Z`).join('')} className={`${p.code === 16 ? 'selected' : [6,16,27,34,35,41,42,54].includes(p.code) ? 'high' : p.code % 3 === 0 ? 'medium' : 'low'}${lowCoverage.includes(p.code) ? ' low-coverage' : ''}`}><title>{provinceNames[p.code - 1]}</title></path>)}</svg><div className="map-readout">Dönüşüm bölgelerinde talep yüksek · ticari ağ seyrek</div><div className="map-legend"><span>Talep:</span><span><i className="demand-low" />düşük</span><span><i className="demand-medium" />orta</span><span><i className="demand-high" />yüksek</span><span className="coverage-key"><i className="demand-low-coverage" />ticari ağ seyrek</span></div></div> : <div className="whitespace-profiles">
           <Tag>{layer === 0 ? 'TEMSİLİ MÜŞTERİ · KATEGORİ BOŞLUĞU' : 'TEMSİLİ İŞLETME · FİNANSMAN BOŞLUĞU'}</Tag>
-          <div className="whitespace-selectors"><button type="button" aria-pressed="true">{layer === 0 ? 'Müşteri A' : 'Yapı market zinciri'}</button></div>
-          <div className="whitespace-existing"><span>{layer === 0 ? 'Mevcut: ✓ Market  ✓ Akaryakıt  ✓ Giyim' : 'Mevcut: ✓ POS  ✓ Ticari hesap'}</span></div>
-          <div className="whitespace-gaps">{gaps.map(([name, detail]) => <div className="chain-gap" key={name}><div><h3>{name}</h3><span>Henüz yok</span></div><p>{detail}</p></div>)}</div>
-          {layer === 0 && <p className="chain-category-limit">Yalnızca işyeri kategorisi; ürün ya da neden çıkarılmaz.</p>}
+          <div className="chain-identity">{layer === 0 ? <User size={28} aria-hidden="true" /> : <Store size={28} aria-hidden="true" />}<span>{layer === 0 ? 'Müşteri A' : 'Yapı market zinciri'}</span></div>
+          <div className="whitespace-existing"><span>{layer === 0 ? 'Mevcut: ✓ Market  ✓ Akaryakıt  ✓ Giyim' : 'Mevcut: ✓ Ticari hesap  ✓ İşletme finansmanı'}</span></div>
+          <div className="chain-panel-bottom"><div className="whitespace-gaps">{gaps.map(([name, detail]) => <div className="chain-gap" key={name}><div><h3>{name}</h3><span>Henüz yok</span></div><p>{detail}</p></div>)}</div>
+            {layer === 0 && <p className="chain-category-limit">Yalnızca işyeri kategorisi; ürün ya da neden çıkarılmaz.</p>}
+          </div>
         </div>}
       </motion.div>
     </div>
@@ -75,7 +77,31 @@ function B2C() {
 
 function Flywheel() {
   const [active, setActive] = useState(0)
-  return <><div className="loop-layout"><div className="deck-loop"><svg viewBox="0 0 600 600" aria-hidden="true"><circle cx="300" cy="300" r="218" /><path d="M300 82 A218 218 0 0 1 518 300" /><path d="M504 282l14 18 14-18" /></svg><div className="loop-center"><span>TEK</span><strong>EKONOMİK<br />AĞ</strong></div>{data.loop.map((label, i) => <button key={label} className={active === i ? 'active' : ''} style={{ left: `${50 + Math.cos((i * 45 - 90) * Math.PI / 180) * 40}%`, top: `${50 + Math.sin((i * 45 - 90) * Math.PI / 180) * 40}%` }} onClick={() => setActive(i)} aria-pressed={active === i}><span>{i + 1}</span>{label}</button>)}</div><div className="loop-copy"><Tag>{active < 3 ? 'B2C → BÖLGE' : active < 6 ? 'B2B → TİCARET' : 'VERİ → ÖĞRENME'}</Tag><h2>{data.loop[active]}</h2><p>B2C talebin yönünü, B2B bu talebi karşılayacak işletmeleri görünür kılar.</p><button className="deck-button secondary" onClick={() => setActive(a => (a + 1) % 8)}>Döngüyü ilerlet <ArrowRight /></button></div></div></>
+  const maskId = useId()
+  const lines = [['Bölgesel talep', 'sinyali'], ['İşletme', 'fırsatı'], ['Şubeci', 'doğrular'], ['Tedarikçi', 'alternatifleri'], ['Reel ticaret'], ['Finansman'], ['Yeni veri'], ['Model yeniden', 'öğrenir']]
+  const pointAt = (angle: number) => ({ x: 435 + 330 * Math.cos(angle), y: 310 + 270 * Math.sin(angle) })
+  const points = data.loop.map((_, i) => pointAt(i * Math.PI / 4 - Math.PI / 2))
+  const advance = () => {
+    if (active < data.loop.length - 1) setActive(active + 1)
+    else window.dispatchEvent(new Event('ekomatch:next-slide'))
+  }
+  return <div className="loop-layout">
+    <div className="deck-loop">
+      <svg viewBox="0 0 870 620" aria-hidden="true">
+        <defs><mask id={maskId} maskUnits="userSpaceOnUse" x="0" y="0" width="870" height="620"><rect width="870" height="620" fill="white" />{points.map(({ x, y }, i) => <rect key={i} x={x - 109} y={y - 44} width="218" height="88" rx="16" fill="black" />)}</mask></defs>
+        <ellipse className="loop-track" cx="435" cy="310" rx="330" ry="270" mask={`url(#${maskId})`} />
+        {points.map((_, i) => {
+          const angle = i * Math.PI / 4 - Math.PI / 2 + Math.PI / 8
+          const { x, y } = pointAt(angle)
+          const rotation = Math.atan2(270 * Math.cos(angle), -330 * Math.sin(angle)) * 180 / Math.PI
+          return <path key={i} className="loop-arrow" d="M-7 -7L7 0L-7 7" transform={`translate(${x} ${y}) rotate(${rotation})`} />
+        })}
+      </svg>
+      <div className="loop-center"><span>TEK</span><strong>EKONOMİK AĞ</strong></div>
+      {data.loop.map((label, i) => <button key={label} className={active === i ? 'active' : ''} style={{ left: points[i].x, top: points[i].y }} onClick={() => setActive(i)} aria-label={`${i + 1}. ${label}`} aria-pressed={active === i}>{i === 2 && <UserCheck className="loop-human-icon" size={28} aria-hidden="true" />}<span className="loop-box-label">{lines[i].map(line => <span className="loop-box-line" key={line}>{line}</span>)}</span></button>)}
+    </div>
+    <div className="loop-copy"><Tag>{data.loopDetails[active].label}</Tag><h2>{data.loop[active]}</h2><p>{data.loopDetails[active].description}</p><button className="deck-button secondary" onClick={advance}>Döngüyü ilerlet <ArrowRight /></button></div>
+  </div>
 }
 
 function Architecture() {
@@ -87,9 +113,25 @@ function Privacy() {
   return <><div className="privacy-layout"><div className="branch-preview"><div className="branch-top"><Monitor /><strong>Şube fırsat ekranı</strong><span>Temsili MVP</span></div><Tag>MOBİLYA ATÖLYESİ</Tag><h2>Kereste tedariki</h2><p><strong>Neden?</strong> Benzer şirket grubunda tekrar eden tedarik ve finansman ilişkisi.</p><div className="confidence"><span>Güven skoru · temsili</span><strong>82 / 100</strong></div><button className="deck-button" onClick={() => setValidated(v => !v)}>{validated ? <Check /> : <UserCheck />}{validated ? 'Doğrulamayı geri al' : 'İhtiyacı doğrula'}</button><p className="validation-result" aria-live="polite">{validated ? 'İhtiyaç doğrulandı. Tedarikçi A · B · C alternatifleri açıldı.' : 'Tedarikçi alternatifleri için müşteri görüşmesi bekleniyor.'}</p></div><div className="privacy-route"><div><Database /><h2>Bireysel kart verisi</h2><p>Banka içinde kalır.</p></div><div className="privacy-gate"><ShieldCheck /><h2>Anonimleştirme + minimum örneklem</h2><p>Veri yönetişimi kapısı</p></div><div><Network /><h2>İşletmeye ulaşan</h2><p>Yalnızca toplulaştırılmış bölgesel sinyal.</p></div></div></div></>
 }
 
-function Roadmap() {
-  const [selected, setSelected] = useState(0)
-  return <><div className="gantt"><div className="gantt-head"><strong>İş paketi</strong><div>{Array.from({ length: 12 }, (_, i) => <span key={i}>{i + 1}</span>)}</div><strong>Çıktı</strong></div>{data.phases.map((p, i) => <button className={`gantt-row ${selected === i ? 'selected' : ''}`} key={p.name} onClick={() => setSelected(i)} aria-pressed={selected === i}><span>{p.name}</span><div className="gantt-track"><i style={{ gridColumn: `${p.start} / ${p.end + 1}` }}>{p.start}–{p.end}. ay</i></div><strong>{p.output}</strong></button>)}</div><div className="gates"><span>◇ Ay 4 · Veri / gizlilik</span><span>◇ Ay 8 · Model doğrulama</span><span>◇ Ay 12 · Ölçekleme</span></div><p className="deck-source">Aylık dağılım öneridir. Karar kapıları: devam / durdur.</p></>
+function GateDiamond() {
+  return <svg className="gantt-gate-diamond" viewBox="0 0 22 22" width="22" height="22" aria-hidden="true"><path d="M11 0L22 11L11 22L0 11Z" /></svg>
+}
+
+function Roadmap({ detailed = false }: { detailed?: boolean }) {
+  const [selected, setSelected] = useState<number | null>(null)
+  const phases = detailed ? data.detailedPhases : data.phases
+  const gates = [{ month: 4, label: 'Veri / gizlilik' }, { month: 8, label: 'Model doğrulama' }, { month: 12, label: 'Ölçekleme' }]
+  return <>
+    <div className="gantt">
+      <div className="gantt-head"><strong>İş paketi</strong><div>{Array.from({ length: 12 }, (_, i) => <span key={i}>{i + 1}</span>)}</div><strong>Çıktı</strong></div>
+      <div className="gantt-rows">
+        <div className="gantt-gate-lines" aria-hidden="true"><div className="gantt-gate-track">{gates.map(gate => <i key={gate.month} style={{ left: `${gate.month / 12 * 100}%` }} />)}</div></div>
+        {phases.map((p, i) => <button className={`gantt-row ${selected === i ? 'selected' : ''}`} key={p.name} onClick={() => setSelected(i)} aria-pressed={selected === i}><span>{p.name}</span><div className="gantt-track"><i style={{ gridColumn: `${p.start} / ${p.end + 1}` }}>{p.start}–{p.end}. ay</i></div><strong>{p.output}</strong></button>)}
+      </div>
+    </div>
+    <div className="gantt-decision-gates"><div className="gantt-gate-track">{gates.map(gate => <div key={gate.month} className="gantt-decision-gate" style={{ left: `${gate.month / 12 * 100}%` }}><GateDiamond /><strong>Ay {gate.month}</strong><span>{gate.label}</span></div>)}</div></div>
+    {detailed && <p className="gantt-gate-legend"><GateDiamond />Karar kapısı: devam / durdur</p>}
+  </>
 }
 
 function Pilot() {
@@ -97,7 +139,33 @@ function Pilot() {
 }
 
 function Resources() {
-  return <><div className="resources-layout"><div><div className="resource-total"><strong>13</strong><span>kişilik ekip</span></div><div className="team-list">{data.team.map(role => <div key={role}><span>{role}</span><span>Dağılım bekleniyor</span></div>)}</div></div><div><div className="resource-total"><strong>~45</strong><span>milyon TL</span></div><div className="cost-unallocated"><div className="unallocated-ring" aria-label="Maliyet payları henüz belirlenmedi"><span>Paylar<br />bekleniyor</span></div><ul>{['Ekip', 'Altyapı', 'Veri', 'Eğitim'].map(c => <li key={c}>{c} <span>—</span></li>)}</ul></div><p className="deck-source">Başvuru tutarı · kalem bazlı maliyet kırılımı paylaşılmadı.</p></div></div></>
+  const total = data.costBreakdown.reduce((sum, item) => sum + item.cost, 0)
+  const radius = 125 - 20.8 / 2
+  const halfGap = 3 / radius / 2
+  const pointAt = (angle: number) => ({ x: 125 + radius * Math.sin(angle), y: 125 - radius * Math.cos(angle) })
+  const formatDecimal = (value: number) => value.toFixed(1).replace('.', ',')
+  let angle = 0
+  const segments = data.costBreakdown.map(item => {
+    const sweep = item.cost / total * Math.PI * 2
+    const start = pointAt(angle + halfGap)
+    const end = pointAt(angle + sweep - halfGap)
+    angle += sweep
+    return { ...item, path: `M${start.x} ${start.y}A${radius} ${radius} 0 ${sweep - halfGap * 2 > Math.PI ? 1 : 0} 1 ${end.x} ${end.y}` }
+  })
+  return <div className="resources-layout">
+    <div>
+      <div className="resource-total"><strong>13</strong><span>kişilik ekip</span></div>
+      <div className="team-list">{data.team.map(item => <div key={item.role}><span>{item.role}</span><span>{item.people} kişi · {formatDecimal(item.cost)} M TL</span></div>)}</div>
+    </div>
+    <div>
+      <div className="resource-total"><strong>~45</strong><span>milyon TL</span></div>
+      <div className="cost-unallocated">
+        <div className="resource-ring"><svg viewBox="0 0 250 250" role="img" aria-label={`Maliyet dağılımı: ${data.costBreakdown.map(item => `${item.name} %${formatDecimal(item.cost / total * 100)}`).join(', ')}`}>{segments.map(item => <path key={item.name} d={item.path} stroke={item.color} />)}</svg><span>12 ay</span></div>
+        <ul>{data.costBreakdown.map(item => <li key={item.name}><span className="resource-cost-label"><i style={{ background: item.color }} aria-hidden="true" />{item.name}</span><span className="resource-cost-value">{item.cost} M TL</span></li>)}</ul>
+      </div>
+      <p className="deck-source">Kıdemli fintech kaynak seviyesi; rakamlar gösterge niteliğindedir.</p>
+    </div>
+  </div>
 }
 
 function Benchmark() {
@@ -113,9 +181,23 @@ function Opportunity() {
 }
 
 function Revenue() {
-  const f = data.finances
-  const [scenario, setScenario] = useState(1)
-  return <><div className="revenue-layout"><div><div className="financial-number"><strong>{f.total}</strong><span>milyon TL</span></div><p>POS + finansman katkı projeksiyonu</p><div className="revenue-bar" role="img" aria-label="400 milyon TL: 155 milyon POS ve 245 milyon finansman"><div style={{ flex: f.pos }}>155<br /><span>POS</span></div><div style={{ flex: f.financing }}>245<br /><span>Finansman</span></div></div><p className="deck-source">155 + 245 = 400 milyon TL</p></div><div className="scenario-panel"><div className="deck-tabs">{['Kötü', 'Beklenen', 'İyi'].map((n, i) => <button key={n} onClick={() => setScenario(i)} aria-pressed={scenario === i}>{n}</button>)}</div><div className="scenario-value" aria-live="polite"><strong>{scenario === 1 ? '400' : '—'}</strong><span>{scenario === 1 ? 'milyon TL · verilen projeksiyon' : 'Senaryo tutarı paylaşılmadı'}</span></div><div className="cost-reference"><span>Yaklaşık maliyet</span><strong>45 milyon TL</strong></div><p className="deck-source">Net/brüt tanımı ve dönem teyit bekliyor. Maliyet üstünde kalma iddiası henüz doğrulanamaz.</p></div></div><div className="finance-footer"><Insight>Projeksiyon, gerçekleşmiş gelir değildir.</Insight><Appendix /></div></>
+  const scenarios = [
+    ['Kötü giderse', '~120', 'maliyetin ~2,7 katı'],
+    ['Beklenen', '~245', 'maliyetin ~5,4 katı'],
+    ['İyi giderse', '~490', 'maliyetin ~10,9 katı'],
+  ]
+  return <div className="revenue-summary">
+    <div className="revenue-cards">{scenarios.map(([label, value, multiple], i) => <article key={label} className={`revenue-card${i === 1 ? ' is-expected' : ''}`} aria-label={`${label} senaryo`}>
+      <p className="revenue-label">{label}</p>
+      <strong className="revenue-amount">{value}</strong>
+      <span className="revenue-unit">milyon TL / yıl</span>
+      <p className="revenue-multiple">{multiple}</p>
+    </article>)}</div>
+    <div className="revenue-conclusion">
+      <Insight>Kötü senaryoda bile yatırım maliyetinin yaklaşık 2,7 katı.</Insight>
+      <p className="revenue-origin">Gelir, yeni ticari ilişkilerin finansmanından doğar.</p>
+    </div>
+  </div>
 }
 
 function FourStepProcess() {
@@ -151,6 +233,7 @@ function SlideBody({ kind }: { kind: string }) {
     case 'privacy': return <Privacy />
     case 'stack': return <><div className="stack-grid">{data.stack.map(([name, desc], i) => { const Icon = [Database, Layers, Network, BrainCircuit, ShieldCheck, Monitor][i]; return <div key={name}><Icon /><h2>{name}</h2><p>{desc}</p></div> })}</div><p className="deck-source">Önerilen teknoloji seçenekleri · entegrasyon ve altyapı kararları banka içinde netleştirilir.</p></>
     case 'roadmap': return <Roadmap />
+    case 'roadmap-detail': return <Roadmap detailed />
     case 'pilot': return <Pilot />
     case 'resources': return <Resources />
     case 'benchmark': return <Benchmark />
@@ -166,6 +249,7 @@ function SlideBody({ kind }: { kind: string }) {
 
 export function DeckScene({ index, direction = 'forward' }: { index: number; direction?: 'forward' | 'backward' }) {
   const slide = data.scenes[index]
+  const detailedRoadmap = slide.kind === 'roadmap-detail'
   const reduced = useReducedMotion()
   const root = useRef<HTMLElement>(null)
   useEffect(() => { root.current?.focus({ preventScroll: true }) }, [index])
@@ -184,5 +268,5 @@ export function DeckScene({ index, direction = 'forward' }: { index: number; dir
       {slide.kind === 'final' ? <><motion.div className="final-logo" initial={false} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : .78, duration: reduced ? 0 : .8, ease }}><EkoMark /></motion.div><motion.h1 initial={false} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : .18, duration: reduced ? 0 : .75, ease }}>{slide.title}</motion.h1><motion.p className="deck-slogan" initial={false} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : 1.12, duration: reduced ? 0 : .65, ease }}>Talebi keşfet. Arzla buluştur.<br /><strong>Ekonomik ağı büyüt.</strong></motion.p></> : slide.kind === 'cover' ? <><div className="deck-cover-brand"><EkoMark /></div><h1>{slide.title}</h1><p className="deck-slogan">Talebi keşfet. Arzla buluştur.<br /><strong>Ekonomik ağı büyüt.</strong></p><div className="deck-cover-logos" aria-label="Proje paydaşları"><span className="deck-partner-slot is-kt"><img className="deck-cover-partner is-kt" src={ktLogoUrl} alt="Kuveyt Türk" draggable={false} /></span><span className="deck-partner-slot is-archi"><img className="deck-cover-partner is-archi" src={archiLogoUrl} alt="Archi Tech" draggable={false} /></span></div></> : <><span className="chapter-number">{slide.eyebrow.slice(-2)}</span><Tag>{slide.chapter}</Tag><h1>{slide.title}</h1><div className="chapter-line" /><img className="chapter-logo" src={miniLogoUrl} width="112" height="112" alt="EkoMatch sembolü" draggable={false} /></>}
     </div></section>
   }
-  return <section ref={root} tabIndex={-1} className={`scene deck-scene deck-kind-${slide.kind}`} aria-label={slide.shortTitle}><header className="deck-heading"><Tag>{slide.eyebrow}</Tag><h1>{slide.title}</h1></header><motion.div className="deck-body" initial={false} animate={{ opacity: 1 }} transition={{ duration: .3 }}><SlideBody kind={slide.kind} /></motion.div></section>
+  return <section ref={root} tabIndex={-1} className={`scene deck-scene deck-kind-${detailedRoadmap ? 'roadmap' : slide.kind}${detailedRoadmap ? ' roadmap-detailed' : ''}`} aria-label={slide.shortTitle}><header className="deck-heading"><Tag>{slide.eyebrow}</Tag><h1>{slide.title}</h1></header><motion.div className="deck-body" initial={false} animate={{ opacity: 1 }} transition={{ duration: .3 }}><SlideBody kind={slide.kind} /></motion.div></section>
 }

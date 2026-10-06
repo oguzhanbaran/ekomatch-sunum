@@ -21,6 +21,8 @@ try {
         const style = selector => getComputedStyle(el(selector))
         const scene = rect('.deck-scene'), scale = scene.width / 1920
         const copy = rect('.perspective-copy'), tag = rect('.perspective-fixed-tag'), net = rect('.perspective-network'), legend = rect('.perspective-legend')
+        const year = el('.perspective-year')?.getBoundingClientRect()
+        const nodes = [...el('.perspective-network').querySelectorAll(':scope > .perspective-node')].map(node => node.getBoundingClientRect())
         const bad = [...el('.perspective-copy').querySelectorAll('h1,p,h2')].filter(node => {
           const r = node.getBoundingClientRect()
           return r.left < scene.left - 1 || r.right > scene.right + 1 || r.top < scene.top - 1 || r.bottom > scene.bottom + 1 || node.scrollWidth > node.clientWidth + 2
@@ -29,6 +31,9 @@ try {
           x: (copy.left - scene.left) / scale, width: copy.width / scale,
           center: (copy.top + copy.bottom) / 2, targetCenter: (tag.bottom + scene.bottom - 54 * scale) / 2,
           gap: (net.left - copy.right) / scale, legendGap: (legend.top - net.bottom) / scale,
+          rightMargin: (scene.right - net.right) / scale,
+          yearGap: year ? (Math.min(...nodes.map(node => node.top)) - year.bottom) / scale : null,
+          graphOverflow: nodes.some(node => node.left < net.left || node.right > net.right || node.top < net.top || node.bottom > net.bottom),
           legendAlign: (legend.left - net.left) / scale,
           graph: [net.x,net.y,net.width,net.height], viewBox: el('.perspective-network').getAttribute('viewBox'),
           points: [...document.querySelectorAll('.perspective-network > .perspective-node')].map(node => node.getAttribute('transform')),
@@ -40,6 +45,9 @@ try {
       assert.ok(Math.abs(layout.width - 760) < .1)
       assert.ok(Math.abs(layout.center - layout.targetCenter) < .1)
       assert.ok(layout.gap >= 100)
+      assert.ok(layout.rightMargin >= 96)
+      if (layout.yearGap !== null) assert.ok(layout.yearGap >= 32)
+      assert.equal(layout.graphOverflow, false)
       assert.ok(Math.abs(layout.legendGap - 24) < .1)
       assert.ok(Math.abs(layout.legendAlign) < .1)
       assert.equal(layout.heading, '60px')

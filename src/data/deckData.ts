@@ -48,15 +48,15 @@ ANLATIM NOTU
   'cozum': `HEDEF SÜRE: 7 saniye
 
 Bu keşfi iki model yaklaşımıyla destekliyoruz: işletmeler için ekonomik ikizler, bireysel müşteriler için davranışsal ikizler. İkisini aynı ekonomik ağda birleştiriyoruz.`,
-  'davranissal-ikiz': `Bir örnekle gösterelim. Müşterimiz A market, akaryakıt ve giyimde harcama yapıyor. Harcama davranışı ona benzeyen müşterilerin çoğu yapı market kategorisine girmiş, o henüz girmemiş. Bu bir boşluk; tek bir müşteri için küçük bir sinyal. Biz yalnızca işyeri kategorisine bakıyoruz; ne alındığını ya da nedenini çıkarmıyoruz.
-Bu sinyalleri anonim olarak ilçe bazında topladığımızda, özellikle kentsel dönüşümün sürdüğü bölgelerde talebin yoğunlaştığını, bankamızla çalışan işyerinin ise az olduğunu görüyoruz. Bireysel veri bankada kalıyor; işletmeye yalnızca anonim toplam gidiyor.
+  'davranissal-ikiz': `Bir örnekle gösterelim. Müşterimiz A market, akaryakıt ve giyimde harcama yapıyor. Harcama davranışı ona benzer yüz müşterinin otuz sekizi yapı market kategorisine girmiş, o henüz girmemiş. Bu bir boşluk; tek bir müşteri için küçük bir sinyal. Biz yalnızca işyeri kategorisine bakıyoruz; ne alındığını ya da nedenini çıkarmıyoruz.
+Bu sinyalleri anonim olarak ilçe bazında topladığımızda, özellikle kentsel dönüşümün sürdüğü bölgelerde talebin yoğunlaştığını, bankamızın ticari ağının ise seyrek olduğunu görüyoruz. Bireysel veri bankada kalıyor; işletmeye yalnızca anonim toplam gidiyor.
 O bölgedeki bir yapı market zinciri bankamızın müşterisi. Ona ölçek, bölge ve büyüme bakımından en çok benzeyen kırk işletmeye bakıyoruz: yirmi altısı üreticilerden vadeli alımını Tedarikçi Finansmanı ile yapmış, on yedisi ekipmanını finansal kiralamayla finanse etmiş. Bu zincir yapmamış.
-Bu bir ihtiyaç tespiti değil, bir görüşme sinyali. Şubemiz görüşüyor; ihtiyaç gerçekse müşterimiz olan üreticileri alternatif olarak sunuyoruz, seçimi taraflar yapıyor. Örnekteki iş yeri, ürün adları ve oranlar temsilidir.`,
+Bu bir ihtiyaç tespiti değil, bir görüşme sinyali. Şubemiz görüşüyor; ihtiyaç gerçekse müşterimiz olan üreticileri alternatif olarak sunuyoruz, seçimi taraflar yapıyor. Örnekteki iş yeri, ürün adları ve oranlar temsilidir. Haritada il bazında gösteriyoruz; analiz ilçe bazında yapılıyor.`,
   'ekonomik-dongu': `HEDEF SÜRE: 22 saniye
 
 Bu üç düzey birbirini besleyen bir ekonomik döngü oluşturuyor.
 
-Bir bölgede keşfedilen talep, yeni bir işyeri veya POS ilişkisine dönüşebilir. İşletmenin büyümesi yeni ekipman ve tedarikçi ihtiyacı doğurabilir. Bu ihtiyaç yeni ticareti, ticaret de ödeme ve finansman ilişkilerini oluşturur.
+Bir bölgede keşfedilen talep, bir işletme fırsatına dönüşebilir. İşletmenin büyümesi yeni ekipman ve tedarikçi ihtiyacı doğurabilir. Bu ihtiyaç yeni ticareti, ticaret de ödeme ve finansman ilişkilerini oluşturur.
 
 Gerçekleşen işlemler ve şubeciden gelen geri bildirimler modelin öğrenmesine katkı sağlar. Böylece her doğrulanmış ilişki, sonraki fırsatların keşfini destekler.
 
@@ -75,7 +75,8 @@ Teknoloji isimlerini listelemek yerine her katmanın yaptığı işi anlat.`,
   'uygulama': `HEDEF SÜRE: 6 saniye
 
 Uygulama yaklaşımımız üç aşamalı: Önce teknik olarak kanıtlamak, ardından pilotta iş etkisini ölçmek ve sonuçlara göre kontrollü yaygınlaştırmak.`,
-  'yol-haritasi': `HEDEF SÜRE: 26 saniye
+  'yol-haritasi': `Uygulamayı on iki ayda ve aşamalı yapıyoruz. Her aşamanın bir çıktısı var. Dördüncü, sekizinci ve on ikinci aylarda birer karar kapımız var: veri ve gizlilik uygunsa, model doğrulanırsa ve pilot sonuçları olumluysa devam ediyoruz; olmazsa duruyoruz. Pilotu kontrol grubuyla yürütüyoruz: EkoMatch olmasa bu işlem yine olur muydu, buna bakıyoruz.`,
+  'yol-haritasi-ek': `HEDEF SÜRE: 26 saniye
 
 Önerdiğimiz on iki aylık planda ilk dört ay veri erişimi, hazırlık ve anonimleştirme çalışmalarına odaklanıyoruz. Üçüncü aydan itibaren ikiz modelleri, ardından fırsat skoru ve açıklama katmanı geliştiriliyor.
 
@@ -85,11 +86,7 @@ Dördüncü, sekizinci ve on ikinci aylardaki karar kapılarında veri uygunluğ
 
 ANLATIM NOTU
 Yedi satırı ayrı ayrı okumak yerine veri, model, entegrasyon ve pilot olmak üzere dört grupta anlat.`,
-  'kaynak': `HEDEF SÜRE: 16 saniye
-
-Başvuru planındaki kaynak ihtiyacımız on üç kişilik ekip ve yaklaşık kırk beş milyon liralık bütçe.
-
-Veri mühendisliği, veri bilimi, ürün, entegrasyon, altyapı ve iş birimi yetkinliklerini birlikte ele alıyoruz. Bu aşamada toplam kaynak çerçevesi belirli; rol bazlı kişi dağılımı ve maliyet kalemlerinin ayrıntıları planlama sürecinde netleştirilecek.`,
+  'kaynak': `Ekibi on üç kişi olarak planladık: veri mühendisliği, veri bilimi, ürün ve entegrasyon, altyapı, iş birimi ve güvenlik. Maliyetin yaklaşık yüzde yetmiş sekizi ekip, geri kalanı altyapı, veri ve eğitim. Rakamları FlowVision'da kullandığımız kıdemli fintech kaynak seviyesine göre aldık; gösterge niteliğindedir. Güvenlik ve yönetişim rolü paylaşımlı bir kaynak olarak planlandı.`,
   'rekabet': `HEDEF SÜRE: 6 saniye
 
 EkoMatch’in değerini, yeni ekonomik ilişki keşfini müşteri görüşmesi, eşleştirme ve finansman süreciyle bir araya getirmesinde görüyoruz.`,
@@ -129,16 +126,7 @@ Ekrandaki yirmi iki milyar liralık fırsat senaryosunun hesap bazı ise teyit b
 
 ANLATIM NOTU
 Ana mesaj “kart müşterisi bizde, işyeri ilişkisi başka bankada”. 652 ara tutarının tanımı sorulursa mevcut hesapta teyit beklediğini açıkça söyle.`,
-  'bankaya-katki': `HEDEF SÜRE: 25 saniye
-
-Sunumdaki katkı projeksiyonu iki kalemden oluşuyor: yüz elli beş milyon lira POS ve iki yüz kırk beş milyon lira finansman katkısı. Toplamda dört yüz milyon liralık bir potansiyel öngörülüyor.
-
-Bu tutar gerçekleşmiş gelir değil. Dönem, gelir marjları ve net veya brüt tanımı netleştirilmeli; ardından pilotta ölçülen dönüşüm oranlarıyla doğrulanmalı.
-
-Yaklaşık kırk beş milyon liralık maliyetle sağlıklı karşılaştırma yapmak için de aynı dönem ve kapsamı kullanmamız gerekiyor.
-
-ANLATIM NOTU
-Beklenen senaryoda kal. Sayısal girdileri olmayan iyi ve kötü senaryolar hakkında getiri iddiasında bulunma.`,
+  'bankaya-katki': `Gelirimiz yeni ticari ilişkilerin finansmanından doğuyor. Beklenen senaryoda yılda yaklaşık bin yeni finansman, yaklaşık 4,9 milyar lira hacim ve yaklaşık yüzde beş net kâr payıyla yılda yaklaşık 245 milyon lira. Kötü giderse bunun yarısı; yine de proje maliyetinin yaklaşık 2,7 katı. Bu rakamlar olgun yapı içindir; ilk yıl kademeli ilerliyoruz. Oranlar, pilotta ölçeceğimiz varsayımlardır.`,
   'strateji-kapanis': `HEDEF SÜRE: 6 saniye
 
 Son olarak, bu yaklaşımın sunumda ele aldığımız Kuveyt Türk strateji başlıklarına nasıl katkı sağlayabileceğini birlikte değerlendirelim.`,
@@ -195,21 +183,19 @@ export const scenes: Slide[] = [
   s('ekomatch-nedir', 'NASIL ÇALIŞIR?', '01 / PROBLEM & FIRSAT', 'EkoMatch dört adımda çalışır.', 'definition', 'EkoMatch dört adımda çalışıyor. Önce benzerlerinin geçmişinden öğrenip henüz kurulmamış ilişkileri buluyor. Bu fırsat gerekçesiyle şubemize geliyor ve gerçek ihtiyacı şubemiz doğruluyor; yapay zekâ kararı kendi başına vermiyor. İhtiyaç doğrulanırsa uygun alternatifler sunuluyor, seçimi taraflar yapıyor. Kurulan ticaretin üzerine de ödeme, POS ve finansman geliyor.'),
   s('cozum', 'Çözüm & Mimari', 'BÖLÜM 02', 'İki model, tek ekonomik ağ.', 'divider', 'Economic Twin şirketlerin geçmiş ticari ilişkilerinden; Behavioral Twin MCC kategori dizilerinden öğrenir.', 'Çözüm & Mimari'),
   s('davranissal-ikiz', 'BİR ÖRNEK', '02 / ÇÖZÜM & MİMARİ', 'Bir müşteriden bir tedarik zincirine.', 'b2c', ''),
-  s('ekonomik-dongu', 'Ekonomik Döngü', '02 / ÇÖZÜM & MİMARİ', 'B2B ve B2C, aynı ağın iki tarafı.', 'flywheel', 'Bölgesel talep → POS/işyeri fırsatı → işletmede büyüme → yeni tedarikçi → reel ticaret → finansman ve POS → yeni veri → yeniden öğrenme.'),
+  s('ekonomik-dongu', 'Ekonomik Döngü', '02 / ÇÖZÜM & MİMARİ', 'Talep ve arz, aynı ağın iki tarafı.', 'flywheel', 'Bölgesel talep sinyali → işletme fırsatı → şubeci doğrular → tedarikçi alternatifleri → reel ticaret → finansman → yeni veri → model yeniden öğrenir.'),
   s('teknoloji', 'Teknoloji Yığını', '02 / ÇÖZÜM & MİMARİ', 'Banka içinde çalışan, izlenebilir bir altyapı.', 'stack', 'Bunlar sunumda önerilen teknoloji seçenekleridir; tamamlanmış entegrasyon veya kurulu altyapı iddiası değildir. LLM ve RAG on-prem açıklama katmanıdır.'),
   s('uygulama', 'Uygulama & Yol Haritası', 'BÖLÜM 03', 'Kanıtla. Pilotta ölç. Kontrollü yaygınlaştır.', 'divider', 'Veri erişimi, anonimleştirme, model, açıklama, şube entegrasyonu, pilot ve ölçüm birbirine bağlı iş paketleridir.', 'Uygulama & Yol Haritası'),
-  s('yol-haritasi', '12 Aylık Yol Haritası', '03 / UYGULAMA & YOL HARİTASI', 'Her fazın çıktısı ve karar kapısı var.', 'roadmap', 'Fazlar sağlanan metindendir. Aylara dağılım öneri olarak yerleştirilmiştir. Devam/durdur kararları: veri erişimi ve gizlilik, model doğrulaması, pilot etkisi.'),
-  s('kaynak', 'Kaynak Planı & Maliyet', '03 / UYGULAMA & YOL HARİTASI', '13 kişilik ekip. Yaklaşık 45 milyon TL.', 'resources', '13 kişi ve yaklaşık 45 milyon TL başvuru rakamları olarak kullanıcı metninde belirtilmiştir. Rol başına kişi ve ekip/altyapı/veri/eğitim maliyetleri verilmemiştir. Paylar uydurulmadı; alanlar teyit bekliyor.'),
+  s('yol-haritasi', '12 Aylık Yol Haritası', '03 / UYGULAMA & YOL HARİTASI', 'Her fazın çıktısı ve karar kapısı var.', 'roadmap', ''),
+  s('kaynak', 'Kaynak Planı & Maliyet', '03 / UYGULAMA & YOL HARİTASI', "Yatırımın yaklaşık %78'i ekip.", 'resources', ''),
   s('rekabet', 'Rekabet & Değer', 'BÖLÜM 04', 'Ürünün ötesinde, yeni ekonomik ilişki.', 'divider', 'Karşılaştırma ürün kategorileri düzeyinde kavramsaldır. Adı geçen bir rakibin doğrulanmış yetenek denetimi değildir.', 'Rekabet & Değer'),
-  s('benchmark', 'Özellik Karşılaştırması', '04 / REKABET & DEĞER', 'Fark, fırsatın nasıl keşfedildiğinde.', 'benchmark', 'Var/kısmi/yok işaretleri önerilen EkoMatch kapsamını ve tipik kategori odağını gösterir. Ürün bazında farklılaşabilir; araştırılmış rekabet iddiası olarak kullanılmamalıdır.'),
   s('swot', 'SWOT', '04 / REKABET & DEĞER', 'Veri gücünü, kontrollü büyümeye dönüştür.', 'swot', 'Güç: bankaya özgü ilişki verisi, B2B+B2C, açıklanabilirlik ve insan onayı, katılım bankacılığı uyumu. Zayıflık: veri kalitesi, MCC sınırı, soğuk başlangıç, benimsenme. Fırsat ve tehditler stratejik değerlendirmelerdir.'),
   s('ekonomik-katki', 'Ekonomik Katkı', 'BÖLÜM 05', 'Potansiyelden ölçülebilir katkıya.', 'divider', 'Ekonomik katkı bölümüne geçiş. Hacim ile gelir projeksiyonunu ayrı değerlendirin.', 'Ekonomik Katkı'),
   s('ekonomik-firsat', 'Ekonomik Fırsat', '05 / EKONOMİK KATKI', 'Talep bizde, dükkân başka bankada.', 'opportunity', '564 milyar TL hacimdir; gelir kaybı değildir. 855 → 652 → 564 dizisinde 652 ara adımının tanımı verilmemiştir. Binde 1 = 22 milyar TL için gereken baz 22 trilyon TL’dir. 33,4 trilyonun binde 1’i 33,4 milyar; 564 milyarın binde 1’i 564 milyondur. Ek panelde teyit listesi bulunur.'),
-  s('bankaya-katki', 'Bankaya Katkısı', '05 / EKONOMİK KATKI', '400 milyon TL katkı projeksiyonu.', 'revenue', '155 milyon TL POS + 245 milyon TL finansman = 400 milyon TL. Gerçekleşmiş sonuç değildir. Net/brüt tanımı ve dönem verilmemiştir. Kötü/iyi senaryoların tutarları eksik olduğundan maliyet üstünde kaldıkları iddia edilemez. 45 milyon maliyet ancak eş dönem/kapsamda karşılaştırılabilir.'),
+  s('bankaya-katki', 'ETKİ', '05 / EKONOMİK KATKI', 'Yılda yaklaşık 245 milyon TL net gelir.', 'revenue', ''),
   s('strateji-kapanis', 'Strateji & Kapanış', 'BÖLÜM 06', 'Stratejiyi reel ticaretle buluştur.', 'divider', 'Strateji ve kapanış bölümüne geçiş.', 'Strateji & Kapanış'),
   s('strateji', 'Kuveyt Türk Stratejileri', '06 / STRATEJİ & KAPANIŞ', 'Reel ekonomiden, sürdürülebilir değere.', 'strategy', 'Strateji ifadeleri kullanıcı tarafından sağlanan sunum metnindendir. Güncel kurumsal strateji belgesi bu çalışmaya eklenmedi; resmî dönem ve kaynak teyit edilmelidir.'),
   s('final', 'Kapanış', 'EKOMATCH', 'Henüz kurulmamış ilişki, keşfedilmeyi bekleyen bir fırsattır.', 'final', 'Talebi keşfet. Arzla buluştur. Ekonomik ağı büyüt. Tek büyük logo yalnızca bu sahnede görünür.'),
-  s('mevcut-durum', 'Mevcut Durum', 'EK / MEVCUT DURUM', 'Müşteri ve kart bizde. Harcamanın büyük kısmı başka bankada.', 'metrics', 'Bu boşluklar küçük değil. Müşterilerimiz her yıl kartlarımızla yaklaşık 855 milyar lira harcıyor. Ama bunun 564 milyarı başka bankaların POS\'larında gerçekleşiyor. Kart bizim, POS başka bankanın. Rakamlar kullanıcının sağladığı sunum metninden alınmıştır. Referans yıl, tanım ve birincil kaynaklar verilmediğinden dışarıdan doğrulanmış sonuç değildir. 33,4 trilyon TL yıllık kartlı harcama; yaklaşık 855 milyar TL KT kart harcaması; yaklaşık 564 milyar TL diğer banka POS harcaması; 10,3 milyon müşteri ve 458 şube.'),
 ]
 
 export const definition = ['Keşif', 'Doğrulama', 'Eşleştirme', 'Finansman']
@@ -224,20 +210,50 @@ export const b2bStory = [
   ['Tedarik alternatifleri', 'Bankanın müşterisi olan keresteciler uyuma göre değerlendirilir. Kalite garantisi verilmez.'],
   ['Reel ticaret', 'Tarafların kararıyla yeni ilişki kurulur; ödeme ve finansman ihtiyacı bu ticaretten doğar.'],
 ]
-export const b2cLayers = [['Müşteri', 'Benzerlerinde var, bu müşteride yok.'], ['Bölge', 'Talep yoğunlaşıyor, bankanın kapsaması düşük.'], ['İşletme', 'Benzerlerinin finansmanı var, bu işletmede yok.']]
-export const loop = ['Bölgesel talep sinyali', 'POS / işyeri fırsatı', 'İşletmede büyüme', 'Yeni tedarikçi ilişkisi', 'Reel ticaret', 'Finansman + POS', 'Yeni veri', 'Model yeniden öğrenir']
+export const b2cLayers = [['Müşteri', 'Benzerlerinde var, bu müşteride yok.'], ['Bölge', 'Talep yoğunlaşıyor, bankanın ticari ağı seyrek.'], ['İşletme', 'Benzerlerinin finansmanı var, bu işletmede yok.']]
+export const loop = ['Bölgesel talep sinyali', 'İşletme fırsatı', 'Şubeci doğrular', 'Tedarikçi alternatifleri', 'Reel ticaret', 'Finansman', 'Yeni veri', 'Model yeniden öğrenir']
+export const loopDetails = [
+  { label: 'BİREY → BÖLGE', description: 'Bireysel sinyaller anonim toplanır; hangi kategoride talebin yoğunlaştığı görünür.' },
+  { label: 'BÖLGE → İŞLETME', description: 'Talebin yoğunlaştığı bölgede, talebi karşılayabilecek işletmeler belirlenir.' },
+  { label: 'İNSAN KARARI', description: 'Fırsat gerekçesiyle şubeye gelir; gerçek ihtiyacı şubeci doğrular.' },
+  { label: 'İŞLETME → TEDARİKÇİ', description: 'Doğrulanan ihtiyaç için bankanın müşterisi olan birden fazla tedarikçi sunulur.' },
+  { label: 'TİCARET', description: 'Taraflar ticareti kendi seçimleriyle kurar; banka tedarikçiyi garanti etmez.' },
+  { label: 'FİNANSMAN', description: 'Kurulan ticarete uygun finansman eşlik eder; kredi kararı bankada, insan onayıyla verilir.' },
+  { label: 'VERİ', description: 'Gerçekleşen ve gerçekleşmeyen her sonuç sisteme geri beslenir.' },
+  { label: 'ÖĞRENME', description: 'Sonuçlar benzerlik ve skorlama modellerini iyileştirir; döngü yeniden başlar.' },
+]
 export const architecture = [['Veri', 'Kart · POS · finansman · NACE'], ['Temsil', 'Economic Twin + Behavioral Twin temsilleri'], ['Zekâ', 'Benzerlik · kümeleme · dizi · bağlantı tahmini · skorlama'], ['Fırsat ve karar', 'White Space + insan onayı'], ['Deneyim', 'Şube ve genel müdürlük ekranları']]
 export const stack = [['Veri & özellik deposu', 'SQL · feature store'], ['Temsil & vektör', 'pgvector / Milvus'], ['Graf analitiği', 'Graf veritabanı / analitik altyapı'], ['Makine öğrenmesi', 'Kümeleme · dizi · bağlantı tahmini · artımsal etki'], ['LLM & RAG', 'Banka içinde · açıklama katmanı'], ['Servis & MLOps', 'FastAPI · Redis · model izleme']]
 export const phases = [
+  { name: 'Veri erişimi ve anonimleştirme', start: 1, end: 4, output: 'İzinli veri seti' },
+  { name: 'Benzerlik modelleri ve fırsat açıklaması', start: 3, end: 8, output: 'Gerekçeli sinyal' },
+  { name: 'Şube ekranı ve entegrasyon', start: 6, end: 9, output: 'Çalışan prototip' },
+  { name: 'Kontrollü pilot', start: 9, end: 11, output: 'Test / kontrol ölçümü' },
+  { name: 'Ölçüm ve karar', start: 11, end: 12, output: 'Ölçekleme kararı' },
+]
+export const detailedPhases = [
   { name: 'Keşif ve veri erişimi', start: 1, end: 2, output: 'Veri envanteri' },
   { name: 'Veri hazırlama ve anonimleştirme', start: 2, end: 4, output: 'İzinli veri seti' },
-  { name: 'B2B ve B2C ikiz modelleri', start: 3, end: 6, output: 'Model prototipleri' },
+  { name: 'Benzerlik modelleri', start: 3, end: 6, output: 'Model prototipleri' },
   { name: 'Fırsat skoru ve açıklama', start: 5, end: 7, output: 'Gerekçeli sinyal' },
-  { name: 'Şube ekranı ve entegrasyon', start: 6, end: 9, output: 'Çalışan MVP' },
+  { name: 'Şube ekranı ve entegrasyon', start: 6, end: 9, output: 'Çalışan prototip' },
   { name: 'Kontrollü pilot', start: 9, end: 11, output: 'Test / kontrol ölçümü' },
   { name: 'Ölçüm ve yaygınlaştırma', start: 11, end: 12, output: 'Ölçekleme kararı' },
 ]
-export const team = ['Veri mühendisliği', 'Veri bilimi / ML', 'Ürün ve entegrasyon', 'MLOps / altyapı', 'İş birimi ve pilot', 'Güvenlik ve yönetişim']
+export const team = [
+  { role: 'Veri mühendisliği', people: 3, cost: 7.6 },
+  { role: 'Veri bilimi / ML', people: 3, cost: 8.6 },
+  { role: 'Ürün ve entegrasyon', people: 3, cost: 8.7 },
+  { role: 'MLOps / altyapı', people: 1, cost: 3.2 },
+  { role: 'İş birimi ve pilot', people: 2, cost: 5.4 },
+  { role: 'Güvenlik ve yönetişim', people: 1, cost: 1.5 },
+]
+export const costBreakdown = [
+  { name: 'Ekip', cost: 35, color: '#0A6B5C' },
+  { name: 'Altyapı', cost: 6, color: '#13283B' },
+  { name: 'Veri', cost: 2, color: '#5E9E93' },
+  { name: 'Eğitim', cost: 2, color: '#A8CCC4' },
+]
 export const benchmarkColumns = ['EkoMatch', 'CRM / ürün önerisi', 'Kampanya motoru', 'Mevcut ağ analitiği', 'Pazaryeri']
 export const benchmarkRows: { label: string; values: number[] }[] = [
   { label: 'Yeni ekonomik ilişki keşfi', values: [2, 0, 0, 1, 1] },

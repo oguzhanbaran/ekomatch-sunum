@@ -1,4 +1,4 @@
-export const TIMELINE = { startYear: 1989, endYear: 2026, delay: .8, growth: 12, hold: 1.5, fade: .4, edgeDraw: .35 } as const
+export const TIMELINE = { startYear: 1989, endYear: 2026, delay: .8, growth: 8, hold: 1.5, fade: .4, edgeDraw: .35 } as const
 export const TIMELINE_END = TIMELINE.delay + TIMELINE.growth + TIMELINE.hold
 export type Node = { x: number; y: number; business: boolean; birthYear: number; ringBirthYear: number }
 export type Pair = readonly [number, number]
@@ -61,5 +61,5 @@ function createNetwork() {
 }
 
 export const perspectiveNetwork = createNetwork()
-// Preserve the existing artwork box and its 842.05 × 603.67 slide footprint.
+// Both slides use the same artwork box and node positions.
 export const perspectiveViewBox = '59.453129024244845 64.33150147879496 882.7824542075396 632.8798333187588'

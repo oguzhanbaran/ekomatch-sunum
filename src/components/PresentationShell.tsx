@@ -67,6 +67,19 @@ export function PresentationShell({ index, setIndex, children }: Props) {
           if (cards[next]) { event.preventDefault(); cards[next].click(); return }
         }
       }
+      if (scenes[index].id === 'ekonomik-dongu') {
+        const forward = ['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(event.key)
+        const backward = ['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)
+        if (forward) {
+          const advance = document.querySelector<HTMLButtonElement>('.loop-copy .deck-button')
+          if (advance) { event.preventDefault(); advance.click(); return }
+        }
+        if (backward) {
+          const boxes = Array.from(document.querySelectorAll<HTMLButtonElement>('.deck-loop > button'))
+          const selected = boxes.findIndex(box => box.getAttribute('aria-pressed') === 'true')
+          if (boxes[selected - 1]) { event.preventDefault(); boxes[selected - 1].click(); return }
+        }
+      }
       if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(event.key)) { event.preventDefault(); go(index + 1) }
       if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)) { event.preventDefault(); go(index - 1) }
       if (event.key.toLowerCase() === 'o') setOverview(v => !v)
@@ -75,8 +88,10 @@ export function PresentationShell({ index, setIndex, children }: Props) {
       if (event.key === 'Home') go(0)
       if (event.key === 'End') go(total - 1)
     }
+    const onNextSlide = () => go(index + 1)
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    window.addEventListener('ekomatch:next-slide', onNextSlide)
+    return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('ekomatch:next-slide', onNextSlide) }
   }, [go, index, notes, overview, total, revealControls])
 
   useEffect(() => {

@@ -42,9 +42,10 @@ try{
   assert.ok(halfway>.4&&halfway<.6,'edge should be halfway drawn after 0.175 seconds')
   await page.clock.runFor(225)
   assert.equal(+(await edgeLine.getAttribute('stroke-dashoffset')),0,'edge should finish drawing after 0.35 seconds')
-  await page.clock.runFor(6800-midpoint-225)
+  const halfTime=(TIMELINE.delay+TIMELINE.growth/2)*1000
+  await page.clock.runFor(halfTime-midpoint-225)
   const half=await snapshot();assert.equal(half.year,'2007');assert.ok(half.nodes>=23&&half.nodes<=28);assert.equal(half.legend,0)
-  await page.clock.runFor(6400)
+  await page.clock.runFor((TIMELINE.growth/2+.4)*1000)
   const hold=await snapshot();assert.equal(hold.year,'2026');assert.equal(hold.question,0)
   await page.clock.runFor(1200);const fade=await snapshot();assert.ok(fade.question>0&&fade.question<1)
   await page.clock.runFor(400);const end=await snapshot();assert.equal(end.nodes,120);assert.equal(end.lines,200);assert.equal(end.question,1);assert.equal(end.legend,1);assert.equal(end.running,'false')
@@ -62,5 +63,5 @@ try{
   assert.equal(await page.locator('.perspective-gap line').first().evaluate(e=>getComputedStyle(e).animationName),'perspective-flow')
   await page.keyboard.press('ArrowLeft');await page.keyboard.press('n');assert.ok((await page.locator('.notes > p').textContent()).startsWith('Bu ağ temsilidir; ama gerçek bir gerçeği anlatır.'))
   assert.deepEqual(errors,[])
-  console.log('Passed: deterministic 120-node/200-edge graph, growth curve, 18 business rings, noncrossing reserved gaps, 0.8/12/1.5/0.4s timeline, delayed question/legend, skip/replay/backward behavior and stationary shared SVG.')
+  console.log('Passed: deterministic 120-node/200-edge graph, growth curve, 18 business rings, noncrossing reserved gaps, 0.8/8/1.5/0.4s timeline, delayed question/legend, skip/replay/backward behavior and stationary shared SVG.')
 }finally{await browser.close()}
