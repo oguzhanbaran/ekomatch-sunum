@@ -13,7 +13,7 @@ export function PerspectiveNetwork({ reveal, cropToArtwork = false, year = 2026,
         return <line key={i} {...line([edge.a, edge.b])} data-birth-year={edge.birthYear} pathLength="1" opacity={progress > 0 ? 1 : 0} strokeDasharray="1" strokeDashoffset={1 - progress} />
       })}
     </g>
-    {nodes.map((node, i) => <g key={i} data-node={i} data-birth-year={node.birthYear} transform={`translate(${node.x} ${node.y})`} className="perspective-node" style={{ opacity: visibility(node.birthYear, .18) }}>
+    {nodes.map((node, i) => <g key={i} data-node={i} data-birth-year={node.birthYear} transform={`translate(${node.x} ${node.y})`} className="perspective-node" style={{ opacity: node.birthYear === TIMELINE.startYear ? 1 : visibility(node.birthYear, .18) }}>
       <circle r={node.business ? 5 : 3} />
       {node.business && <circle className="perspective-business" r="10" style={{ opacity: visibility(node.ringBirthYear, .18) }} />}
     </g>)}

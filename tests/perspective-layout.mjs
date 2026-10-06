@@ -65,7 +65,7 @@ try {
   assert.equal(await page.locator('.perspective-items p').count(), 0)
   assert.equal(await page.locator('.perspective-potential-ring').count(), 10)
   assert.equal(await page.locator('.perspective-gap line').first().evaluate(el => getComputedStyle(el).stroke), 'rgb(10, 107, 92)')
-  assert.equal(await page.locator('.perspective-gap line').first().evaluate(el => getComputedStyle(el).strokeWidth), '3px')
+  assert.equal(await page.locator('.perspective-gap line').first().evaluate(el => getComputedStyle(el).strokeWidth), '4px')
   assert.equal(await page.locator('.perspective-potential-ring').first().evaluate(el => getComputedStyle(el).opacity), '0.4')
   await page.keyboard.press('n')
   assert.ok((await page.locator('.notes').textContent()).includes('Benzerlerini buluyoruz: davranışı ve yapısı birbirine benzeyen'))

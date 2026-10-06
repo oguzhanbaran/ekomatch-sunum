@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowRight, Check, Minus, X, ScanSearch, UserCheck, Handshake, Banknote, Database, Layers, Network, BrainCircuit, ShieldCheck, Monitor, ChevronRight, RotateCcw, BookOpen, History, User, Users, Store, Package, PackageCheck, Activity, Radar, Link, Landmark, type LucideIcon } from 'lucide-react'
+import { ArrowRight, Check, Minus, X, ScanSearch, UserCheck, Handshake, Banknote, Database, Layers, Network, BrainCircuit, ShieldCheck, Monitor, ChevronRight, RotateCcw, History, User, Users, Store, Package, PackageCheck, Activity, Radar, Link, Landmark, type LucideIcon } from 'lucide-react'
 import { EkoMark } from '../components/Brand'
 import { EconomicNetwork } from '../components/Network'
 import { PerspectiveSlides } from '../components/PerspectiveSlides'
@@ -32,16 +32,10 @@ function Steps({ items, active, select, icons, humanDecisionAt, productAt }: { i
   })}</ol>
 }
 
-function Appendix() {
-  const ref = useRef<HTMLDialogElement>(null)
-  const [tab, setTab] = useState(0)
-  return <><button className="deck-button secondary" onClick={() => ref.current?.showModal()}><BookOpen /> Hesaplar ve varsayımlar</button><dialog ref={ref} className="deck-dialog" aria-label="Finansal hesap ekleri"><button className="dialog-close" aria-label="Ekleri kapat" onClick={() => ref.current?.close()}><X /></button><Tag>SORU GELİRSE · EK 1–4</Tag><div className="deck-tabs">{data.appendices.map((a, i) => <button key={a.title} aria-pressed={tab === i} onClick={() => setTab(i)}>Ek {i + 1}</button>)}</div><h2>{data.appendices[tab].title}</h2><ul>{data.appendices[tab].body.map(t => <li key={t}>{t}</li>)}</ul><p className="deck-source">Kaynak: sağlanan sunum metni. Eksik hesap ekleri için teyit alanlarıdır.</p></dialog></>
-}
-
 function Heatmap() {
   const [selected, setSelected] = useState(3)
-  const categories = ['Market', 'Ulaşım', 'Restoran', 'Kasap', 'Ev / yaşam']
-  return <><div className="heatmap-layout"><div className="relation-heatmap" role="table" aria-label="Temsili benzer müşteri kategori ilişkileri"><div role="row" className="heatmap-row"><span role="columnheader">Müşteri</span>{categories.map((cat, c) => <button role="columnheader" key={cat} onClick={() => setSelected(c)} aria-pressed={selected === c}>{cat}</button>)}</div>{Array.from({ length: 6 }, (_, r) => <div role="row" className={`heatmap-row ${r === 5 ? 'target-row' : ''}`} key={r}><strong role="rowheader">{r === 5 ? 'Bu müşteri' : `Benzer ${r + 1}`}</strong>{categories.map((cat, c) => { const missing = r === 5 && c === selected; const exists = r === 5 ? !missing : (r + c) % 4 !== 0; return <span role="cell" className={`heat-cell ${missing ? 'missing' : exists ? 'present' : 'absent'}`} key={cat} aria-label={`${cat}: ${missing ? 'potansiyel ilişki' : exists ? 'ilişki var' : 'ilişki yok'}`}>{missing ? '?' : exists ? <Check /> : <Minus />}</span> })}</div>)}</div><div className="heatmap-explain"><Tag>ECONOMIC WHITE SPACE</Tag><h2>Benzerlerimde var,<br /><em>bende yok.</em></h2><p><strong>{categories[selected]}</strong> ilişkisi bu müşteride henüz oluşmamış.</p><p className="deck-source">Kategoriyi seçerek boş alanı inceleyin. Veriler temsilidir.</p></div></div><Insight warning>White Space kesin ihtiyaç değil; doğrulama gerektiren potansiyel sinyaldir.</Insight></>
+  const categories = ['Market', 'Ulaşım', 'Restoran', 'Yapı market', 'Ev / yaşam']
+  return <><div className="heatmap-layout"><div className="relation-heatmap" role="table" aria-label="Temsili benzer müşteri kategori ilişkileri"><div role="row" className="heatmap-row"><span role="columnheader">Müşteri</span>{categories.map((cat, c) => <button role="columnheader" key={cat} onClick={() => setSelected(c)} aria-pressed={selected === c}>{cat}</button>)}</div>{Array.from({ length: 6 }, (_, r) => <div role="row" className={`heatmap-row ${r === 5 ? 'target-row' : ''}`} key={r}><strong role="rowheader">{r === 5 ? 'Bu müşteri' : `Benzer ${r + 1}`}</strong>{categories.map((cat, c) => { const missing = r === 5 && c === selected; const exists = r === 5 ? !missing : (r + c) % 4 !== 0; return <span role="cell" className={`heat-cell ${missing ? 'missing' : exists ? 'present' : 'absent'}`} key={cat} aria-label={`${cat}: ${missing ? 'potansiyel ilişki' : exists ? 'ilişki var' : 'ilişki yok'}`}>{missing ? '?' : exists ? <Check /> : <Minus />}</span> })}</div>)}</div><div className="heatmap-explain"><Tag>EKONOMİK BOŞLUK</Tag><h2>Benzerlerimde var,<br /><em>bende yok.</em></h2><p><strong>{categories[selected]}</strong> ilişkisi bu müşteride henüz oluşmamış.</p><p className="deck-source">Kategoriyi seçerek boş alanı inceleyin. Veriler temsilidir.</p></div></div><Insight warning>Boşluk kesin ihtiyaç değil; doğrulama gerektiren potansiyel sinyaldir.</Insight></>
 }
 
 function B2B() {
@@ -51,6 +45,19 @@ function B2B() {
 }
 
 const provinceNames = ['Adana','Adıyaman','Afyonkarahisar','Ağrı','Amasya','Ankara','Antalya','Artvin','Aydın','Balıkesir','Bilecik','Bingöl','Bitlis','Bolu','Burdur','Bursa','Çanakkale','Çankırı','Çorum','Denizli','Diyarbakır','Edirne','Elazığ','Erzincan','Erzurum','Eskişehir','Gaziantep','Giresun','Gümüşhane','Hakkâri','Hatay','Isparta','Mersin','İstanbul','İzmir','Kars','Kastamonu','Kayseri','Kırklareli','Kırşehir','Kocaeli','Konya','Kütahya','Malatya','Manisa','Kahramanmaraş','Mardin','Muğla','Muş','Nevşehir','Niğde','Ordu','Rize','Sakarya','Samsun','Siirt','Sinop','Sivas','Tekirdağ','Tokat','Trabzon','Tunceli','Şanlıurfa','Uşak','Van','Yozgat','Zonguldak','Aksaray','Bayburt','Karaman','Kırıkkale','Batman','Şırnak','Bartın','Ardahan','Iğdır','Yalova','Karabük','Kilis','Osmaniye','Düzce']
+function SparseNetworkMarker({ province }: { province: typeof provinces[number] }) {
+  const ring = province.rings[0]
+  let area = 0, x = 0, y = 0
+  ring.forEach((a, i) => {
+    const b = ring[(i + 1) % ring.length], cross = a[0] * b[1] - b[0] * a[1]
+    area += cross; x += (a[0] + b[0]) * cross; y += (a[1] + b[1]) * cross
+  })
+  // Keep the marker's outer diameter at 22px within the 380px-high map artwork.
+  return <g transform={`translate(${x / (3 * area)} ${y / (3 * area)}) scale(${425 / 380})`} data-province={province.code}>
+    <circle className="map-sparse-marker" r="9.5" />
+  </g>
+}
+
 function B2C() {
   const [layer, setLayer] = useState(0)
   const reduced = useReducedMotion()
@@ -61,7 +68,7 @@ function B2C() {
     <div className="b2c-layout">
       <div className="space-layers">{data.b2cLayers.map(([title, desc], i) => <button key={title} aria-pressed={layer === i} onClick={() => setLayer(i)}><span>0{i + 1}</span><div><h2>{title}</h2><p>{desc}</p></div></button>)}</div>
       <motion.div key={layer} className="chain-panel" initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0 : .3 }}>
-        {layer === 1 ? <div className="turkey-map"><div className="map-heading"><Tag>TEMSİLİ TALEP · TİCARİ AĞ</Tag></div><svg viewBox="0 0 970 425" role="img" aria-label="Talep ve ticari ağ haritası; Bursa, Ankara ve İzmir'de ticari ağ seyrek">{[...provinces].sort((a, b) => Number(lowCoverage.includes(a.code)) - Number(lowCoverage.includes(b.code))).map(p => <path key={p.code} d={p.rings.map(r => `M${r.map(pt => pt.join(',')).join('L')}Z`).join('')} className={`${p.code === 16 ? 'selected' : [6,16,27,34,35,41,42,54].includes(p.code) ? 'high' : p.code % 3 === 0 ? 'medium' : 'low'}${lowCoverage.includes(p.code) ? ' low-coverage' : ''}`}><title>{provinceNames[p.code - 1]}</title></path>)}</svg><div className="map-readout">Dönüşüm bölgelerinde talep yüksek · ticari ağ seyrek</div><div className="map-legend"><span>Talep:</span><span><i className="demand-low" />düşük</span><span><i className="demand-medium" />orta</span><span><i className="demand-high" />yüksek</span><span className="coverage-key"><i className="demand-low-coverage" />ticari ağ seyrek</span></div></div> : <div className="whitespace-profiles">
+        {layer === 1 ? <div className="turkey-map"><div className="map-heading"><Tag>TEMSİLİ TALEP · TİCARİ AĞ</Tag></div><svg viewBox="0 0 970 425" role="img" aria-label="Talep ve ticari ağ haritası; Bursa, Ankara ve İzmir'de ticari ağ seyrek">{[...provinces].sort((a, b) => Number(lowCoverage.includes(a.code)) - Number(lowCoverage.includes(b.code))).map(p => <path key={p.code} d={p.rings.map(r => `M${r.map(pt => pt.join(',')).join('L')}Z`).join('')} className={`${p.code === 16 ? 'selected' : [6,16,27,34,35,41,42,54].includes(p.code) ? 'high' : p.code % 3 === 0 ? 'medium' : 'low'}${lowCoverage.includes(p.code) ? ' low-coverage' : ''}`}><title>{provinceNames[p.code - 1]}</title></path>)}{provinces.filter(p => lowCoverage.includes(p.code)).map(p => <SparseNetworkMarker key={p.code} province={p} />)}</svg><div className="map-readout">Dönüşüm bölgelerinde talep yüksek · ticari ağ seyrek</div><div className="map-legend"><span>Talep:</span><span><i className="demand-low" />düşük</span><span><i className="demand-medium" />orta</span><span><i className="demand-high" />yüksek</span><span className="coverage-key"><i className="demand-low-coverage" />ticari ağ seyrek</span></div></div> : <div className="whitespace-profiles">
           <Tag>{layer === 0 ? 'TEMSİLİ MÜŞTERİ · KATEGORİ BOŞLUĞU' : 'TEMSİLİ İŞLETME · FİNANSMAN BOŞLUĞU'}</Tag>
           <div className="chain-identity">{layer === 0 ? <User size={28} aria-hidden="true" /> : <Store size={28} aria-hidden="true" />}<span>{layer === 0 ? 'Müşteri A' : 'Yapı market zinciri'}</span></div>
           <div className="whitespace-existing"><span>{layer === 0 ? 'Mevcut: ✓ Market  ✓ Akaryakıt  ✓ Giyim' : 'Mevcut: ✓ Ticari hesap  ✓ İşletme finansmanı'}</span></div>
@@ -131,11 +138,12 @@ function Roadmap({ detailed = false }: { detailed?: boolean }) {
     </div>
     <div className="gantt-decision-gates"><div className="gantt-gate-track">{gates.map(gate => <div key={gate.month} className="gantt-decision-gate" style={{ left: `${gate.month / 12 * 100}%` }}><GateDiamond /><strong>Ay {gate.month}</strong><span>{gate.label}</span></div>)}</div></div>
     {detailed && <p className="gantt-gate-legend"><GateDiamond />Karar kapısı: devam / durdur</p>}
+    {!detailed && <div className="gantt-footer"><p className="gantt-gate-legend"><GateDiamond />Karar kapısı: devam / durdur</p><span className="gantt-resource-summary">12 ay · 13 kişi · ~45 milyon TL</span></div>}
   </>
 }
 
 function Pilot() {
-  return <><div className="pilot-layout"><div className="pilot-funnel">{[['Fırsat','Doğrulama / fırsat'],['Doğrulama','Eşleşme / doğrulama'],['Eşleşme','İşlem / eşleşme'],['İşlem','Artımsal hacim']].map(([name, ratio], i) => <div key={name} style={{ marginInline: `${i * 5}%` }}><strong>{name}</strong><span>{ratio}</span></div>)}</div><div className="pilot-groups"><div><Tag>TEST ŞUBELERİ</Tag><h2>EkoMatch ile</h2><p>Önce → sonra</p></div><div><Tag>KONTROL ŞUBELERİ</Tag><h2>Mevcut akış</h2><p>Önce → sonra</p></div><Insight>Değişimlerin farkı → artımsal etki</Insight></div></div><div className="pilot-kpis">{['Yeni ekonomik ilişki', 'Artımsal POS hacmi', 'Finansman hacmi', 'Şube kullanım oranı'].map(k => <strong key={k}>{k}</strong>)}</div></>
+  return <><div className="pilot-layout"><div className="pilot-funnel">{[['Fırsat','Doğrulama / fırsat'],['Doğrulama','Eşleşme / doğrulama'],['Eşleşme','İşlem / eşleşme'],['İşlem','Artımsal hacim']].map(([name, ratio], i) => <div key={name} style={{ marginInline: `${i * 5}%` }}><strong>{name}</strong><span>{ratio}</span></div>)}</div><div className="pilot-groups"><div><Tag>TEST ŞUBELERİ</Tag><h2>EkoMatch ile</h2><p>Önce → sonra</p></div><div><Tag>KONTROL ŞUBELERİ</Tag><h2>Mevcut akış</h2><p>Önce → sonra</p></div><Insight>Değişimlerin farkı → artımsal etki</Insight></div></div><div className="pilot-kpis">{['Yeni ekonomik ilişki', 'Artımsal ticaret hacmi', 'Finansman hacmi', 'Şube kullanım oranı'].map(k => <strong key={k}>{k}</strong>)}</div></>
 }
 
 function Resources() {
@@ -176,10 +184,6 @@ function Positioning() {
   return <div className="position-layout"><div className="position-y">Ekonomik ilişki odaklı ↑</div><div className="position-grid"><div><Network /><h2>Ağ analitiği</h2><p>Mevcut ilişkileri gösterir.</p></div><div className="position-highlight"><ScanSearch /><h2>EkoMatch</h2><p>Yeni ekonomik ilişkiyi keşfeder.</p></div><div><h2>Kampanya motoru</h2><p>Ürün ve teklif odağı</p></div><div><h2>CRM / ürün önerisi</h2><p>Yeni banka ürünü ilişkisi</p></div></div><div className="position-x"><span>Mevcut ilişki</span><ArrowRight /><span>Yeni ilişki keşfi</span></div><p className="deck-source">Kavramsal konumlandırma · alt sıra ürün, üst sıra ekonomik ilişki odaklıdır.</p></div>
 }
 
-function Opportunity() {
-  return <><div className="opportunity-layout"><div className="cash-story"><div className="financial-number"><strong>564</strong><span>milyar TL</span></div><p>Diğer banka POS’larındaki harcama hacmi</p><ol><li>Kasap kategorisinde bölgesel talep sinyali.</li><li>Bankanın POS kapsaması sınırlı.</li><li>İşyeri edinimi → yeni ödeme ilişkisi.</li></ol></div><div><div className="financial-number"><strong>22</strong><span>milyar TL</span></div><p>Binde 1 senaryosunda fırsat hacmi</p><div className="volume-stages" aria-label="Verilen hacim dizisi, milyar TL">{[855,652,564].map((n, i) => <div key={n}><strong>{n}</strong><i style={{ height: `${n / 855 * 130}px` }} /><span>{['KT kartları', 'Ara baz*', 'Dış POS'][i]}</span></div>)}</div><p className="deck-source">*Ara bazın tanımı ve 22 trilyon TL senaryo bazı teyit bekliyor.</p></div></div><div className="finance-footer"><Insight warning>Hacim, gelir değildir. Kasap hikâyesi temsilidir.</Insight><Appendix /></div></>
-}
-
 function Revenue() {
   const scenarios = [
     ['Kötü giderse', '~120', 'maliyetin ~2,7 katı'],
@@ -195,7 +199,7 @@ function Revenue() {
     </article>)}</div>
     <div className="revenue-conclusion">
       <Insight>Kötü senaryoda bile yatırım maliyetinin yaklaşık 2,7 katı.</Insight>
-      <p className="revenue-origin">Gelir, yeni ticari ilişkilerin finansmanından doğar.</p>
+      <p className="revenue-origin">Olgun yapıda; gelir, yeni ticari ilişkilerin finansmanından doğar.</p>
     </div>
   </div>
 }
@@ -206,7 +210,7 @@ function FourStepProcess() {
     'Benzerlerinin geçmişinden öğrenir, henüz kurulmamış ilişkileri bulur.',
     'Fırsat gerekçesiyle şubeciye gelir; gerçek ihtiyacı şubeci doğrular.',
     'Uygun alternatifler sunulur; seçimi taraflar yapar.',
-    'Kurulan ticarete ödeme, POS ve finansman eşlik eder.',
+    'Kurulan ticarete uygun finansman eşlik eder.',
   ]
   return <>
     <div className="definition-grid">{data.definition.map((name, i) => {
@@ -223,7 +227,7 @@ function FourStepProcess() {
 function SlideBody({ kind }: { kind: string }) {
   switch (kind) {
     case 'definition': return <FourStepProcess />
-    case 'metrics': return <><div className="metrics-grid">{data.metrics.map(([value, unit, label]) => <div key={label}><strong>{value}</strong><span>{unit}</span><p>{label}</p></div>)}</div><Insight>Boşluk küçük değil: harcama bizde başlıyor, başka bankada bitiyor.</Insight><p className="deck-source">Kaynak: BKM 2025–2026 kart verileri, Kuveyt Türk kurumsal tanıtım (Aralık 2025) · 564 milyar TL hesabında %90 off-us oranı varsayımı kullanılmıştır.</p></>
+    case 'metrics': return <><div className="metrics-grid">{data.metrics.map(([value, unit, label]) => <div key={label}><strong>{value}</strong><span>{unit}</span><p>{label}</p></div>)}</div><Insight>Boşluk küçük değil: harcama bizde başlıyor, başka bankada bitiyor.</Insight><p className="deck-source">Kaynak: BKM 2025–2026 kart verileri, Kuveyt Türk kurumsal tanıtım (Aralık 2025).</p></>
     case 'heatmap': return <Heatmap />
     case 'comparison': return <><div className="approach-row old"><Tag>MEVCUT YAKLAŞIM</Tag><Steps items={['Müşterinin geçmişi', 'Segment', 'Ürün / kampanya', 'Ürün kullanılır']} icons={[History, Users, Package, PackageCheck]} productAt={2} /></div><div className="approach-row new"><Tag>EKOMATCH</Tag><Steps items={['Benzerlerin geçmişi', 'Fırsat keşfi', 'Şubeci doğrular', 'Arz eşleşir', 'Yeni ticaret', 'Ürün / finansman']} icons={[Activity, Radar, UserCheck, Link, Handshake, Landmark]} humanDecisionAt={2} productAt={5} /></div><p className="deck-source">Fark: mevcut yaklaşımda ürün hedeftir; EkoMatch'te ürün, kurulan ilişkinin sonucudur.</p></>
     case 'b2b': return <B2B />
@@ -240,7 +244,6 @@ function SlideBody({ kind }: { kind: string }) {
     case 'positioning': return <Positioning />
     case 'swot': return <div className="deck-swot">{data.swot.map(([name, items], i) => <div key={name}><span className="deck-number">0{i + 1}</span><h2>{name}</h2><ul>{items.map(t => <li key={t}>{t}</li>)}</ul></div>)}</div>
     case 'risks': return <div className="deck-risks">{data.risks.map(([name, text], i) => <div key={name}><span className="deck-number">0{i + 1}</span><h2>{name}</h2><ArrowRight /><p>{text}</p></div>)}</div>
-    case 'opportunity': return <Opportunity />
     case 'revenue': return <Revenue />
     case 'strategy': return <><div className="strategy-table">{data.strategies.map(([name, text]) => <div key={name}><h2>{name}</h2><ArrowRight /><p>{text}</p></div>)}</div><Insight>Katılım bankacılığı: önce reel ekonomik ilişki, sonra finansman.</Insight></>
     default: return null

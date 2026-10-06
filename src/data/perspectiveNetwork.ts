@@ -4,6 +4,20 @@ export type Node = { x: number; y: number; business: boolean; birthYear: number;
 export type Pair = readonly [number, number]
 export type NetworkEdge = { a: number; b: number; birthYear: number; delayYears: number }
 
+function birthYearForRank(rank: number) {
+  if (rank < 8) return 1989
+  // These six nodes finish fading in by 1992, leaving the initial network readable.
+  if (rank < 14) return 1989 + (rank - 7) * .35
+  const fraction = (rank - 13) / 106
+  let low = 0, high = 1
+  for (let i = 0; i < 30; i++) {
+    const progress = (low + high) / 2
+    if ((progress + progress ** 2.2) / 2 < fraction) low = progress
+    else high = progress
+  }
+  return 1992 + 34 * (low + high) / 2
+}
+
 function createNetwork() {
   let seed = 20261005
   const random = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296 }
@@ -23,7 +37,7 @@ function createNetwork() {
   const businesses = new Set(shuffle().slice(0, 18))
   const order = shuffle(), ranks = new Map(order.map((id, rank) => [id, rank]))
   const nodes: Node[] = points.map((point, i) => {
-    const birthYear = 1989 + 37 * Math.pow(ranks.get(i)! / 119, 1 / 2.2)
+    const birthYear = birthYearForRank(ranks.get(i)!)
     return { ...point, business: businesses.has(i), birthYear, ringBirthYear: Math.max(1995, birthYear) }
   })
   const candidates = nodes.flatMap((a, i) => nodes.slice(i + 1).map((b, j) => ({

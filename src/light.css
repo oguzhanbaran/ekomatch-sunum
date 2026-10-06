@@ -176,7 +176,7 @@
 [data-theme=light] .is-new-view .perspective-items { margin-bottom: 48px; }
 [data-theme=light] .is-new-view .perspective-items svg { color: #0A6B5C; }
 [data-theme=light] .is-new-view .perspective-emphasis { font-size: 36px; }
-[data-theme=light] .is-new-view .perspective-gap line { stroke: #0A6B5C; stroke-width: 3px; }
+[data-theme=light] .is-new-view .perspective-gap line { stroke: #0A6B5C; stroke-width: 4px; }
 [data-theme=light] .deck-perspective .perspective-gap { opacity: 1; animation: none; }
 [data-theme=light] .is-new-view .perspective-endpoint { fill: #0A6B5C; }
 [data-theme=light] .is-new-view .perspective-potential-ring { fill: none; stroke: #0A6B5C; stroke-width: 1.5px; opacity: .4; vector-effect: non-scaling-stroke; }
@@ -253,6 +253,8 @@
 [data-theme=light] .deck-kind-roadmap .gantt-gate-diamond { display: block; flex-shrink: 0; width: 22px; height: 22px; color: #13283B; }
 [data-theme=light] .deck-kind-roadmap .gantt-gate-diamond path { fill: currentColor; stroke: none; }
 [data-theme=light] .deck-kind-roadmap .gantt-gate-legend { display: flex; align-items: center; gap: 12px; margin: 0; font-size: 26px; line-height: 1.35; color: #2F3F4D; }
+[data-theme=light] .deck-kind-roadmap .gantt-footer { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; align-items: center; }
+[data-theme=light] .deck-kind-roadmap .gantt-resource-summary { font-size: 28px; line-height: 1.4; font-weight: 600; color: #075448; text-align: right; }
 [data-theme=light] .deck-kind-roadmap:not(.roadmap-detailed) .gantt-head { font-size: 28px; }
 [data-theme=light] .deck-kind-roadmap:not(.roadmap-detailed) .gantt-head > div { font-size: 28px; }
 [data-theme=light] .deck-kind-roadmap:not(.roadmap-detailed) .gantt-row { height: 96px; min-height: 96px; padding: 6px 0; font-size: 28px; line-height: 1.2; }
@@ -323,6 +325,7 @@
 [data-theme=light] .deck-kind-revenue .revenue-conclusion .deck-insight { border-left: 4px solid #0A6B5C; font-size: 34px; font-weight: 500; color: #075448; }
 [data-theme=light] .deck-kind-revenue .revenue-origin { font-size: 30px; color: #2F3F4D; }
 [data-theme=light] .strategy-table > div { grid-template-columns: 620px 48px 1fr; gap: 32px; padding: 22px 16px; min-height: 110px; border-top: 2px solid #647789; align-items: center; }
+[data-theme=light] .strategy-table > div:first-child { height: 110px; grid-template-rows: minmax(0, 1fr); }
 [data-theme=light] .strategy-table h2 { font-size: 32px; margin: 0; line-height: 1.35; }
 [data-theme=light] .strategy-table p { font-size: 32px; line-height: 1.4; }
 [data-theme=light] .strategy-table svg { display: block; width: 36px; height: 36px; }
@@ -369,6 +372,7 @@
 [data-theme=light] .chain-example { display: flex; flex-direction: column; gap: 24px; }
 [data-theme=light] .chain-example .space-layers button h2 { font-size: 34px; font-weight: 600; }
 [data-theme=light] .chain-example .space-layers button p { font-size: 28px; line-height: 1.4; }
+[data-theme=light] .chain-example .space-layers button:last-child p { min-height: 2lh; }
 [data-theme=light] .chain-panel { min-width: 0; display: flex; }
 [data-theme=light] .chain-panel > :is(.whitespace-profiles, .turkey-map) { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; }
 [data-theme=light] .chain-panel > :is(.whitespace-profiles, .turkey-map) > * { flex-shrink: 0; }
@@ -393,7 +397,8 @@
 [data-theme=light] .chain-example .map-legend .coverage-key { margin-left: 2px; white-space: nowrap; }
 [data-theme=light] .chain-example .turkey-map path.low-coverage { stroke: #13283B; stroke-width: 3px; vector-effect: non-scaling-stroke; }
 [data-theme=light] .map-legend i { display: inline-block; width: 26px; height: 26px; border: 1px solid #13283B; flex-shrink: 0; }
-[data-theme=light] .chain-example .map-legend .demand-low-coverage { border: 3px solid #13283B; }
+[data-theme=light] .chain-example .map-legend .demand-low-coverage { width: 22px; height: 22px; border: 3px solid #13283B; border-radius: 50%; background: #FFFFFF; }
+[data-theme=light] .chain-example .map-sparse-marker { fill: #FFFFFF; stroke: #13283B; stroke-width: 3px; pointer-events: none; }
 [data-theme=light] .demand-low { background: #FFFFFF; }
 [data-theme=light] .demand-medium { background: #b4d8d4; }
 [data-theme=light] .demand-high { background: #007F78; }

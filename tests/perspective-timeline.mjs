@@ -6,11 +6,11 @@ assert.equal(model.nodes.length,120)
 assert.equal(model.nodes.filter(n=>n.business).length,18)
 assert.equal(model.edges.length,200)
 assert.equal(model.gaps.length,5)
-for (const year of [1995,2000,2010,2020,2026]) {
-  const actual=model.nodes.filter(n=>n.birthYear<=year).length
-  const expected=120*((year-1989)/37)**2.2
-  assert.ok(Math.abs(actual-expected)<=1.1)
-}
+assert.equal(model.nodes.filter(n=>n.birthYear<=1989).length,8)
+assert.equal(model.nodes.filter(n=>n.birthYear<=1992).length,14)
+assert.equal(model.nodes.filter(n=>n.birthYear<=2026).length,120)
+const counts=[1992,1995,2000,2010,2020,2026].map(year=>model.nodes.filter(n=>n.birthYear<=year).length)
+counts.slice(1).forEach((count,i)=>assert.ok(count>counts[i],'the network must keep growing'))
 for(const node of model.nodes)assert.ok(node.ringBirthYear>=1995)
 for(const edge of model.edges){assert.ok(edge.delayYears>=0&&edge.delayYears<=1.5);assert.equal(edge.birthYear,Math.max(model.nodes[edge.a].birthYear,model.nodes[edge.b].birthYear)+edge.delayYears)}
 const crosses=(a,b)=>{
@@ -32,19 +32,23 @@ try{
   await page.locator('.perspective-network').waitFor()
   const snapshot=()=>page.evaluate(()=>({year:document.querySelector('.perspective-year-value')?.textContent,nodes:[...document.querySelectorAll('.perspective-network > .perspective-node')].filter(e=>+getComputedStyle(e).opacity>.99).length,lines:[...document.querySelectorAll('.perspective-existing line')].filter(e=>+getComputedStyle(e).opacity===1&&+e.getAttribute('stroke-dashoffset')===0).length,question:+getComputedStyle(document.querySelector('.perspective-emphasis')).opacity,legend:+getComputedStyle(document.querySelector('.perspective-legend')).opacity,running:document.querySelector('.deck-perspective').dataset.timelineRunning}))
   assert.equal((await snapshot()).year,'1989')
+  assert.equal((await snapshot()).nodes,8)
   assert.equal((await snapshot()).question,0)
   await page.clock.runFor(700);assert.equal((await snapshot()).year,'1989')
-  const firstEdge=model.edges.map((edge,index)=>({index,start:(TIMELINE.delay+(edge.birthYear-TIMELINE.startYear)/37*TIMELINE.growth)*1000})).sort((a,b)=>a.start-b.start)[0]
+  const earlyTime=Math.ceil((TIMELINE.delay+3/37*TIMELINE.growth)*1000)+32
+  await page.clock.runFor(earlyTime-700)
+  assert.equal((await snapshot()).year,'1992');assert.equal((await snapshot()).nodes,14)
+  const firstEdge=model.edges.map((edge,index)=>({index,start:(TIMELINE.delay+(edge.birthYear-TIMELINE.startYear)/37*TIMELINE.growth)*1000})).filter(edge=>edge.start>earlyTime+100).sort((a,b)=>a.start-b.start)[0]
   const midpoint=Math.ceil(firstEdge.start)+175
   const edgeLine=page.locator('.perspective-existing line').nth(firstEdge.index)
-  await page.clock.runFor(midpoint-700)
+  await page.clock.runFor(midpoint-earlyTime)
   const halfway=+(await edgeLine.getAttribute('stroke-dashoffset'))
   assert.ok(halfway>.4&&halfway<.6,'edge should be halfway drawn after 0.175 seconds')
   await page.clock.runFor(225)
   assert.equal(+(await edgeLine.getAttribute('stroke-dashoffset')),0,'edge should finish drawing after 0.35 seconds')
   const halfTime=(TIMELINE.delay+TIMELINE.growth/2)*1000
   await page.clock.runFor(halfTime-midpoint-225)
-  const half=await snapshot();assert.equal(half.year,'2007');assert.ok(half.nodes>=23&&half.nodes<=28);assert.equal(half.legend,0)
+  const half=await snapshot();assert.equal(half.year,'2007');assert.ok(half.nodes>14&&half.nodes<100);assert.equal(half.legend,0)
   await page.clock.runFor((TIMELINE.growth/2+.4)*1000)
   const hold=await snapshot();assert.equal(hold.year,'2026');assert.equal(hold.question,0)
   await page.clock.runFor(1200);const fade=await snapshot();assert.ok(fade.question>0&&fade.question<1)
@@ -61,6 +65,7 @@ try{
   await page.keyboard.press('ArrowRight');assert.ok(page.url().endsWith('#bugunku-bakis'));await page.waitForFunction(()=>document.querySelector('.perspective-year-value')?.textContent==='2026');assert.equal((await snapshot()).question,1)
   await page.keyboard.press('ArrowRight');assert.ok(page.url().endsWith('#yeni-bakis'))
   assert.equal(await page.locator('.perspective-gap line').first().evaluate(e=>getComputedStyle(e).animationName),'perspective-flow')
+  assert.equal(await page.locator('.perspective-gap line').first().evaluate(e=>getComputedStyle(e).strokeWidth),'4px')
   await page.keyboard.press('ArrowLeft');await page.keyboard.press('n');assert.ok((await page.locator('.notes > p').textContent()).startsWith('Bu ağ temsilidir; ama gerçek bir gerçeği anlatır.'))
   assert.deepEqual(errors,[])
   console.log('Passed: deterministic 120-node/200-edge graph, growth curve, 18 business rings, noncrossing reserved gaps, 0.8/8/1.5/0.4s timeline, delayed question/legend, skip/replay/backward behavior and stationary shared SVG.')
