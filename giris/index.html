@@ -31,6 +31,7 @@
     <button id="restart" type="button" title="Açılışı başa sar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6" /></svg>Başa sar</button>
     <button id="pause" type="button" title="Açılışı oynat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 4 12 8-12 8V4Z" /></svg><span>Devam et</span></button>
     <button id="skip" type="button" title="Açılışı atla ve sunuma geç"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 4 12 8-12 8V4ZM20 4v16" /></svg>Atla</button>
+    <button id="fullscreen" type="button" title="Tam ekran (F)" aria-label="Tam ekran" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5" /></svg><span>Tam ekran</span></button>
   </div>
   <audio id="voice" preload="auto" src="ekomatch_seslendirme.mp3"></audio>
   <audio id="music" preload="auto" src="music.mp3"></audio>
@@ -49,6 +50,42 @@
       const subtitle = document.querySelector('#subtitle')
       const debug = document.querySelector('#debug')
       const pauseButton = document.querySelector('#pause')
+      const fullscreenButton = document.querySelector('#fullscreen')
+      // Fullscreen the presentation document so it persists after the opening iframe closes.
+      let fullscreenDocument = document
+      try { fullscreenDocument = window.parent.document } catch {}
+      const isFullscreen = () => Boolean(fullscreenDocument.fullscreenElement || fullscreenDocument.webkitFullscreenElement)
+      function updateFullscreenButton() {
+        const active = isFullscreen()
+        const label = active ? 'Tam ekrandan çık' : 'Tam ekran'
+        fullscreenButton.querySelector('span').textContent = label
+        fullscreenButton.title = `${label} (F)`
+        fullscreenButton.setAttribute('aria-label', label)
+        fullscreenButton.setAttribute('aria-pressed', String(active))
+        fullscreenButton.querySelector('path').setAttribute('d', active ? 'M3 8h5V3M21 8h-5V3M16 21v-5h5M3 16h5v5' : 'M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5')
+      }
+      async function toggleFullscreen() {
+        try {
+          if (isFullscreen()) {
+            if (fullscreenDocument.exitFullscreen) await fullscreenDocument.exitFullscreen()
+            else fullscreenDocument.webkitExitFullscreen?.()
+          } else {
+            const element = fullscreenDocument.documentElement
+            if (element.requestFullscreen) await element.requestFullscreen()
+            else element.webkitRequestFullscreen?.()
+          }
+        } catch {}
+        updateFullscreenButton()
+      }
+      fullscreenDocument.addEventListener('fullscreenchange', updateFullscreenButton)
+      fullscreenDocument.addEventListener('webkitfullscreenchange', updateFullscreenButton)
+      addEventListener('pagehide', () => {
+        fullscreenDocument.removeEventListener('fullscreenchange', updateFullscreenButton)
+        fullscreenDocument.removeEventListener('webkitfullscreenchange', updateFullscreenButton)
+      }, { once: true })
+      fullscreenButton.addEventListener('click', event => { event.stopPropagation(); toggleFullscreen() })
+      updateFullscreenButton()
+
       function updatePauseButton() {
         const paused = voice.paused
         pauseButton.querySelector('span').textContent = paused ? 'Devam et' : 'Durdur'
@@ -594,7 +631,7 @@
         if(event.key.toLowerCase()==='d'){debugOn=!debugOn;debug.classList.toggle('on',debugOn)}
         if(event.key.toLowerCase()==='s')subtitleOn=!subtitleOn
         if(event.key.toLowerCase()==='m'){musicOn=!musicOn;if(!musicOn){music.pause();music.volume=0}else if(started){music.currentTime=voice.currentTime;music.play().catch(()=>{})}}
-        if(event.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen?.().catch(()=>{});else document.exitFullscreen?.().catch(()=>{})}
+        if(event.key.toLowerCase()==='f'){event.preventDefault();toggleFullscreen()}
       })
       voice.addEventListener('ended',finish)
       voice.addEventListener('seeking',()=>{if(voice.currentTime<endTime())ended=false})

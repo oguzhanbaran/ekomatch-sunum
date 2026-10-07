@@ -168,6 +168,7 @@ const s = (id: string, shortTitle: string, eyebrow: string, title: string, kind:
 
 export const scenes: Slide[] = [
   s('acilis', 'Kapak', 'EKOMATCH', 'Yapay Zekâ Destekli Ekonomik İlişki ve Fırsat Keşif Platformu', 'cover', 'Kesikli bağlantı henüz kurulmamış ekonomik ilişkiyi temsil eder. Önce fırsat, sonra reel ticaret ve finansman.'),
+  s('ekip', 'Ekip', 'EKOMATCH / EKİP', 'EkoMatch ekibi.', 'team', 'Ekibimiz Architecht ve Kuveyt Türk ekiplerinden oluşuyor. Oğuzhan Baran, Muhammed Osman Kutlu ve Resul Pala, Architecht Fon Tahsis ve Kontrol tarafında; Abdurrahman Şahin, Architecht Alacak Yönetimi ve Muhasebe tarafında; Zafer Uçar ise Kuveyt Türk Bireysel Kredi Analitiği tarafında görev alıyor.'),
   s('problem', 'Problem & Fırsat', 'BÖLÜM 01', 'Ağın görünen ve görünmeyen yanı.', 'divider', 'Bankanın müşteri ilişkisi ile müşterinin ticari ilişkisinin aynı ekosistemde kalması arasındaki farkı anlatın.', 'Temel Fikir'),
   s('bugunku-bakis', 'Bugünkü Bakış', '01 / BUGÜNKÜ BAKIŞ', 'Bugün, kurulmuş ilişkileri görüyoruz.', 'perspective', 'Bankalar müşterilerine bakarken hep var olana bakar: hangi kartı kullanıyor, hangi krediyi almış, nerede harcıyor. Bu çok değerli, ama resmin sadece bir kısmı.'),
   s('yeni-bakis', 'Yeni Bakış', '02 / YENİ BAKIŞ', 'EkoMatch, henüz kurulmamış olanlara bakıyor.', 'perspective', 'Birbirine benzeyen müşteriler ve işletmeler çoğu zaman benzer ilişkiler kurar. Benzerlerinin kurduğu ama bir müşterinin henüz kurmadığı ilişki bir boşluktur. EkoMatch bu boşlukları görür; her biri bankanın önceden görebileceği bir fırsattır.\n\nBenzerlerini buluyoruz: davranışı ve yapısı birbirine benzeyen müşteri ve işletmeleri. Sonra boşluğu görüyoruz: benzerlerinde kurulmuş, ona henüz kurulmamış ilişkiyi. En sonunda şubemiz doğruluyor ve banka ilişkinin kurulmasını destekliyor.'),
@@ -266,4 +267,12 @@ export const strategies = [['En güncel teknolojiler', 'Benzerlik modelleri ve a
 export const architechtStrategies = [
   'Herkes için yenilikçi ve sürdürülebilir finansal teknolojiler sunmak.',
   'Finansal teknolojide yapay zekâ dönüşümüne öncülük eden en güvenilir iş ortağı olmak.',
+] as const
+
+export const teamMembers = [
+  ['Oğuzhan Baran', 'Architecht', 'Fon Tahsis ve Kontrol', new URL('../../oguzhan.png', import.meta.url).href],
+  ['Abdurrahman Şahin', 'Architecht', 'Alacak Yönetimi ve Muhasebe', new URL('../../abdurrahman.png', import.meta.url).href],
+  ['Muhammed Osman Kutlu', 'Architecht', 'Fon Tahsis ve Kontrol', new URL('../../osman.png', import.meta.url).href],
+  ['Resul Pala', 'Architecht', 'Fon Tahsis ve Kontrol', new URL('../../resul.png', import.meta.url).href],
+  ['Zafer Uçar', 'Kuveyt Türk', 'Bireysel Kredi Analitiği', new URL('../../zafer.png', import.meta.url).href],
 ] as const

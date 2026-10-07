@@ -67,7 +67,7 @@ export function PerspectiveSlides({ slide, direction = 'forward' }: { slide: Sli
           {current && <div className="perspective-year"><span className="perspective-year-value">{Math.min(2026, Math.floor(year))}</span><span className="perspective-today" style={{ opacity: Math.max(0, Math.min(1, (elapsed - TIMELINE.delay - TIMELINE.growth) / TIMELINE.fade)) }}>bugün</span></div>}
           <PerspectiveNetwork reveal={reveal} cropToArtwork year={year} complete={complete} />
         </div>
-        <div className="perspective-legend" style={{ opacity: finalFade }} aria-hidden={finalFade === 0}><div className="perspective-relation-legend"><span><i />Kurulmuş ilişki</span>{reveal && <span><i className="is-potential" />Henüz kurulmamış ilişki</span>}</div><div className="perspective-node-legend"><span><i className="is-customer" />Müşteri</span><span><i className="is-business" />İşletme</span></div></div>
+        <div className="perspective-legend-space" aria-hidden="true" />
       </div>
     </div>
   </section>

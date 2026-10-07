@@ -227,6 +227,14 @@ function FourStepProcess() {
 
 function SlideBody({ kind }: { kind: string }) {
   switch (kind) {
+    case 'team': return <div className="team-portraits" aria-label="EkoMatch ekibi">
+      {data.teamMembers.map(([name, company, role, photo]) => <article className="team-member" key={name}>
+        <div className="team-photo"><img src={photo} alt={name} width="272" height="272" draggable={false} /></div>
+        <h2 aria-label={name}><span>{name.split(" ").slice(0, -1).join(" ")}</span><span>{name.split(" ").at(-1)}</span></h2>
+        <div className="team-company-logo"><span className={`slide-partner-mark ${company === 'Architecht' ? 'is-archi' : 'is-kt'}`}><img src={company === 'Architecht' ? archiLogoUrl : ktLogoUrl} alt={company} draggable={false} /></span></div>
+        <p className="team-role">{role}</p>
+      </article>)}
+    </div>
     case 'definition': return <FourStepProcess />
     case 'metrics': return <><div className="metrics-grid">{data.metrics.map(([value, unit, label]) => <div key={label}><strong>{value}</strong><span>{unit}</span><p>{label}</p></div>)}</div><Insight>Boşluk küçük değil: harcama bizde başlıyor, başka bankada bitiyor.</Insight><p className="deck-source">Kaynak: BKM 2025–2026 kart verileri, Kuveyt Türk kurumsal tanıtım (Aralık 2025).</p></>
     case 'heatmap': return <Heatmap />
