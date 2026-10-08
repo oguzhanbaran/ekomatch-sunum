@@ -450,8 +450,10 @@
           const scale=Math.max(innerWidth/W,innerHeight/H),ox=(innerWidth-W*scale)/2,oy=(innerHeight-H*scale)/2
           return {x:(rect.left-(frame?.left||0)-ox)/scale,y:(rect.top-(frame?.top||0)-oy)/scale,width:rect.width/scale,height:rect.height/scale}
         }
-        // Standalone playback uses the same 1920×1080 cover placement.
-        return {x:560,y:72.65625,width:800,height:800*coverLogo.naturalHeight/coverLogo.naturalWidth}
+        // Match the raised cover logo and the shell's proportional canvas scaling.
+        const coverScale=Math.min(innerWidth/W,innerHeight/H),scale=Math.max(innerWidth/W,innerHeight/H)
+        const ox=(innerWidth-W*scale)/2,oy=(innerHeight-H*scale)/2
+        return {x:((innerWidth-W*coverScale)/2+560*coverScale-ox)/scale,y:((innerHeight-H*coverScale)/2+27.515625*coverScale-oy)/scale,width:800*coverScale/scale,height:800*coverLogo.naturalHeight/coverLogo.naturalWidth*coverScale/scale}
       }
       function visibleLogoBox(layout,bounds,image) {
         const scale=layout.width/image.naturalWidth

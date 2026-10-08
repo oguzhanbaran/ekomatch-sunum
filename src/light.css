@@ -448,9 +448,7 @@
 [data-theme=light] .chain-simplified .map-readout { font-size: 36px; padding: 0; border: 0; }
 [data-theme=light] .chain-simplified .map-legend { font-size: 28px; gap: 24px; flex-wrap: wrap; }
 
-/* Five team portraits on one row, immediately after the cover. */
-[data-theme=light] .deck-kind-team .deck-heading h1 { width: 1256px; margin-left: 236px; }
-[data-theme=light] .deck-kind-team .deck-body { width: 1728px; align-self: center; }
+/* Five team portraits on one row on the cover. */
 [data-theme=light] .team-portraits { display: grid; grid-template-columns: 300px 392px 326px 300px 314px; gap: 24px; align-items: start; }
 [data-theme=light] .team-member { min-width: 0; text-align: center; }
 [data-theme=light] .team-photo { width: 272px; height: 272px; border: 4px solid #0A6B5C; border-radius: 50%; overflow: hidden; margin: 0 auto 28px; background: #A8CCC4; }
@@ -465,8 +463,9 @@
 
 /* The cover shares the team content with a more compact portrait row. */
 [data-theme=light] .deck-cover .deck-center { max-width: 1728px; }
-[data-theme=light] .deck-cover .deck-center h1 { max-width: 1480px; font-size: 72px; margin: 12px auto 44px; }
-[data-theme=light] .deck-cover .team-photo { width: 224px; height: 224px; margin-bottom: 20px; }
+[data-theme=light] .deck-cover .deck-center h1 { max-width: 1480px; font-size: 64px; margin: 12px auto 24px; }
+[data-theme=light] .deck-cover :is(.deck-cover-brand, .deck-center h1) { transform: translateY(-48px); }
+[data-theme=light] .deck-cover .team-photo { width: 264px; height: 264px; margin-bottom: 20px; }
 [data-theme=light] .deck-cover .team-member h2 { min-height: 81.6px; font-size: 34px; margin-bottom: 8px; }
 [data-theme=light] .deck-cover .team-company-logo { margin-bottom: 12px; }
 [data-theme=light] .deck-cover .team-member .team-role { font-size: 26px; }

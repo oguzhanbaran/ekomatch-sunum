@@ -238,7 +238,6 @@ function TeamPortraits() {
 
 function SlideBody({ kind }: { kind: string }) {
   switch (kind) {
-    case 'team': return <TeamPortraits />
     case 'definition': return <FourStepProcess />
     case 'metrics': return <><div className="metrics-grid">{data.metrics.map(([value, unit, label]) => <div key={label}><strong>{value}</strong><span>{unit}</span><p>{label}</p></div>)}</div><Insight>Boşluk küçük değil: harcama bizde başlıyor, başka bankada bitiyor.</Insight><p className="deck-source">Kaynak: BKM 2025–2026 kart verileri, Kuveyt Türk kurumsal tanıtım (Aralık 2025).</p></>
     case 'heatmap': return <Heatmap />
