@@ -5,7 +5,7 @@ const labels = ['Bölgesel talep sinyali', 'İşletme fırsatı', 'Şubeci doğr
 const panels = [
   ['BİREY → BÖLGE', 'Bireysel sinyaller anonim toplanır; hangi kategoride talebin yoğunlaştığı görünür.'],
   ['BÖLGE → İŞLETME', 'Talebin yoğunlaştığı bölgede, talebi karşılayabilecek işletmeler belirlenir.'],
-  ['İNSAN KARARI', 'Fırsat gerekçesiyle şubeye gelir; gerçek ihtiyacı şubeci doğrular.'],
+  ['İNSAN KARARI', 'Fırsat gerekçesiyle gelir; gerçek ihtiyacı kullanıcı doğrular.'],
   ['İŞLETME → TEDARİKÇİ', 'Doğrulanan ihtiyaç için bankanın müşterisi olan birden fazla tedarikçi sunulur.'],
   ['TİCARET', 'Taraflar ticareti kendi seçimleriyle kurar; banka tedarikçiyi garanti etmez.'],
   ['FİNANSMAN', 'Kurulan ticarete uygun finansman eşlik eder; kredi kararı bankada, insan onayıyla verilir.'],

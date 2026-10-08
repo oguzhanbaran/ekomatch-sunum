@@ -61,7 +61,7 @@ function B2C() {
   const [layer, setLayer] = useState(0)
   const reduced = useReducedMotion()
   const lowCoverage = [6, 16, 35]
-  const insights = ['Yapı market, bu müşteri için potansiyel bir fırsat alanı.', 'Bireysel veri bankada kalır; yalnızca anonim toplam görünür.', 'Şubemiz doğrular; bankanın müşterisi üreticileri alternatif olarak sunar.']
+  const insights = ['Yapı market, bu müşteri için potansiyel bir fırsat alanı.', 'Bireysel veri bankada kalır; yalnızca anonim toplam görünür.', 'Ekiplerimiz doğrular; bankanın müşterisi üreticileri alternatif olarak sunar.']
   const gaps = layer === 0 ? [['Yapı market', '38 / 100', 'benzer müşteride var']] : [['Tedarikçi Finansmanı', '26 / 40', 'benzer işletmede var'], ['Leasing', '17 / 40', 'benzer işletmede var']]
   return <div className="chain-example chain-simplified">
     <div className="b2c-layout">
@@ -209,7 +209,7 @@ function FourStepProcess() {
   const icons = [ScanSearch, UserCheck, Handshake, Banknote]
   const descriptions = [
     'Benzerlerinin geçmişinden öğrenir, henüz kurulmamış ilişkileri bulur.',
-    'Fırsat gerekçesiyle şubeciye gelir; gerçek ihtiyacı şubeci doğrular.',
+    'Fırsat gerekçesiyle gelir; gerçek ihtiyacı kullanıcı doğrular.',
     'Uygun alternatifler sunulur; seçimi taraflar yapar.',
     'Kurulan ticarete uygun finansman eşlik eder.',
   ]

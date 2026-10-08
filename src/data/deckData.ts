@@ -206,7 +206,7 @@ export const loop = ['Bölgesel talep sinyali', 'İşletme fırsatı', 'Şubeci 
 export const loopDetails = [
   { label: 'BİREY → BÖLGE', description: 'Bireysel sinyaller anonim toplanır; hangi kategoride talebin yoğunlaştığı görünür.' },
   { label: 'BÖLGE → İŞLETME', description: 'Talebin yoğunlaştığı bölgede, talebi karşılayabilecek işletmeler belirlenir.' },
-  { label: 'İNSAN KARARI', description: 'Fırsat gerekçesiyle şubeye gelir; gerçek ihtiyacı şubeci doğrular.' },
+  { label: 'İNSAN KARARI', description: 'Fırsat gerekçesiyle gelir; gerçek ihtiyacı kullanıcı doğrular.' },
   { label: 'İŞLETME → TEDARİKÇİ', description: 'Doğrulanan ihtiyaç için bankanın müşterisi olan birden fazla tedarikçi sunulur.' },
   { label: 'TİCARET', description: 'Taraflar ticareti kendi seçimleriyle kurar; banka tedarikçiyi garanti etmez.' },
   { label: 'FİNANSMAN', description: 'Kurulan ticarete uygun finansman eşlik eder; kredi kararı bankada, insan onayıyla verilir.' },
