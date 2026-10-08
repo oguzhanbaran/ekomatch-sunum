@@ -4,6 +4,7 @@ import { ArrowRight, Check, Minus, X, ScanSearch, UserCheck, Handshake, Banknote
 import { EkoMark, ktLogoUrl, archiLogoUrl } from '../components/Brand'
 import { EconomicNetwork } from '../components/Network'
 import { PerspectiveSlides } from '../components/PerspectiveSlides'
+import { GlobalCompetition } from '../components/GlobalCompetition'
 import * as data from '../data/deckData'
 import provinces from '../data/provinces.json'
 import { impactScenarios, impactNumber } from '../data/impactModel'
@@ -277,6 +278,7 @@ export function DeckScene({ index, direction = 'forward' }: { index: number; dir
   const reduced = useReducedMotion()
   const root = useRef<HTMLElement>(null)
   useEffect(() => { root.current?.focus({ preventScroll: true }) }, [index])
+  if (slide.kind === 'global-competition') return <section ref={root} tabIndex={-1} className="scene deck-scene deck-global-competition" aria-label={slide.shortTitle}><GlobalCompetition slide={slide} /></section>
   if (slide.kind === 'perspective') return <PerspectiveSlides slide={slide} direction={direction} />
   if (slide.kind === 'definition') return <section ref={root} tabIndex={-1} className="scene deck-scene deck-kind-definition" aria-label={slide.shortTitle}>
     <header className="definition-header"><Tag>{slide.eyebrow}</Tag></header>
