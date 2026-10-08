@@ -225,9 +225,8 @@ function FourStepProcess() {
   </>
 }
 
-function SlideBody({ kind }: { kind: string }) {
-  switch (kind) {
-    case 'team': return <div className="team-portraits" aria-label="EkoMatch ekibi">
+function TeamPortraits() {
+  return <div className="team-portraits" aria-label="EkoMatch ekibi">
       {data.teamMembers.map(([name, company, role, photo]) => <article className="team-member" key={name}>
         <div className="team-photo"><img src={photo} alt={name} width="272" height="272" draggable={false} /></div>
         <h2 aria-label={name}><span>{name.split(" ").slice(0, -1).join(" ")}</span><span>{name.split(" ").at(-1)}</span></h2>
@@ -235,6 +234,11 @@ function SlideBody({ kind }: { kind: string }) {
         <p className="team-role">{role}</p>
       </article>)}
     </div>
+}
+
+function SlideBody({ kind }: { kind: string }) {
+  switch (kind) {
+    case 'team': return <TeamPortraits />
     case 'definition': return <FourStepProcess />
     case 'metrics': return <><div className="metrics-grid">{data.metrics.map(([value, unit, label]) => <div key={label}><strong>{value}</strong><span>{unit}</span><p>{label}</p></div>)}</div><Insight>Boşluk küçük değil: harcama bizde başlıyor, başka bankada bitiyor.</Insight><p className="deck-source">Kaynak: BKM 2025–2026 kart verileri, Kuveyt Türk kurumsal tanıtım (Aralık 2025).</p></>
     case 'heatmap': return <Heatmap />
@@ -286,7 +290,7 @@ export function DeckScene({ index, direction = 'forward' }: { index: number; dir
   if (slide.kind === 'cover' || slide.kind === 'final' || slide.kind === 'divider') {
     const ease = [0.22, 1, 0.36, 1] as const
     return <section ref={root} tabIndex={-1} className={`scene deck-scene deck-${slide.kind}`} aria-label={slide.shortTitle}>{slide.kind === 'final' ? <motion.div className="final-network-layer" initial={false} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0 : 1.1, ease }}><EconomicNetwork rich className="deck-background-network" /></motion.div> : <EconomicNetwork className="deck-background-network" />}<div className="deck-veil" /><div className={`deck-center ${slide.kind === 'final' ? 'final-composition' : ''}`}>
-      {slide.kind === 'final' ? <><motion.div className="final-logo" initial={false} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : .78, duration: reduced ? 0 : .8, ease }}><EkoMark /></motion.div><motion.h1 initial={false} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : .18, duration: reduced ? 0 : .75, ease }}>{slide.title}</motion.h1><motion.p className="deck-slogan" initial={false} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : 1.12, duration: reduced ? 0 : .65, ease }}>Talebi keşfet. Arzla buluştur.<br /><strong>Ekonomik ağı büyüt.</strong></motion.p></> : slide.kind === 'cover' ? <><div className="deck-cover-brand"><EkoMark /></div><h1>{slide.title}</h1><p className="deck-slogan">Talebi keşfet. Arzla buluştur.<br /><strong>Ekonomik ağı büyüt.</strong></p><div className="deck-cover-logos" aria-label="Proje paydaşları"><span className="deck-partner-slot is-kt"><img className="deck-cover-partner is-kt" src={ktLogoUrl} alt="Kuveyt Türk" draggable={false} /></span><span className="deck-partner-slot is-archi"><img className="deck-cover-partner is-archi" src={archiLogoUrl} alt="Archi Tech" draggable={false} /></span></div></> : <><span className="chapter-number">{slide.eyebrow.slice(-2)}</span><Tag>{slide.chapter}</Tag><h1>{slide.title}</h1><div className="chapter-line" /><img className="chapter-logo" src={miniLogoUrl} width="112" height="112" alt="EkoMatch sembolü" draggable={false} /></>}
+      {slide.kind === 'final' ? <><motion.div className="final-logo" initial={false} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : .78, duration: reduced ? 0 : .8, ease }}><EkoMark /></motion.div><motion.h1 initial={false} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : .18, duration: reduced ? 0 : .75, ease }}>{slide.title}</motion.h1><motion.p className="deck-slogan" initial={false} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : 1.12, duration: reduced ? 0 : .65, ease }}>Talebi keşfet. Arzla buluştur.<br /><strong>Ekonomik ağı büyüt.</strong></motion.p></> : slide.kind === 'cover' ? <><div className="deck-cover-brand"><EkoMark /></div><h1>{slide.title}</h1><TeamPortraits /></> : <><span className="chapter-number">{slide.eyebrow.slice(-2)}</span><Tag>{slide.chapter}</Tag><h1>{slide.title}</h1><div className="chapter-line" /><img className="chapter-logo" src={miniLogoUrl} width="112" height="112" alt="EkoMatch sembolü" draggable={false} /></>}
     </div></section>
   }
   return <section ref={root} tabIndex={-1} className={`scene deck-scene deck-kind-${detailedRoadmap ? 'roadmap' : slide.kind}${detailedRoadmap ? ' roadmap-detailed' : ''}`} aria-label={slide.shortTitle}><header className="deck-heading"><Tag>{slide.eyebrow}</Tag><h1>{slide.title}</h1></header><motion.div className="deck-body" initial={false} animate={{ opacity: 1 }} transition={{ duration: .3 }}><SlideBody kind={slide.kind} /></motion.div></section>

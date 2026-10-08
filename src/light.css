@@ -463,4 +463,12 @@
 
 [data-theme=light] .team-member h2 > span { display: block; white-space: nowrap; font-weight: inherit; color: inherit; }
 
+/* The cover shares the team content with a more compact portrait row. */
+[data-theme=light] .deck-cover .deck-center { max-width: 1728px; }
+[data-theme=light] .deck-cover .deck-center h1 { max-width: 1480px; font-size: 72px; margin: 12px auto 44px; }
+[data-theme=light] .deck-cover .team-photo { width: 224px; height: 224px; margin-bottom: 20px; }
+[data-theme=light] .deck-cover .team-member h2 { min-height: 81.6px; font-size: 34px; margin-bottom: 8px; }
+[data-theme=light] .deck-cover .team-company-logo { margin-bottom: 12px; }
+[data-theme=light] .deck-cover .team-member .team-role { font-size: 26px; }
+
 [data-theme=light] .deck-perspective .perspective-legend-space { height: 84px; flex-shrink: 0; }
