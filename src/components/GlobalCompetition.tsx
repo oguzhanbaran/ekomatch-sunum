@@ -6,17 +6,14 @@ import './GlobalCompetition.css'
 const examples = [
   {
     institution: 'Standard Chartered', product: 'SOLV', description: 'Alıcı–satıcı ağı ve finansman',
-    logo: new URL('../assets/global-competition/standard-chartered.png', import.meta.url).href,
     source: 'https://www.sc.com/en/press-release/sc-ventures-backs-solv-in-enabling-seamless-trade-and-access-to-finance-for-small-businesses-in-post-covid-world/',
   },
   {
     institution: 'Santander', product: 'Trade Club Alliance', description: 'Uluslararası ticari eşleşme',
-    logo: new URL('../assets/global-competition/santander.svg', import.meta.url).href,
     source: 'https://www.santander.com/en/press-room/press-releases/trade-club-alliance-global-financial-leaders-to-launch-digital-platform-to-tackle-international-trade-barriers-and-help-businesses-grow',
   },
   {
-    institution: 'Akbank', product: 'DijiOrtak', description: 'Ticari ilişki ve finansman yönetimi',
-    logo: new URL('../assets/global-competition/akbank.svg', import.meta.url).href,
+    institution: 'Türkiye’de bir banka', product: 'DijiOrtak', description: 'Ticari ilişki ve finansman yönetimi',
     source: 'https://www.akbank.com/kurumsal/hizmetler/dijiortak',
   },
 ]
@@ -41,7 +38,7 @@ export function GlobalCompetition({ slide }: { slide: Slide }) {
         <h2 id="global-examples-title">Dünyadan örnekler</h2>
         <div className="global-example-list">
           {examples.map(example => <a className="global-example" key={example.product} href={example.source} target="_blank" rel="noopener noreferrer" aria-label={`${example.institution} ${example.product}: resmî kaynak`}>
-            <div className="global-example-top"><span>{example.institution}</span><img src={example.logo} alt={`${example.institution} logosu`} draggable={false} /></div>
+            <div className="global-example-top"><span>{example.institution}</span></div>
             <h3>{example.product}</h3>
             <p>{example.description}</p>
           </a>)}
